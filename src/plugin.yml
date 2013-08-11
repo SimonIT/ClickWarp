@@ -1,0 +1,84 @@
+name: ClickWarp
+version: 1.3.5
+author: comniemeer
+description: Teleports to a warp by clicking on it in an inventory
+website: http://dev.bukkit.org/server-mods/clickwarp/
+
+main: de.comniemeer.ClickWarp.ClickWarp
+
+softdepend: [Vault]
+
+commands:
+  warp:
+    description: Warp command
+    aliases: [warps]
+    
+permissions:
+  clickwarp.*:
+    default: op
+    description: All ClickWarp permissions.
+    children:
+      clickwarp.warp: true
+      clickwarp.warp.*: true
+      clickwarp.warps: true
+      clickwarp.warp.instant: true
+      clickwarp.invwarp: true
+      clickwarp.invwarp.item: true
+      clickwarp.setwarp: true
+      clickwarp.delwarp: true
+      clickwarp.editwarp: true
+      clickwarp.invtp: true
+      clickwarp.invtp.item: true
+      clickwarp.teleport.instant: true
+      clickwarp.clickwarp: true
+      clickwarp.sign.create: true
+      clickwarp.sign.use: true
+  clickwarp.warp:
+    default: op
+    description: Access to the /warp command.
+  clickwarp.warp.*:
+    default: op
+    description: Access to all warps.
+  clickwarp.warps:
+    default: op
+    description: Access to the /warps command.
+  clickwarp.warp.instant:
+    default: op
+    description: Allows to warp immediately regardless on settings in the config.
+  clickwarp.invwarp:
+    default: op
+    description: Access to the /invwarp command.
+  clickwarp.invwarp.item:
+    default: op
+    description: Access to the /invwarp menu with an item.
+    children:
+      clickwarp.invwarp: true
+  clickwarp.setwarp:
+    default: op
+    description: Access to the /setwarp command.
+  clickwarp.delwarp:
+    default: op
+    description: Access to the /delwarp command.
+  clickwarp.editwarp:
+    default: op
+    description: Access to the /editwarp command.
+  clickwarp.invtp:
+    default: op
+    description: Access to the /invtp command.
+  clickwarp.invtp.item:
+    default: op
+    description: Access to the /invtp menu with an item.
+    children:
+      clickwarp.invtp: true
+  clickwarp.teleport.instant:
+    default: op
+    description: Allows to teleport immediately regardless on settings in the config.
+  clickwarp.clickwarp:
+    default: op
+    description: Access to the /clickwarp command.
+  clickwarp.sign.create:
+    default: op
+    description: Access to create Warp-Signs.
+  clickwarp.sign.use:
+    default: op
+    description: Access to use Warp-Signs.
