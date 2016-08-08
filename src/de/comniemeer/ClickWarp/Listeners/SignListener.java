@@ -17,20 +17,21 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import de.comniemeer.ClickWarp.ClickWarp;
 
 public class SignListener implements Listener {
-	
+
 	private ClickWarp plugin;
+
 	public SignListener(ClickWarp clickwarp) {
 		plugin = clickwarp;
 	}
-	
+
 	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
 		Player player = e.getPlayer();
-		
+
 		if (e.getLine(0).equalsIgnoreCase("[Warp]")) {
 			if (player.hasPermission("clickwarp.sign.create")) {
 				if (e.getLine(1).isEmpty()) {
-		        	e.setCancelled(true);
+					e.setCancelled(true);
 					e.getBlock().breakNaturally();
 					player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSpecifyWarp));
 					return;
@@ -38,26 +39,29 @@ public class SignListener implements Listener {
 					String _line = e.getLine(1);
 					String line = _line.toLowerCase();
 					File file = new File("plugins/ClickWarp/Warps", line + ".yml");
-					
+
 					if (!file.exists()) {
-			        	e.setCancelled(true);
+						e.setCancelled(true);
 						e.getBlock().breakNaturally();
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist).replace("{warp}", _line));
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
+								.replace("{warp}", _line));
 						return;
 					}
-					
+
 					FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 					String name = "";
-					
+
 					if (cfg.getString(line + ".name") == null) {
 						name = line;
 					} else {
 						name = ChatColor.translateAlternateColorCodes('&', cfg.getString(line + ".name"));
 					}
-			        
-					e.setLine(0, ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Sign.FirstLine")));
+
+					e.setLine(0, ChatColor.translateAlternateColorCodes('&',
+							plugin.getConfig().getString("Sign.FirstLine")));
 					e.setLine(1, name);
-					player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSuccess).replace("{warp}", name));
+					player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSuccess)
+							.replace("{warp}", name));
 					return;
 				}
 			} else {
@@ -66,25 +70,26 @@ public class SignListener implements Listener {
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
 				return;
 			}
-        }
+		}
 	}
-	
+
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		
+
 		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			BlockState bs = event.getClickedBlock().getState();
-			
+
 			if (bs instanceof Sign) {
 				Sign sign = (Sign) bs;
-				
-				if (sign.getLine(0).equalsIgnoreCase(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Sign.FirstLine")))) {
+
+				if (sign.getLine(0).equalsIgnoreCase(
+						ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("Sign.FirstLine")))) {
 					if (player.hasPermission("clickwarp.sign.use")) {
 						event.setCancelled(true);
-						
+
 						String str = ChatColor.stripColor(sign.getLine(1).toLowerCase());
-						
+
 						plugin.warphandler.handleWarp(player, str, sign.getLine(1), true);
 						return;
 					} else {

@@ -19,7 +19,6 @@ public class InventoryListener implements Listener {
 		plugin = clickwarp;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		if (e.getSlot() == e.getRawSlot()) {

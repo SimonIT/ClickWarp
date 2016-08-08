@@ -8,15 +8,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.comniemeer.ClickWarp.ClickWarp;
 
 public class Messages {
-	
+
 	private ClickWarp plugin;
+
 	public Messages(ClickWarp clickwarp) {
 		plugin = clickwarp;
 	}
-	
+
 	public File messagesFile;
 	public FileConfiguration messages;
-	
+
 	public String NoWarps;
 	public String WarpList;
 	public String WarpNoExist;
@@ -46,7 +47,7 @@ public class Messages {
 	public String ErrorFileSaving;
 	public String NoPermission;
 	public String OnlyPlayers;
-	
+
 	private String NoWarpsPath = "Warp.NoWarps";
 	private String WarpListPath = "Warp.List";
 	private String WarpNoExistPath = "Warp.NoExist";
@@ -76,11 +77,11 @@ public class Messages {
 	private String ErrorFileSavingPath = "Various.ErrorFileSaving";
 	private String NoPermissionPath = "Various.NoPermission";
 	private String OnlyPlayersPath = "Various.OnlyPlayers";
-	
+
 	public void load() {
 		messagesFile = new File("plugins/ClickWarp/Languages", plugin.getConfig().getString("Language") + ".yml");
 		messages = YamlConfiguration.loadConfiguration(messagesFile);
-		
+
 		NoWarps = messages.getString(NoWarpsPath);
 		WarpList = messages.getString(WarpListPath);
 		WarpNoExist = messages.getString(WarpNoExistPath);

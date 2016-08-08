@@ -9,15 +9,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.comniemeer.ClickWarp.ClickWarp;
 
 public class LanguagePortuguese {
-	
+
 	private ClickWarp plugin;
+
 	public LanguagePortuguese(ClickWarp clickwarp) {
 		plugin = clickwarp;
 	}
-	
+
 	public File file;
 	public FileConfiguration cfg;
-	
+
 	private String NoWarps = "&7Nao existe nenhum warp de momento!";
 	private String WarpList = "&7No momento temos estes warps:";
 	private String WarpNoExist = "&7Nao existe nenhum warp com o nome &6{warp}&7!";
@@ -77,13 +78,14 @@ public class LanguagePortuguese {
 	private String ErrorFileSavingPath = "Various.ErrorFileSaving";
 	private String NoPermissionPath = "Various.NoPermission";
 	private String OnlyPlayersPath = "Various.OnlyPlayers";
-	
+
 	public void load() {
 		file = new File("plugins/ClickWarp/Languages", "pt.yml");
 		cfg = YamlConfiguration.loadConfiguration(file);
-		
+
 		if (!(file.exists())) {
-			cfg.options().header("[Clickwarp] Plugin by comniemeer | Color codes: http://ess.khhq.net/mc/ | Portugese translated by ksocially");
+			cfg.options().header(
+					"[Clickwarp] Plugin by comniemeer | Color codes: http://ess.khhq.net/mc/ | Portugese translated by ksocially");
 			cfg.set(NoWarpsPath, NoWarps);
 			cfg.set(WarpListPath, WarpList);
 			cfg.set(WarpNoExistPath, WarpNoExist);
@@ -113,7 +115,7 @@ public class LanguagePortuguese {
 			cfg.set(ErrorFileSavingPath, ErrorFileSaving);
 			cfg.set(NoPermissionPath, NoPermission);
 			cfg.set(OnlyPlayersPath, OnlyPlayers);
-			
+
 			try {
 				cfg.save(file);
 			} catch (IOException e) {
@@ -208,7 +210,7 @@ public class LanguagePortuguese {
 			if (cfg.getString(OnlyPlayersPath) == null) {
 				cfg.set(OnlyPlayersPath, OnlyPlayers);
 			}
-			
+
 			try {
 				cfg.save(file);
 			} catch (IOException e) {
