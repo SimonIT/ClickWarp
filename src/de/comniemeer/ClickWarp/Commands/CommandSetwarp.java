@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
 import de.comniemeer.ClickWarp.Metrics;
+import de.comniemeer.ClickWarp.Metrics.Graph;
 
 public class CommandSetwarp extends AutoCommand<ClickWarp> {
 	
@@ -59,8 +60,9 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
 						
 						try {
 						    Metrics metrics = new Metrics(plugin);
-						    
-						    metrics.addCustomData(new Metrics.Plotter("Warps") {
+						    Graph Warps = metrics.createGraph("Warps");
+							
+							Warps.addPlotter(new Metrics.Plotter("Warps") {
 						        @Override
 						        public int getValue() {
 						            return files;
@@ -167,7 +169,9 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
 						try {
 						    Metrics metrics = new Metrics(plugin);
 						    
-						    metrics.addCustomData(new Metrics.Plotter("Warps") {
+						    Graph Warps = metrics.createGraph("Warps");
+							
+							Warps.addPlotter(new Metrics.Plotter("Warps") {
 						        @Override
 						        public int getValue() {
 						            return files;
@@ -286,7 +290,9 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
 						try {
 						    Metrics metrics = new Metrics(plugin);
 						    
-						    metrics.addCustomData(new Metrics.Plotter("Warps") {
+						    Graph Warps = metrics.createGraph("Warps");
+							
+							Warps.addPlotter(new Metrics.Plotter("Warps") {
 						        @Override
 						        public int getValue() {
 						            return files;

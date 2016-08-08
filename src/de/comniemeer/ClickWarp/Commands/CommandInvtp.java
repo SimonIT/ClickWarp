@@ -27,7 +27,7 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 				if (args.length == 0) {
 					Player p = (Player) sender;
 					int lines = 0;
-					Player[] players = Bukkit.getOnlinePlayers();
+					Player[] players = Bukkit.getOnlinePlayers().toArray(new Player[Bukkit.getOnlinePlayers().size()]);
 					
 					if (players.length == 1) {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPNoPlayers));

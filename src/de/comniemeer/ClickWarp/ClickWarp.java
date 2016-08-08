@@ -1,5 +1,6 @@
 package de.comniemeer.ClickWarp;
 
+import de.comniemeer.ClickWarp.Metrics.Graph;
 import de.comniemeer.ClickWarp.Commands.CommandClickwarp;
 import de.comniemeer.ClickWarp.Commands.CommandDelwarp;
 import de.comniemeer.ClickWarp.Commands.CommandEditwarp;
@@ -109,7 +110,9 @@ public class ClickWarp extends JavaPlugin {
 				try {
 					Metrics metrics = new Metrics(this);
 					
-					metrics.addCustomData(new Metrics.Plotter("Warps") {
+					Graph Warps = metrics.createGraph("Warps");
+					
+					Warps.addPlotter(new Metrics.Plotter("Warps") {
 						public int getValue() {
 							return files;
 						}
