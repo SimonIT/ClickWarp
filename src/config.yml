@@ -35,6 +35,8 @@ InvwarpItem: 347
 #Warp vehicle with you
 VehicleWarp: true
 
+GetWarpItem: true
+
 # If you wish to use an item that opens the "/invtp" menu, enable it here and define an item.
 # Only players with the permission "clickwarp.invtp.item" can use this function.
 EnableInvtpItem: true

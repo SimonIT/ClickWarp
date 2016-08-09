@@ -145,12 +145,12 @@ public class ClickWarp extends JavaPlugin {
 		}
 
 		new CommandClickwarp(this);
+		new CommandWarp(this);
 		new CommandDelwarp(this);
 		new CommandEditwarp(this);
 		new CommandInvtp(this);
 		new CommandInvwarp(this);
 		new CommandSetwarp(this);
-		new CommandWarp(this);
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(new InventoryListener(this), this);
