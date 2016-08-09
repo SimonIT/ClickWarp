@@ -91,7 +91,7 @@ public class LanguageKorean {
 		cfg = YamlConfiguration.loadConfiguration(file);
 
 		if (!file.exists()) {
-			cfg.options().header("[Clickwarp] Plugin by comniemeer | Color codes: http://ess.khhq.net/mc/");
+			cfg.options().header("[Clickwarp] Plugin by comniemeer | Color codes: http://ess.khhq.net/mc/ | Korean translated by Wolfwork");
 			cfg.set(NoWarpsPath, NoWarps);
 			cfg.set(WarpListPath, WarpList);
 			cfg.set(WarpNoExistPath, WarpNoExist);

@@ -6,10 +6,10 @@
 #                                         |_|
 # Plugin by comniemeer
 # The configurable command method is from PostCrafter (excellent german video tutorials on YouTube: http://www.youtube.com/user/PostCrafter)
-# Version 1.3.5
+# Version 1.3.6
 # Main configuration File
 
-# Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese) or cz (Czech)
+# Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese), cz (Czech) or ko (Korean)
 # Or add your own language file to the "Languages" folder and type here the name of the file.
 Language: en
 
@@ -31,6 +31,9 @@ DefaultWarpItem: 2
 # Only players with the permission "clickwarp.invwarp.item" can use this function.
 EnableInvwarpItem: true
 InvwarpItem: 347
+
+#Warp vehicle with you
+VehicleWarp: true
 
 # If you wish to use an item that opens the "/invtp" menu, enable it here and define an item.
 # Only players with the permission "clickwarp.invtp.item" can use this function.

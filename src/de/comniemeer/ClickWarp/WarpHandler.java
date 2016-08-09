@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class WarpHandler {
@@ -28,6 +29,13 @@ public class WarpHandler {
 		}
 
 		if (player.hasPermission("clickwarp.warp." + str) || player.hasPermission("clickwarp.warp.*")) {
+			Boolean use_vehicle = false;
+			Entity vec = null;
+			if(player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp") && plugin.getConfig().getBoolean("VehicleWarp")){
+				use_vehicle = true;
+				vec = player.getVehicle();
+			}
+			
 			FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
 			Boolean enableEconomy = plugin.getConfig().getBoolean("Economy.Enable");
 			double _price = 0;
@@ -79,6 +87,10 @@ public class WarpHandler {
 
 			if (!usedelay.booleanValue()) {
 				player.teleport(loc);
+				if(use_vehicle){
+					vec.teleport(loc);
+					vec.setPassenger(player);
+				}
 
 				if (payed.booleanValue()) {
 					String payed_ = ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpSuccessPayed)
@@ -101,6 +113,10 @@ public class WarpHandler {
 
 					if (!usesigndelay.booleanValue()) {
 						player.teleport(loc);
+						if(use_vehicle){
+							vec.teleport(loc);
+							vec.setPassenger(player);
+						}
 
 						if (payed.booleanValue()) {
 							String payed_ = ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpSuccessPayed)
@@ -124,6 +140,10 @@ public class WarpHandler {
 
 				if (player.hasPermission("clickwarp.warp.instant")) {
 					player.teleport(loc);
+					if(use_vehicle){
+						vec.teleport(loc);
+						vec.setPassenger(player);
+					}
 
 					if (payed.booleanValue()) {
 						String payed_ = ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpSuccessPayed)
