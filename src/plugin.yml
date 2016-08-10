@@ -1,16 +1,11 @@
 name: ClickWarp
-version: 1.3.6
+version: 1.3.8
 author: comniemeer
 description: Teleports to a warp by clicking on it in an inventory
 website: http://dev.bukkit.org/server-mods/clickwarp/
 main: de.comniemeer.ClickWarp.ClickWarp
 softdepend:
 - Vault
-commands:
-  warp:
-    description: Warp command
-    aliases:
-    - warps
 permissions:
   clickwarp.*:
     default: op
@@ -32,6 +27,7 @@ permissions:
       clickwarp.sign.create: true
       clickwarp.sign.use: true
       clickwarp.vehiclewarp: true
+      clickwarp.gettpskull: true
   clickwarp.warp:
     default: op
     description: Access to the /warp command.
@@ -84,3 +80,6 @@ permissions:
   clickwarp.sign.use:
     default: op
     description: Access to use Warp-Signs.
+  clickwarp.gettpskull:
+    default: op
+    description: Acces to the /gettpskull command.

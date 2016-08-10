@@ -16,8 +16,8 @@ import de.comniemeer.ClickWarp.ClickWarp;
 
 public class CommandInvtp extends AutoCommand<ClickWarp> {
 
-	public CommandInvtp(ClickWarp plugin) {
-		super(plugin, "invtp", "Teleport to players through an inventory", "invteleport");
+	public CommandInvtp(ClickWarp plugin, String cmd, String description, String alias) {
+		super(plugin, cmd, description, alias);
 	}
 
 	@Override

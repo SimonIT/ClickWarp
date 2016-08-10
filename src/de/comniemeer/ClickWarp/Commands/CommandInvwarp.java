@@ -20,8 +20,8 @@ import de.comniemeer.ClickWarp.ClickWarp;
 
 public class CommandInvwarp extends AutoCommand<ClickWarp> {
 
-	public CommandInvwarp(ClickWarp plugin) {
-		super(plugin, "invwarp", "Warp through an inventory");
+	public CommandInvwarp(ClickWarp plugin, String cmd, String description, String alias) {
+		super(plugin, cmd, description, alias);
 	}
 
 	@Override

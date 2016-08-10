@@ -4,6 +4,7 @@ import de.comniemeer.ClickWarp.Metrics.Graph;
 import de.comniemeer.ClickWarp.Commands.CommandClickwarp;
 import de.comniemeer.ClickWarp.Commands.CommandDelwarp;
 import de.comniemeer.ClickWarp.Commands.CommandEditwarp;
+import de.comniemeer.ClickWarp.Commands.CommandGettpskull;
 import de.comniemeer.ClickWarp.Commands.CommandInvtp;
 import de.comniemeer.ClickWarp.Commands.CommandInvwarp;
 import de.comniemeer.ClickWarp.Commands.CommandSetwarp;
@@ -144,13 +145,14 @@ public class ClickWarp extends JavaPlugin {
 			}
 		}
 
-		new CommandClickwarp(this);
-		new CommandWarp(this);
-		new CommandDelwarp(this);
-		new CommandEditwarp(this);
-		new CommandInvtp(this);
-		new CommandInvwarp(this);
-		new CommandSetwarp(this);
+		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
+		new CommandWarp(this, "warp", "Warp command", "warps");
+		new CommandDelwarp(this, "delwarp", "Deletes a warp");
+		new CommandEditwarp(this, "editwarp", "Allows to edit warps");
+		new CommandInvtp(this, "invtp", "Inventory-Teleport command", "invteleport");
+		new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
+		new CommandSetwarp(this, "setwarp", "Sets a warp at the current location");
+		new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(new InventoryListener(this), this);

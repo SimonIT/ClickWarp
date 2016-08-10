@@ -19,8 +19,8 @@ import de.comniemeer.ClickWarp.Metrics.Graph;
 
 public class CommandSetwarp extends AutoCommand<ClickWarp> {
 	
-	public CommandSetwarp (ClickWarp plugin) {
-		super(plugin, "setwarp", "Set a warp at the current location");
+	public CommandSetwarp (ClickWarp plugin, String cmd, String description) {
+		super(plugin, cmd, description);
 	}
 	
 	@Override

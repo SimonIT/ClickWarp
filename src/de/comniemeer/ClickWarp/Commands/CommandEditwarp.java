@@ -16,8 +16,8 @@ import de.comniemeer.ClickWarp.ClickWarp;
 
 public class CommandEditwarp extends AutoCommand<ClickWarp> {
 
-	public CommandEditwarp(ClickWarp plugin) {
-		super(plugin, "editwarp", "Edit a warp: Change the item, add a lore or change the price");
+	public CommandEditwarp(ClickWarp plugin, String cmd, String description) {
+		super(plugin, cmd, description);
 	}
 
 	@Override

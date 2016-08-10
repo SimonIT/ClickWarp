@@ -11,8 +11,8 @@ import de.comniemeer.ClickWarp.ClickWarp;
 
 public class CommandClickwarp extends AutoCommand<ClickWarp> {
 
-	public CommandClickwarp(ClickWarp plugin) {
-		super(plugin, "clickwarp", "ClickWarp main command");
+	public CommandClickwarp(ClickWarp plugin, String cmd, String description) {
+		super(plugin, cmd, description);
 	}
 
 	@Override
@@ -69,6 +69,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 		plugin.fr.load();
 		plugin.pt.load();
 		plugin.cz.load();
+		plugin.ko.load();
 		plugin.msg.load();
 	}
 }
