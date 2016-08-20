@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
@@ -55,8 +55,9 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 
 						if (p_ != p) {
 							ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-							ItemMeta meta = item.getItemMeta();
-
+							SkullMeta meta = (SkullMeta) item.getItemMeta();
+							
+							meta.setOwner(p_.getName());					
 							meta.setDisplayName("§l" + p_.getName());
 							item.setItemMeta(meta);
 							inv.setItem(slot, item);

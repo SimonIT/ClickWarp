@@ -21,16 +21,17 @@ Commands:
   delwarp: delwarp
   invtp: invtp
   invtpa: invtpa
+  gettpskull: gettpskull
 
 # Define here the default item for /invwarp
-# Attention! If you use an item with an additional meta, like blue wool (35:11),
-# you have to make that item in '' (example: DefaultWarpItem: '35:11')!
-DefaultWarpItem: 2
+# Attention! If you use an item with an additional meta, like blue wool (wool:11),
+# you have to make that item in '' (example: DefaultWarpItem: 'wool:11')!
+DefaultWarpItem: grass
 
 # If you wish to use an item that opens the "/invwarp" menu, enable it here and define an item.
 # Only players with the permission "clickwarp.invwarp.item" can use this function.
 EnableInvwarpItem: true
-InvwarpItem: 347
+InvwarpItem: clock
 
 #show Invwarp-menu on /warp
 InvwarpInsteadWarp: false
@@ -38,14 +39,19 @@ InvwarpInsteadWarp: false
 #Warp vehicle with you
 VehicleWarp: true
 
+# If you wish to use an item that teleports you to a warp
 GetWarpItem: true
 
+# The sound who should be played if someone warps
+WarpSound: ENTITY_ENDERMEN_TELEPORT 
+
+# If you wish to use an item that teleports you to a player
 GetTpSkull: true
 
 # If you wish to use an item that opens the "/invtp" menu, enable it here and define an item.
 # Only players with the permission "clickwarp.invtp.item" can use this function.
 EnableInvtpItem: true
-InvtpItem: 340
+InvtpItem: book
 
 Sign:
   # Here you can edit the text that is replaced on a sign, if you write [Warp] in the first line.

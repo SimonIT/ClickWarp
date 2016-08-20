@@ -4,7 +4,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,10 +31,23 @@ public class PlayerListener implements Listener {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR) {
 			Player p = e.getPlayer();
 			ItemStack hand = p.getInventory().getItemInMainHand();
-			int invwarpitem = plugin.getConfig().getInt("InvwarpItem");
+			String invwarpitem = plugin.getConfig().getString("InvwarpItem").toUpperCase();
+			int invwarpitem_variant = 0;
+			if (invwarpitem.contains(":")) {
+				String[] invwarpitem_split = invwarpitem.split(":");
+				invwarpitem = invwarpitem_split[0].toUpperCase();
+				invwarpitem_variant = Integer.parseInt(invwarpitem_split[1]);
+			}
 			Material invwarpmaterial = Material.getMaterial(invwarpitem);
-			int invtpitem = plugin.getConfig().getInt("InvwarpItem");
+			String invtpitem = plugin.getConfig().getString("InvtpItem").toUpperCase();
+			int invtpitem_variant = 0;
+			if (invtpitem.contains(":")) {
+				String[] invtpitem_split = invtpitem.split(":");
+				invtpitem = invtpitem_split[0].toUpperCase();
+				invtpitem_variant = Integer.parseInt(invtpitem_split[1]);
+			}
 			Material invtpmaterial = Material.getMaterial(invtpitem);
+
 			String item_prefix = ChatColor.translateAlternateColorCodes('&',
 					this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
 
@@ -73,12 +89,36 @@ public class PlayerListener implements Listener {
 				if (p_ != null) {
 					Boolean usedelay = Boolean
 							.valueOf(this.plugin.getConfig().getBoolean("Delay.Teleport.EnableDelay"));
+					Sound warp_sound = Sound.valueOf(this.plugin.getConfig().getString("WarpSound").toUpperCase());
+					Boolean use_vehicle = false;
+					Entity vec = null;
+					if (p.getVehicle() != null && p.hasPermission("clickwarp.vehiclewarp")
+							&& plugin.getConfig().getBoolean("VehicleWarp")) {
+						use_vehicle = true;
+						vec = p.getVehicle();
+					}
 					if (!usedelay.booleanValue()) {
+						p.playEffect(p.getLocation(), Effect.ENDER_SIGNAL, null);
+						p.playSound(p.getLocation(), warp_sound, 1, 0);
 						p.teleport(p_);
+						p.playSound(p_.getLocation(), warp_sound, 1, 0);
+						if (use_vehicle) {
+							vec.teleport(p_.getLocation());
+							vec.setPassenger(p);
+						}
+						p.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPSuccess)
 								.replace("{player}", p_.getName()));
 					} else if (p.hasPermission("clickwarp.teleport.instant")) {
+						p.playEffect(p.getLocation(), Effect.ENDER_SIGNAL, null);
+						p.playSound(p.getLocation(), warp_sound, 1, 0);
 						p.teleport(p_);
+						p.playSound(p_.getLocation(), warp_sound, 1, 0);
+						if (use_vehicle) {
+							vec.teleport(p_.getLocation());
+							vec.setPassenger(p);
+						}
+						p.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPSuccess)
 								.replace("{player}", p_.getName()));
 					} else {

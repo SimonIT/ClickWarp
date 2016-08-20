@@ -9,6 +9,7 @@ import de.comniemeer.ClickWarp.Commands.CommandInvtp;
 import de.comniemeer.ClickWarp.Commands.CommandInvwarp;
 import de.comniemeer.ClickWarp.Commands.CommandSetwarp;
 import de.comniemeer.ClickWarp.Commands.CommandWarp;
+import de.comniemeer.ClickWarp.Commands.CustomCommands;
 import de.comniemeer.ClickWarp.Listeners.InventoryListener;
 import de.comniemeer.ClickWarp.Listeners.PlayerListener;
 import de.comniemeer.ClickWarp.Listeners.SignListener;
@@ -21,12 +22,18 @@ import de.comniemeer.ClickWarp.Messages.LanguagePortuguese;
 import de.comniemeer.ClickWarp.Messages.Messages;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -49,7 +56,7 @@ public class ClickWarp extends JavaPlugin {
 
 	public HashMap<String, String> InvHM = new HashMap<String, String>();
 	public HashMap<String, Boolean> warp_delay = new HashMap<String, Boolean>();
-
+	public HashMap<List<String>, List<String>> cmd = new HashMap<List<String>, List<String>>();
 	public int delaytask;
 
 	public Economy economy = null;
@@ -129,6 +136,37 @@ public class ClickWarp extends JavaPlugin {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				for (File warp : warps) {
+					FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
+
+					String str = warp.getName().replace(".yml", "");
+					List<String> infos = new ArrayList<String>();
+					infos.add(cfg.getString(str + ".name"));
+					if (cfg.get(str + ".price") != null) {
+						Double price = cfg.getDouble(str + ".price");
+						String priceformat = ChatColor.translateAlternateColorCodes('&',
+								getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
+
+						if (price == 1) {
+							infos.add(priceformat.replace("{currency}",
+									getConfig().getString("Economy.CurrencySingular")));
+						} else {
+							infos.add(
+									priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
+						}
+					} else {
+						infos.add("free");
+					}
+					if (cfg.get(str + ".lore") != null) {
+						String description = cfg.getString(str + ".lore");
+						description = description.replace(":", " ");
+						description = description.replace("_", " ");
+						infos.add(description);
+					} else {
+						infos.add("");
+					}
+					cmd.put(infos, cfg.getStringList(str + ".cmd"));
+				}
 			}
 		}
 
@@ -153,6 +191,21 @@ public class ClickWarp extends JavaPlugin {
 		new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
 		new CommandSetwarp(this, "setwarp", "Sets a warp at the current location");
 		new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
+		for (Entry<List<String>, List<String>> entry : cmd.entrySet()) {
+			List<String> key = entry.getKey();
+			List<String> value = entry.getValue();
+
+			if (value.size() > 0) {
+				String mainCommand = value.get(0);
+				value.remove(0);
+				String[] alias = value.toArray(new String[value.size()]);
+
+				new CustomCommands(this, mainCommand,
+						ChatColor.translateAlternateColorCodes('&', getConfig().getString("Sign.FirstLine")) + " "
+								+ key.get(0) + " | " + key.get(1) + " | " + key.get(2),
+						alias);
+			}
+		}
 
 		PluginManager pm = this.getServer().getPluginManager();
 		pm.registerEvents(new InventoryListener(this), this);

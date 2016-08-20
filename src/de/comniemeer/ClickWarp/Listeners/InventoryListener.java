@@ -2,7 +2,10 @@ package de.comniemeer.ClickWarp.Listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,75 +16,104 @@ import org.bukkit.inventory.ItemStack;
 import de.comniemeer.ClickWarp.ClickWarp;
 
 public class InventoryListener implements Listener {
-	
+
 	private ClickWarp plugin;
+
 	public InventoryListener(ClickWarp clickwarp) {
 		plugin = clickwarp;
 	}
-	
+
 	@EventHandler
 	public void onClick(InventoryClickEvent e) {
 		if (e.getSlot() == e.getRawSlot()) {
 			final Player player = (Player) e.getWhoClicked();
-			
+
 			if (plugin.InvHM.containsKey(player.getName())) {
 				if (plugin.InvHM.get(player.getName()).equals("InventarWarp")) {
 					e.setCancelled(true);
-					player.updateInventory();
+					// player.updateInventory();
 					ItemStack item = e.getCurrentItem();
-					
+
 					if (item != null && item.getType() != Material.AIR) {
 						String dispname = item.getItemMeta().getDisplayName();
 						String name = ChatColor.stripColor(dispname.toLowerCase());
-						
+
 						plugin.warphandler.handleWarp(player, name, dispname, false);
 						this.closeInv(player);
 						return;
 					}
 				} else if (plugin.InvHM.get(player.getName()).equals("InventarTP")) {
 					e.setCancelled(true);
-					player.updateInventory();
+					// player.updateInventory();
 					ItemStack item = e.getCurrentItem();
-					
+
 					if (item != null && item.getType() != Material.AIR) {
 						String name = ChatColor.stripColor(item.getItemMeta().getDisplayName());
 						final Player p_ = Bukkit.getPlayerExact(name);
-						
+
 						if (p_ != null) {
 							Boolean usedelay = plugin.getConfig().getBoolean("Delay.Teleport.EnableDelay");
-							
+
 							if (!usedelay.booleanValue()) {
+								Boolean use_vehicle = false;
+								Entity vec = null;
+								if (player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp")
+										&& plugin.getConfig().getBoolean("VehicleWarp")) {
+									use_vehicle = true;
+									vec = player.getVehicle();
+								}
+								Sound warp_sound = Sound
+										.valueOf(this.plugin.getConfig().getString("WarpSound").toUpperCase());
+								player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
+								player.playSound(player.getLocation(), warp_sound, 1, 0);
 								player.teleport(p_);
-								player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess).replace("{player}", p_.getName()));
+								player.playSound(p_.getLocation(), warp_sound, 1, 0);
+								if (use_vehicle) {
+									vec.teleport(p_.getLocation());
+									vec.setPassenger(player);
+								}
+								player.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
+								player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess)
+										.replace("{player}", p_.getName()));
 							} else {
 								if (player.hasPermission("clickwarp.teleport.instant")) {
 									player.teleport(p_);
-									player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess).replace("{player}", p_.getName()));
+									player.sendMessage(
+											ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess)
+													.replace("{player}", p_.getName()));
 								} else {
-									Boolean usedontmove = plugin.getConfig().getBoolean("Delay.Teleport.EnableDontMove");
+									Boolean usedontmove = plugin.getConfig()
+											.getBoolean("Delay.Teleport.EnableDontMove");
 									int delay = plugin.getConfig().getInt("Delay.Teleport.Delay");
-									
+
 									if (usedontmove.booleanValue()) {
 										plugin.warp_delay.put(player.getName(), true);
-										player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.DelayDoNotMove).replace("{delay}", String.valueOf(delay)));
+										player.sendMessage(
+												ChatColor.translateAlternateColorCodes('&', plugin.msg.DelayDoNotMove)
+														.replace("{delay}", String.valueOf(delay)));
 									} else {
-										player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.Delay).replace("{delay}", String.valueOf(delay)));
+										player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.Delay)
+												.replace("{delay}", String.valueOf(delay)));
 									}
-									
-									plugin.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-										@Override
-										public void run() {									
-											player.teleport(p_);
-											plugin.warp_delay.remove(player.getName());
-											player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess).replace("{player}", p_.getName()));
-										}
-									}, delay * 20L);
+
+									plugin.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+											new Runnable() {
+												@Override
+												public void run() {
+													player.teleport(p_);
+													plugin.warp_delay.remove(player.getName());
+													player.sendMessage(ChatColor
+															.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess)
+															.replace("{player}", p_.getName()));
+												}
+											}, delay * 20L);
 								}
 							}
 						} else {
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPNotOnline).replace("{player}", name));
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPNotOnline)
+									.replace("{player}", name));
 						}
-						
+
 						this.closeInv(player);
 						return;
 					}
@@ -89,12 +121,12 @@ public class InventoryListener implements Listener {
 			}
 		}
 	}
-	
+
 	@EventHandler
 	public void onClose(InventoryCloseEvent event) {
 		plugin.InvHM.remove(event.getPlayer().getName());
 	}
-	
+
 	public void closeInv(Player player) {
 		player.closeInventory();
 		plugin.InvHM.remove(player.getName());

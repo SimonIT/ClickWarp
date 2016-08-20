@@ -73,56 +73,29 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 								FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
 								String str = warp.getName().replace(".yml", "");
 								ItemStack itemstack = null;
+								int variant = 0;
+								String item__;
 
 								if (cfg.get(str + ".item") != null) {
-									String item__ = cfg.getString(str + ".item");
-									Material material = null;
-									int item_id = 0;
-									int item_meta = 0;
-
-									if (item__.contains(":")) {
-										String[] item___ = item__.split(":");
-
-										for (int j = 0; j < item___.length; j++) {
-											item_meta = Integer.parseInt(item___[j]);
-
-											if (j + 1 < item___.length) {
-												item_id = Integer.parseInt(item___[j]);
-											}
-										}
-
-										material = Material.getMaterial(item_id);
-										itemstack = new ItemStack(material, 1, (short) item_meta);
+									if (cfg.getString(str + ".item").contains(":")) {
+										String[] item_split = cfg.getString(str + ".item").split(":");
+										item__ = item_split[0].toUpperCase();
+										variant = Integer.parseInt(item_split[1]);
 									} else {
-										item_id = Integer.parseInt(item__);
-										material = Material.getMaterial(item_id);
-										itemstack = new ItemStack(material);
+										item__ = cfg.getString(str + ".item").toUpperCase();
 									}
 								} else {
-									String item__ = plugin.getConfig().getString("DefaultWarpItem");
-									Material material = null;
-									int item_id = 0;
-									int item_meta = 0;
-
-									if (item__.contains(":")) {
-										String[] item___ = item__.split(":");
-
-										for (int j = 0; j < item___.length; j++) {
-											item_meta = Integer.parseInt(item___[j]);
-
-											if (j + 1 < item___.length) {
-												item_id = Integer.parseInt(item___[j]);
-											}
-										}
-
-										material = Material.getMaterial(item_id);
-										itemstack = new ItemStack(material, 1, (short) item_meta);
+									if (this.plugin.getConfig().getString("DefaultWarpItem").contains(":")) {
+										String[] item_split = this.plugin.getConfig().getString("DefaultWarpItem")
+												.split(":");
+										item__ = item_split[0].toUpperCase();
+										variant = Integer.parseInt(item_split[1]);
 									} else {
-										item_id = Integer.parseInt(item__);
-										material = Material.getMaterial(item_id);
-										itemstack = new ItemStack(material);
+										item__ = this.plugin.getConfig().getString("DefaultWarpItem").toUpperCase();
 									}
 								}
+								Material material = Material.getMaterial(item__);
+								itemstack = new ItemStack(material, 1, (byte) variant);
 
 								String name = "";
 

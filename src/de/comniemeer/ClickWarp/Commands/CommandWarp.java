@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -78,7 +77,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
 				}
 			} else {
-				Bukkit.getServer().dispatchCommand(sender, "invwarp");
+				CommandInvwarp invwarp = new CommandInvwarp(plugin, "invwarp", "Inventory-Warp command", "invwarps");
+				invwarp.execute(sender, label, args);
 			}
 		} else if (args.length == 1) {
 			if (sender instanceof Player) {
@@ -107,31 +107,30 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 						} else {
 
 							FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-							int item_id = 0;
 							String item__;
+							int variant = 0;
 							if (cfg.getString(str + ".item") == null) {
-								item__ = this.plugin.getConfig().getString("DefaultWarpItem");
-							} else {
-								item__ = cfg.getString(str + ".item");
-							}
-							Material material = null;
-							int item_meta = 0;
-							ItemStack itemstack = null;
-							if (item__.contains(":")) {
-								String[] item___ = item__.split(":");
-								for (int j = 0; j < item___.length; j++) {
-									item_meta = Integer.parseInt(item___[j]);
-									if (j + 1 < item___.length) {
-										item_id = Integer.parseInt(item___[j]);
-									}
+								if (this.plugin.getConfig().getString("DefaultWarpItem").contains(":")) {
+									String[] item_split = this.plugin.getConfig().getString("DefaultWarpItem")
+											.split(":");
+									item__ = item_split[0].toUpperCase();
+									variant = Integer.parseInt(item_split[1]);
+								} else {
+									item__ = this.plugin.getConfig().getString("DefaultWarpItem").toUpperCase();
 								}
-								material = Material.getMaterial(item_id);
-								itemstack = new ItemStack(material, 1, (short) item_meta);
 							} else {
-								item_id = Integer.parseInt(item__);
-								material = Material.getMaterial(item_id);
-								itemstack = new ItemStack(material);
+								if (cfg.getString(str + ".item").contains(":")) {
+									String[] item_split = cfg.getString(str + ".item").split(":");
+									item__ = item_split[0].toUpperCase();
+									variant = Integer.parseInt(item_split[1]);
+								} else {
+									item__ = cfg.getString(str + ".item").toUpperCase();
+								}
 							}
+
+							Material material = Material.getMaterial(item__);
+							ItemStack itemstack = new ItemStack(material, 1, (byte) variant);
+
 							List<String> lore = new ArrayList<String>();
 							Boolean useeconomy = Boolean.valueOf(this.plugin.getConfig().getBoolean("Economy.Enable"));
 							if (useeconomy.booleanValue()) {
@@ -152,7 +151,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 								}
 							}
 							ItemMeta item_lore = itemstack.getItemMeta();
-							if (cfg.get(str + ".lore") != null) {
+							if (cfg.get(str + ".lore") != null
+									&& !cfg.getString(str + ".lore").equalsIgnoreCase("none")) {
 								String[] lore_ = cfg.get(str + ".lore").toString().split(":");
 								for (int l = 0; l < lore_.length; l++) {
 									lore.add(
