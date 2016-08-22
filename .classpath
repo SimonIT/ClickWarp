@@ -12,5 +12,6 @@
 			<attribute name="javadoc_location" value="https://www.vaultproject.io/docs/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="D:/Simon_PC04/Software/Entwicklung/Java/Bukkit/EssentialsX-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

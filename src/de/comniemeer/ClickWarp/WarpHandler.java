@@ -82,6 +82,7 @@ public class WarpHandler {
 			List<String> excmd = new ArrayList<>();
 			final String name = name_;
 			Sound warp_sound = null;
+			Double minDistance = (double) 1;
 
 			World w = Bukkit.getWorld(cfg.getString(str + ".world"));
 			double x = cfg.getDouble(str + ".x");
@@ -96,17 +97,23 @@ public class WarpHandler {
 				excmd = cfg.getStringList(str + ".excmd");
 			}
 
-			if (cfg.getString(str + ".sound") != null) {
+			if (cfg.get(str + ".sound") != null) {
 				warp_sound = Sound.valueOf(cfg.getString(str + ".sound").toUpperCase());
 			} else {
 				warp_sound = Sound.valueOf(this.plugin.getConfig().getString("WarpSound").toUpperCase());
 			}
 
+			if (cfg.get(str + ".mindist") != null) {
+				minDistance = cfg.getDouble(str + ".mindist");
+			} else {
+				minDistance = this.plugin.getConfig().getDouble("minDistance");
+			}
+
 			final Location loc = new Location(w, x, y, z, (float) yaw, (float) pitch);
 			Boolean usedelay = plugin.getConfig().getBoolean("Delay.Warp.EnableDelay");
 
-			if (!(player.getLocation().distance(loc) < 1)) {
-				if (!usedelay.booleanValue()) {
+			if (!usedelay.booleanValue()) {
+				if (player.getLocation().distance(loc) >= minDistance) {
 					player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 					player.playSound(player.getLocation(), warp_sound, 1, 0);
 					player.teleport(loc);
@@ -118,7 +125,7 @@ public class WarpHandler {
 					player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 					if (excmd != null) {
 						for (String executeCommand : excmd) {
-							player.performCommand(executeCommand.replace("/", ""));
+							player.performCommand(executeCommand.replace("_", " "));
 						}
 					}
 					if (payed.booleanValue()) {
@@ -133,7 +140,7 @@ public class WarpHandler {
 									plugin.getConfig().getString("Economy.CurrencyPlural")));
 						}
 					} else {
-						if (message_lines != null && !message_lines[0].equalsIgnoreCase("none")) {
+						if (message_lines != null) {
 							for (int l = 0; l < message_lines.length; l++) {
 								player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 										message_lines[l].replaceAll("_", " ")));
@@ -144,10 +151,14 @@ public class WarpHandler {
 						}
 					}
 				} else {
-					if (fromsign.booleanValue()) {
-						Boolean usesigndelay = plugin.getConfig().getBoolean("Delay.Warp.Sign.Enable");
 
-						if (!usesigndelay.booleanValue()) {
+				}
+			} else {
+				if (fromsign.booleanValue()) {
+					Boolean usesigndelay = plugin.getConfig().getBoolean("Delay.Warp.Sign.Enable");
+
+					if (!usesigndelay.booleanValue()) {
+						if (player.getLocation().distance(loc) >= minDistance) {
 							player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 							player.playSound(player.getLocation(), warp_sound, 1, 0);
 							player.teleport(loc);
@@ -159,7 +170,7 @@ public class WarpHandler {
 							player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 							if (excmd != null) {
 								for (String executeCommand : excmd) {
-									player.performCommand(executeCommand.replace("/", ""));
+									player.performCommand(executeCommand.replace("_", " "));
 								}
 							}
 							if (payed.booleanValue()) {
@@ -174,7 +185,7 @@ public class WarpHandler {
 											plugin.getConfig().getString("Economy.CurrencyPlural")));
 								}
 							} else {
-								if (message_lines != null && !message_lines[0].equalsIgnoreCase("none")) {
+								if (message_lines != null) {
 									for (int l = 0; l < message_lines.length; l++) {
 										player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 												message_lines[l].replaceAll("_", " ")));
@@ -187,10 +198,14 @@ public class WarpHandler {
 							}
 
 							return;
+						} else {
+
 						}
 					}
+				}
 
-					if (player.hasPermission("clickwarp.warp.instant")) {
+				if (player.hasPermission("clickwarp.warp.instant")) {
+					if (player.getLocation().distance(loc) >= 1) {
 						player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 						player.playSound(player.getLocation(), warp_sound, 1, 0);
 						player.teleport(loc);
@@ -202,7 +217,7 @@ public class WarpHandler {
 						player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 						if (excmd != null) {
 							for (String executeCommand : excmd) {
-								player.performCommand(executeCommand.replace("/", ""));
+								player.performCommand(executeCommand.replace("_", " "));
 							}
 						}
 
@@ -218,7 +233,7 @@ public class WarpHandler {
 										plugin.getConfig().getString("Economy.CurrencyPlural")));
 							}
 						} else {
-							if (message_lines != null && !message_lines[0].equalsIgnoreCase("none")) {
+							if (message_lines != null) {
 								for (int l = 0; l < message_lines.length; l++) {
 									player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 											message_lines[l].replaceAll("_", " ")));
@@ -229,26 +244,31 @@ public class WarpHandler {
 							}
 						}
 					} else {
-						Boolean usedontmove = plugin.getConfig().getBoolean("Delay.Warp.EnableDontMove");
-						int delay = plugin.getConfig().getInt("Delay.Warp.Delay");
 
-						if (usedontmove.booleanValue()) {
-							plugin.warp_delay.put(player.getName(), true);
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.DelayDoNotMove)
-									.replace("{delay}", String.valueOf(delay)));
-						} else {
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.Delay)
-									.replace("{delay}", String.valueOf(delay)));
-						}
+					}
+				} else {
+					Boolean usedontmove = plugin.getConfig().getBoolean("Delay.Warp.EnableDontMove");
+					int delay = plugin.getConfig().getInt("Delay.Warp.Delay");
 
-						final Boolean _use_vehicle = use_vehicle;
-						final Entity _vec = vec;
-						final String[] _message_lines = message_lines;
-						final Sound _warp_sound = warp_sound;
-						final List<String> _excmd = excmd;
-						plugin.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-							@Override
-							public void run() {
+					if (usedontmove.booleanValue()) {
+						plugin.warp_delay.put(player.getName(), true);
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.DelayDoNotMove)
+								.replace("{delay}", String.valueOf(delay)));
+					} else {
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.Delay)
+								.replace("{delay}", String.valueOf(delay)));
+					}
+
+					final Boolean _use_vehicle = use_vehicle;
+					final Entity _vec = vec;
+					final String[] _message_lines = message_lines;
+					final Sound _warp_sound = warp_sound;
+					final List<String> _excmd = excmd;
+					final Double _minDistance = minDistance;
+					plugin.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+						@Override
+						public void run() {
+							if (player.getLocation().distance(loc) >= _minDistance) {
 								player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 								player.playSound(player.getLocation(), _warp_sound, 1, 0);
 								player.teleport(loc);
@@ -262,7 +282,7 @@ public class WarpHandler {
 								player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 								if (_excmd != null) {
 									for (String executeCommand : _excmd) {
-										player.performCommand(executeCommand.replace("/", ""));
+										player.performCommand(executeCommand.replace("_", " "));
 									}
 								}
 
@@ -279,7 +299,7 @@ public class WarpHandler {
 												plugin.getConfig().getString("Economy.CurrencyPlural")));
 									}
 								} else {
-									if (_message_lines != null && !_message_lines[0].equalsIgnoreCase("none")) {
+									if (_message_lines != null) {
 										for (int l = 0; l < _message_lines.length; l++) {
 											player.sendMessage(ChatColor.translateAlternateColorCodes('&',
 													_message_lines[l].replaceAll("_", " ")));
@@ -290,9 +310,11 @@ public class WarpHandler {
 														.replace("{warp}", name));
 									}
 								}
+							} else {
+
 							}
-						}, delay * 20L);
-					}
+						}
+					}, delay * 20L);
 				}
 			}
 		} else {

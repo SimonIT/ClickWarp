@@ -53,6 +53,9 @@ GetTpSkull: true
 EnableInvtpItem: true
 InvtpItem: book
 
+# The Distance the player should have to the warp
+minDistance: 1
+
 Sign:
   # Here you can edit the text that is replaced on a sign, if you write [Warp] in the first line.
   FirstLine: '&7[&6Warp&7]'
@@ -103,5 +106,8 @@ Economy:
   
   CurrencySingular: 'Dollar'
   CurrencyPlural: 'Dollars'
-  
+
+# If ClickWarp should import the warps from Essentials at the start
+# Essentials must be installed for this option
+ImportEssentialsWarps: false
 # End of the config #

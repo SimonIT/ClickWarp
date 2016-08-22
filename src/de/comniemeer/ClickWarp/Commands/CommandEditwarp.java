@@ -5,9 +5,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -211,7 +213,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 							return true;
 						}
 					} else if (args[2].equalsIgnoreCase("remove")) {
-						if(excmds.contains(args[3])){
+						if (excmds.contains(args[3])) {
 							excmds.remove(args[3]);
 						}
 						cfg.set(str + ".excmd", excmds);
@@ -248,7 +250,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 							return true;
 						}
 					} else if (args[2].equalsIgnoreCase("remove")) {
-						if(cmds.contains(args[3])){
+						if (cmds.contains(args[3])) {
 							cmds.remove(args[3]);
 						}
 						cfg.set(str + ".cmd", cmds);
@@ -267,6 +269,22 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
 						sender.sendMessage(cmd_names);
 					}
+				} else if (args[1].equalsIgnoreCase("mindist")) {
+					Double dist;
+					try {
+						dist = Double.parseDouble(args[2]);
+					} catch (NumberFormatException e) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
+						return true;
+					}
+					cfg.set(str + ".mindist", dist);
+					try {
+						cfg.save(file);
+					} catch (IOException e) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
+						e.printStackTrace();
+						return true;
+					}
 				} else {
 					sender.sendMessage("§e/editwarp <warp> name <newname>");
 					sender.sendMessage("§e/editwarp <warp> item <item-ID>");
@@ -274,6 +292,11 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 					sender.sendMessage("§e/editwarp <warp> price <Price>");
 					sender.sendMessage("§e/editwarp <warp> message <Message>");
 					sender.sendMessage("§e/editwarp <warp> sound <Sound>");
+					sender.sendMessage("§e/editwarp <warp> mindist <Distance>");
+					sender.sendMessage("§e/editwarp <warp> cmd add <cmd>");
+					sender.sendMessage("§e/editwarp <warp> cmd remove <cmd>");
+					sender.sendMessage("§e/editwarp <warp> excmd add <cmd>");
+					sender.sendMessage("§e/editwarp <warp> excmd remove <cmd>");
 				}
 			} else {
 				sender.sendMessage("§e/editwarp <warp> name <newname>");
@@ -282,6 +305,11 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 				sender.sendMessage("§e/editwarp <warp> price <Price>");
 				sender.sendMessage("§e/editwarp <warp> message <Message>");
 				sender.sendMessage("§e/editwarp <warp> sound <Sound>");
+				sender.sendMessage("§e/editwarp <warp> mindist <Distance>");
+				sender.sendMessage("§e/editwarp <warp> cmd add <cmd>");
+				sender.sendMessage("§e/editwarp <warp> cmd remove <cmd>");
+				sender.sendMessage("§e/editwarp <warp> excmd add <cmd>");
+				sender.sendMessage("§e/editwarp <warp> excmd remove <cmd>");
 			}
 		} else {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -299,6 +327,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 			parameters.add("price");
 			parameters.add("message");
 			parameters.add("sound");
+			parameters.add("mindist");
 			parameters.add("excmd");
 			parameters.add("cmd");
 

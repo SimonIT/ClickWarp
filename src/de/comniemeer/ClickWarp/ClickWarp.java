@@ -23,6 +23,7 @@ import de.comniemeer.ClickWarp.Messages.Messages;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -32,12 +33,17 @@ import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.Warps;
 
 public class ClickWarp extends JavaPlugin {
 
@@ -60,6 +66,7 @@ public class ClickWarp extends JavaPlugin {
 	public int delaytask;
 
 	public Economy economy = null;
+	public Essentials Ess;
 
 	public boolean setupEconomy() {
 		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
@@ -70,6 +77,16 @@ public class ClickWarp extends JavaPlugin {
 		}
 
 		return (economy != null);
+	}
+
+	public boolean setupIWarps() {
+		Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
+		if ((ess == null) || (!(ess instanceof Essentials))) {
+			return false;
+		}
+		Ess = ((Essentials) ess);
+
+		return true;
 	}
 
 	public void onDisable() {
@@ -168,9 +185,11 @@ public class ClickWarp extends JavaPlugin {
 					cmd.put(infos, cfg.getStringList(str + ".cmd"));
 				}
 			}
+
 		}
 
 		Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
+		Boolean enableIWarps = this.getConfig().getBoolean("ImportEssentialsWarps");
 
 		if (enableEconomy.booleanValue()) {
 			try {
@@ -183,6 +202,85 @@ public class ClickWarp extends JavaPlugin {
 			}
 		}
 
+		if (enableIWarps.booleanValue()) {
+			try {
+				this.setupIWarps();
+			} catch (NoClassDefFoundError ncdfe) {
+				this.log.severe("[ClickWarp] Failed to load Essentials!");
+				this.log.severe(
+						"[ClickWarp] Install Essentials or set \"EnableIWarps\" in the config.yml to \"false\"");
+				this.getServer().getPluginManager().disablePlugin(this);
+				return;
+			}
+			Warps IWarps = this.Ess.getWarps();
+			Collection<String> EWarps = IWarps.getList();
+			for (String EWarp : EWarps) {
+				String str = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', EWarp.toLowerCase()));
+				File warp = new File("plugins/ClickWarp/Warps", str + ".yml");
+				String Name = EWarp;
+				if (warp.exists()) {
+					String name_new = null;
+					String str_new = null;
+					for(int i = 0; warp.exists(); i++){
+						name_new = Name + i;
+						str_new = str + i;
+						warp = new File("plugins/ClickWarp/Warps", str_new + ".yml");
+					}
+					str = str_new;
+					Name = name_new;
+				}
+				FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
+				Location loc = null;
+
+				try {
+					loc = IWarps.getWarp(EWarp);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				cfg.set(str + ".name", Name);
+				cfg.set(str + ".world", loc.getWorld().getName());
+				cfg.set(str + ".x", loc.getX());
+				cfg.set(str + ".y", loc.getY());
+				cfg.set(str + ".z", loc.getZ());
+				cfg.set(str + ".yaw", loc.getYaw());
+				cfg.set(str + ".pitch", loc.getPitch());
+
+				try {
+					cfg.save(warp);
+				} catch (IOException e) {
+					System.err.println(ChatColor.translateAlternateColorCodes('&', msg.ErrorFileSaving));
+					e.printStackTrace();
+				}
+
+				File[] warps = warps_folder.listFiles();
+
+				final int files = warps.length;
+
+				try {
+					Metrics metrics = new Metrics(this);
+					Graph Warps = metrics.createGraph("Warps");
+
+					Warps.addPlotter(new Metrics.Plotter("Warps") {
+						@Override
+						public int getValue() {
+							return files;
+						}
+					});
+
+					metrics.start();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				try {
+					IWarps.removeWarp(EWarp);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
 		new CommandWarp(this, "warp", "Warp command", "warps");
 		new CommandDelwarp(this, "delwarp", "Deletes a warp");
