@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -95,91 +96,131 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));
 			}
 		} else if (args.length == 2) {
-			if (sender instanceof Player) {
-				if (this.plugin.getConfig().getBoolean("GetWarpItem")) {
-					if (sender.hasPermission("clickwarp.warp.getitem.*")
-							|| sender.hasPermission("clickwarp.getwarpitem." + args[0])) {
-						String str = args[0].toLowerCase();
-						File file = new File("plugins/ClickWarp/Warps", str + ".yml");
-						if (!file.exists()) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
-									.replace("{warp}", args[0]));
-						} else {
-
-							FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-							String item__;
-							int variant = 0;
-							if (cfg.getString(str + ".item") == null) {
-								if (this.plugin.getConfig().getString("DefaultWarpItem").contains(":")) {
-									String[] item_split = this.plugin.getConfig().getString("DefaultWarpItem")
-											.split(":");
-									item__ = item_split[0].toUpperCase();
-									variant = Integer.parseInt(item_split[1]);
-								} else {
-									item__ = this.plugin.getConfig().getString("DefaultWarpItem").toUpperCase();
-								}
+			if (args[1].equalsIgnoreCase("getitem")) {
+				if (sender instanceof Player) {
+					if (this.plugin.getConfig().getBoolean("GetWarpItem")) {
+						if (sender.hasPermission("clickwarp.warp.getitem.*")
+								|| sender.hasPermission("clickwarp.getwarpitem." + args[0])) {
+							String str = args[0].toLowerCase();
+							File file = new File("plugins/ClickWarp/Warps", str + ".yml");
+							if (!file.exists()) {
+								sender.sendMessage(
+										ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+												.replace("{warp}", args[0]));
 							} else {
-								if (cfg.getString(str + ".item").contains(":")) {
-									String[] item_split = cfg.getString(str + ".item").split(":");
-									item__ = item_split[0].toUpperCase();
-									variant = Integer.parseInt(item_split[1]);
-								} else {
-									item__ = cfg.getString(str + ".item").toUpperCase();
-								}
-							}
 
-							Material material = Material.getMaterial(item__);
-							ItemStack itemstack = new ItemStack(material, 1, (byte) variant);
-
-							List<String> lore = new ArrayList<String>();
-							Boolean useeconomy = Boolean.valueOf(this.plugin.getConfig().getBoolean("Economy.Enable"));
-							if (useeconomy.booleanValue()) {
-								Boolean useshowprice = Boolean
-										.valueOf(this.plugin.getConfig().getBoolean("Economy.ShowPrice"));
-								if ((useshowprice.booleanValue()) && (cfg.getString(str + ".price") != null)) {
-									Double price = Double.valueOf(cfg.getDouble(str + ".price"));
-									String priceformat = ChatColor.translateAlternateColorCodes('&',
-											this.plugin.getConfig().getString("Economy.PriceFormat").replace("{price}",
-													String.valueOf(price)));
-									if (price.doubleValue() == 1.0D) {
-										lore.add(priceformat.replace("{currency}",
-												this.plugin.getConfig().getString("Economy.CurrencySingular")));
+								FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+								String item__;
+								int variant = 0;
+								if (cfg.getString(str + ".item") == null) {
+									if (this.plugin.getConfig().getString("DefaultWarpItem").contains(":")) {
+										String[] item_split = this.plugin.getConfig().getString("DefaultWarpItem")
+												.split(":");
+										item__ = item_split[0].toUpperCase();
+										variant = Integer.parseInt(item_split[1]);
 									} else {
-										lore.add(priceformat.replace("{currency}",
-												this.plugin.getConfig().getString("Economy.CurrencyPlural")));
+										item__ = this.plugin.getConfig().getString("DefaultWarpItem").toUpperCase();
+									}
+								} else {
+									if (cfg.getString(str + ".item").contains(":")) {
+										String[] item_split = cfg.getString(str + ".item").split(":");
+										item__ = item_split[0].toUpperCase();
+										variant = Integer.parseInt(item_split[1]);
+									} else {
+										item__ = cfg.getString(str + ".item").toUpperCase();
 									}
 								}
-							}
-							ItemMeta item_lore = itemstack.getItemMeta();
-							if (cfg.get(str + ".lore") != null
-									&& !cfg.getString(str + ".lore").equalsIgnoreCase("none")) {
-								String[] lore_ = cfg.get(str + ".lore").toString().split(":");
-								for (int l = 0; l < lore_.length; l++) {
-									lore.add(
-											ChatColor.translateAlternateColorCodes('&', lore_[l].replaceAll("_", " ")));
+
+								Material material = Material.getMaterial(item__);
+								ItemStack itemstack = new ItemStack(material, 1, (byte) variant);
+
+								List<String> lore = new ArrayList<String>();
+								Boolean useeconomy = Boolean
+										.valueOf(this.plugin.getConfig().getBoolean("Economy.Enable"));
+								if (useeconomy.booleanValue()) {
+									Boolean useshowprice = Boolean
+											.valueOf(this.plugin.getConfig().getBoolean("Economy.ShowPrice"));
+									if ((useshowprice.booleanValue()) && (cfg.getString(str + ".price") != null)) {
+										Double price = Double.valueOf(cfg.getDouble(str + ".price"));
+										String priceformat = ChatColor.translateAlternateColorCodes('&',
+												this.plugin.getConfig().getString("Economy.PriceFormat")
+														.replace("{price}", String.valueOf(price)));
+										if (price.doubleValue() == 1.0D) {
+											lore.add(priceformat.replace("{currency}",
+													this.plugin.getConfig().getString("Economy.CurrencySingular")));
+										} else {
+											lore.add(priceformat.replace("{currency}",
+													this.plugin.getConfig().getString("Economy.CurrencyPlural")));
+										}
+									}
 								}
+								ItemMeta item_lore = itemstack.getItemMeta();
+								if (cfg.get(str + ".lore") != null
+										&& !cfg.getString(str + ".lore").equalsIgnoreCase("none")) {
+									String[] lore_ = cfg.get(str + ".lore").toString().split(":");
+									for (int l = 0; l < lore_.length; l++) {
+										lore.add(ChatColor.translateAlternateColorCodes('&',
+												lore_[l].replaceAll("_", " ")));
+									}
+								}
+								item_lore.setLore(lore);
+								String item_prefix = ChatColor.translateAlternateColorCodes('&',
+										this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
+								item_lore.setDisplayName(item_prefix + args[0]);
+								itemstack.setItemMeta(item_lore);
+								Player player = (Player) sender;
+								PlayerInventory inventory = player.getInventory();
+								inventory.setItemInMainHand(itemstack);
 							}
-							item_lore.setLore(lore);
-							String item_prefix = ChatColor.translateAlternateColorCodes('&',
-									this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
-							item_lore.setDisplayName(item_prefix + args[0]);
-							itemstack.setItemMeta(item_lore);
-							Player player = (Player) sender;
-							PlayerInventory inventory = player.getInventory();
-							inventory.setItemInMainHand(itemstack);
+						} else {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
 						}
+					}
+				} else {
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));
+				}
+			} else if (args[1].equalsIgnoreCase("all")) {
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					if (player.hasPermission("clickwarp.warp")) {
+						String str = args[0].toLowerCase();
+
+						plugin.warphandler.handleWarp(player, str, args[0], false);
 					} else {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
 					}
 				}
-			} else {
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));
-			}
-		} else
+			} else if (args[1].contains("g:")) {
+				String group = args[1].replace("g:", "");
+				for (Player player : Bukkit.getOnlinePlayers()) {
+					if (plugin.permission.playerInGroup(player.getWorld().getName(), player, group)) {
+						if (player.hasPermission("clickwarp.warp")) {
+							String str = args[0].toLowerCase();
 
-		{
+							plugin.warphandler.handleWarp(player, str, args[0], false);
+						} else {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+						}
+					}
+				}
+			} else if (Bukkit.getPlayer(args[1]) != null) {
+				Player player = Bukkit.getPlayer(args[1]);
+				if (player.isOnline()) {
+					if (player.hasPermission("clickwarp.warp")) {
+						String str = args[0].toLowerCase();
+
+						plugin.warphandler.handleWarp(player, str, args[0], false);
+					} else {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+					}
+				} else {
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPNotOnline)
+							.replace("{player}", player.getDisplayName()));
+				}
+			}
+		} else {
 			sender.sendMessage("§e/warps");
 			sender.sendMessage("§e/warp <warp>");
+			sender.sendMessage("§e/warp <warp> <user>");
 			sender.sendMessage("§e/warp <warp> getitem");
 		}
 

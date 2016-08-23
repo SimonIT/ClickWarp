@@ -1,5 +1,7 @@
 package de.comniemeer.ClickWarp.Listeners;
 
+import java.io.File;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -36,11 +38,13 @@ public class InventoryListener implements Listener {
 
 					if (item != null && item.getType() != Material.AIR) {
 						String dispname = item.getItemMeta().getDisplayName();
-						String name = ChatColor.stripColor(dispname.toLowerCase());
-
-						plugin.warphandler.handleWarp(player, name, dispname, false);
-						this.closeInv(player);
-						return;
+						if (dispname != null) {
+							String name = ChatColor.stripColor(dispname.toLowerCase());
+							
+							plugin.warphandler.handleWarp(player, name, dispname, false);
+							this.closeInv(player);
+							return;
+						}
 					}
 				} else if (plugin.InvHM.get(player.getName()).equals("InventarTP")) {
 					e.setCancelled(true);

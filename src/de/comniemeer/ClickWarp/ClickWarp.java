@@ -4,11 +4,13 @@ import de.comniemeer.ClickWarp.Metrics.Graph;
 import de.comniemeer.ClickWarp.Commands.CommandClickwarp;
 import de.comniemeer.ClickWarp.Commands.CommandDelwarp;
 import de.comniemeer.ClickWarp.Commands.CommandEditwarp;
+import de.comniemeer.ClickWarp.Commands.CommandExport;
 import de.comniemeer.ClickWarp.Commands.CommandGettpskull;
 import de.comniemeer.ClickWarp.Commands.CommandInvtp;
 import de.comniemeer.ClickWarp.Commands.CommandInvwarp;
 import de.comniemeer.ClickWarp.Commands.CommandSetwarp;
 import de.comniemeer.ClickWarp.Commands.CommandWarp;
+import de.comniemeer.ClickWarp.Commands.CommandImport;
 import de.comniemeer.ClickWarp.Commands.CustomCommands;
 import de.comniemeer.ClickWarp.Listeners.InventoryListener;
 import de.comniemeer.ClickWarp.Listeners.PlayerListener;
@@ -23,17 +25,16 @@ import de.comniemeer.ClickWarp.Messages.Messages;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -65,26 +66,34 @@ public class ClickWarp extends JavaPlugin {
 	public HashMap<List<String>, List<String>> cmd = new HashMap<List<String>, List<String>>();
 	public int delaytask;
 
+	public Permission permission = null;
 	public Economy economy = null;
-	public Essentials Ess;
+	public Warps IWarps = null;
 
 	public boolean setupEconomy() {
-		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
-				.getRegistration(net.milkbowl.vault.economy.Economy.class);
-
-		if (economyProvider != null) {
-			economy = economyProvider.getProvider();
-		}
-
-		return (economy != null);
+		if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return economy != null;
 	}
 
+	private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        permission = rsp.getProvider();
+        return permission != null;
+    }
+	
 	public boolean setupIWarps() {
 		Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
 		if ((ess == null) || (!(ess instanceof Essentials))) {
 			return false;
 		}
-		Ess = ((Essentials) ess);
+		this.IWarps = ((Essentials) ess).getWarps();
 
 		return true;
 	}
@@ -194,6 +203,7 @@ public class ClickWarp extends JavaPlugin {
 		if (enableEconomy.booleanValue()) {
 			try {
 				this.setupEconomy();
+				this.setupPermissions();
 			} catch (NoClassDefFoundError ncdfe) {
 				this.log.severe("[ClickWarp] Failed to load Vault!");
 				this.log.severe("[ClickWarp] Install Vault or set \"EnableEconomy\" in the config.yml to \"false\"");
@@ -212,74 +222,6 @@ public class ClickWarp extends JavaPlugin {
 				this.getServer().getPluginManager().disablePlugin(this);
 				return;
 			}
-			Warps IWarps = this.Ess.getWarps();
-			Collection<String> EWarps = IWarps.getList();
-			for (String EWarp : EWarps) {
-				String str = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', EWarp.toLowerCase()));
-				File warp = new File("plugins/ClickWarp/Warps", str + ".yml");
-				String Name = EWarp;
-				if (warp.exists()) {
-					String name_new = null;
-					String str_new = null;
-					for(int i = 0; warp.exists(); i++){
-						name_new = Name + i;
-						str_new = str + i;
-						warp = new File("plugins/ClickWarp/Warps", str_new + ".yml");
-					}
-					str = str_new;
-					Name = name_new;
-				}
-				FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
-				Location loc = null;
-
-				try {
-					loc = IWarps.getWarp(EWarp);
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				cfg.set(str + ".name", Name);
-				cfg.set(str + ".world", loc.getWorld().getName());
-				cfg.set(str + ".x", loc.getX());
-				cfg.set(str + ".y", loc.getY());
-				cfg.set(str + ".z", loc.getZ());
-				cfg.set(str + ".yaw", loc.getYaw());
-				cfg.set(str + ".pitch", loc.getPitch());
-
-				try {
-					cfg.save(warp);
-				} catch (IOException e) {
-					System.err.println(ChatColor.translateAlternateColorCodes('&', msg.ErrorFileSaving));
-					e.printStackTrace();
-				}
-
-				File[] warps = warps_folder.listFiles();
-
-				final int files = warps.length;
-
-				try {
-					Metrics metrics = new Metrics(this);
-					Graph Warps = metrics.createGraph("Warps");
-
-					Warps.addPlotter(new Metrics.Plotter("Warps") {
-						@Override
-						public int getValue() {
-							return files;
-						}
-					});
-
-					metrics.start();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				try {
-					IWarps.removeWarp(EWarp);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
 		}
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
 		new CommandWarp(this, "warp", "Warp command", "warps");
@@ -289,6 +231,8 @@ public class ClickWarp extends JavaPlugin {
 		new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
 		new CommandSetwarp(this, "setwarp", "Sets a warp at the current location");
 		new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
+		new CommandImport(this, "import", "Import the Warps from other Plugins.");
+		new CommandExport(this, "export", "Export the Warps to other Plugins.");
 		for (Entry<List<String>, List<String>> entry : cmd.entrySet()) {
 			List<String> key = entry.getKey();
 			List<String> value = entry.getValue();
