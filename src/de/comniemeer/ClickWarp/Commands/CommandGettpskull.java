@@ -58,7 +58,9 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 			List<String> playerList = new ArrayList<>();
 
 			for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-				playerList.add(p.getName());
+				if (p != null) {
+					playerList.add(p.getName());
+				}
 			}
 
 			if (args.length == 0) {
@@ -67,7 +69,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 				List<String> tabList = new ArrayList<>();
 
 				for (String player : playerList) {
-					if (player.toLowerCase().startsWith(args[0].toLowerCase())) {
+					if (player != null && player.toLowerCase().startsWith(args[0].toLowerCase())) {
 						tabList.add(player);
 					}
 				}
