@@ -56,67 +56,22 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 						Inventory inv = Bukkit.createInventory(null, lines * 9, ChatColor
 								.translateAlternateColorCodes('&', plugin.getConfig().getString("Inventory.Warp")));
 						int slot = 0;
-						List<String> list = new ArrayList<String>();
-
-						for (int i = 0; i < warps.length; i++) {
-							if (p.hasPermission("clickwarp.warp." + warps[i].getName().replace(".yml", ""))
-									|| p.hasPermission("clickwarp.warp.*")) {
-								list.add(warps[i].getName().replace(".yml", ""));
-							}
-						}
+						List<String> list = this.plugin.methods.getWarps();
 
 						if (list.size() == 0) {
 							p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
 						} else {
 							for (int i = 0; i < list.size(); i++) {
-								File warp = new File("plugins/ClickWarp/Warps", list.get(i) + ".yml");
-								FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
-								String str = warp.getName().replace(".yml", "");
-								ItemStack itemstack = null;
-								int variant = 0;
-								String item__;
+								ItemStack itemstack = this.plugin.methods.getItemStack(list.get(i));
 
-								if (cfg.get(str + ".item") != null) {
-									if (cfg.getString(str + ".item").contains(":")) {
-										String[] item_split = cfg.getString(str + ".item").split(":");
-										item__ = item_split[0].toUpperCase();
-										variant = Integer.parseInt(item_split[1]);
-									} else {
-										item__ = cfg.getString(str + ".item").toUpperCase();
-									}
-								} else {
-									if (this.plugin.getConfig().getString("DefaultWarpItem").contains(":")) {
-										String[] item_split = this.plugin.getConfig().getString("DefaultWarpItem")
-												.split(":");
-										item__ = item_split[0].toUpperCase();
-										variant = Integer.parseInt(item_split[1]);
-									} else {
-										item__ = this.plugin.getConfig().getString("DefaultWarpItem").toUpperCase();
-									}
-								}
-								Material material = Material.getMaterial(item__);
-								itemstack = new ItemStack(material, 1, (byte) variant);
-
-								String name = "";
-
-								if (cfg.getString(str + ".name") == null) {
-									name = str;
-								} else {
-									name = ChatColor.translateAlternateColorCodes('&', cfg.getString(str + ".name"));
-								}
+								String name = this.plugin.methods.getName(list.get(i));
 
 								ItemMeta meta = itemstack.getItemMeta();
 
 								meta.setDisplayName("§r" + name);
 
-								if (cfg.get(str + ".lore") != null) {
-									String[] lore_ = cfg.get(str + ".lore").toString().split(":");
-									List<String> lore = new ArrayList<String>();
-
-									for (int l = 0; l < lore_.length; l++) {
-										lore.add(ChatColor.translateAlternateColorCodes('&',
-												lore_[l].replaceAll("_", " ")));
-									}
+								if (this.plugin.methods.getPreparedLore(list.get(i)) != null) {
+									List<String> lore = this.plugin.methods.getPreparedLore(list.get(i));
 
 									Boolean useeconomy = plugin.getConfig().getBoolean("Economy.Enable");
 
@@ -124,8 +79,8 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 										Boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
 
 										if (useshowprice.booleanValue()) {
-											if (cfg.getString(str + ".price") != null) {
-												Double price = cfg.getDouble(str + ".price");
+											if (this.plugin.methods.getPrice(list.get(i)) != null) {
+												Double price = this.plugin.methods.getPrice(list.get(i));
 												String priceformat = ChatColor.translateAlternateColorCodes('&',
 														plugin.getConfig().getString("Economy.PriceFormat")
 																.replace("{price}", String.valueOf(price)));
@@ -149,9 +104,9 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 										Boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
 
 										if (useshowprice.booleanValue()) {
-											if (cfg.getString(str + ".price") != null) {
+											if (this.plugin.methods.getPrice(list.get(i)) != null) {
 												List<String> lore = new ArrayList<String>();
-												Double price = cfg.getDouble(str + ".price");
+												Double price = this.plugin.methods.getPrice(list.get(i));
 												String priceformat = ChatColor.translateAlternateColorCodes('&',
 														plugin.getConfig().getString("Economy.PriceFormat")
 																.replace("{price}", String.valueOf(price)));

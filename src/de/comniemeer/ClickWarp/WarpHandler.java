@@ -82,7 +82,7 @@ public class WarpHandler {
 			List<String> excmd = new ArrayList<>();
 			final String name = name_;
 			Sound warp_sound = null;
-			Double minDistance = (double) 1;
+			double minDistance = (double) 1;
 
 			World w = Bukkit.getWorld(cfg.getString(str + ".world"));
 			double x = cfg.getDouble(str + ".x");

@@ -1,7 +1,6 @@
 package de.comniemeer.ClickWarp.Commands;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,9 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
 
@@ -26,71 +22,30 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 		if (sender.hasPermission("clickwarp.editwarp")) {
 			if (args.length >= 3) {
 				String str = args[0].toLowerCase();
-				File file = new File("plugins/ClickWarp/Warps", str + ".yml");
-
-				if (!(file.exists())) {
+				if (!this.plugin.methods.existWarp(str)) {
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
 							.replace("{warp}", args[0]));
 					return true;
 				}
 
-				FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-				String name = "";
-
-				if (cfg.getString(str + ".name") == null) {
-					name = str;
-				} else {
-					name = ChatColor.translateAlternateColorCodes('&', cfg.getString(str + ".name"));
-				}
+				String name = this.plugin.methods.getName(str);
 
 				if (args[1].equalsIgnoreCase("item")) {
-					String item_;
-					int variant = 0;
-					if (args[2].contains(":")) {
-						String[] item_split = args[2].split(":");
-						item_ = item_split[0];
-						variant = Integer.parseInt(item_split[1]);
+					boolean result = this.plugin.methods.setItem(str, args[2]);
+					if (result) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpItemSuccess)
+								.replace("{warp}", name).replace("{item}", args[2]));
 					} else {
-						item_ = args[2];
-					}
-					Material item_name;
-
-					try {
-						item_name = Material.getMaterial(item_.toUpperCase());
-						cfg.set(str + ".item", item_name.toString() + ":" + variant);
-					} catch (NullPointerException e) {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
-						return true;
 					}
-
-					try {
-						cfg.save(file);
-					} catch (IOException e) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-						return true;
-					}
-
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpItemSuccess)
-							.replace("{warp}", name).replace("{item}", item_name.toString()));
 					return true;
-
 				} else if (args[1].equalsIgnoreCase("lore")) {
-					String lore = args[2];
-
-					cfg.set(str + ".lore", lore);
-
-					try {
-						cfg.save(file);
-					} catch (IOException e) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-						return true;
+					boolean result = this.plugin.methods.setLore(str, args[2]);
+					if (result) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
+								.replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
+										args[2].replace("_", " ").replace(":", "§r:"))));
 					}
-
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
-							.replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
-									lore.replace("_", " ").replace(":", "§r:"))));
 					return true;
 				} else if (args[1].equalsIgnoreCase("price")) {
 					double price;
@@ -102,127 +57,97 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						return true;
 					}
 
-					cfg.set(str + ".price", price);
+					boolean result = this.plugin.methods.setPrice(str, price);
 
-					try {
-						cfg.save(file);
-					} catch (IOException e) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-						return true;
-					}
+					if (result) {
+						String pricesuccess = ChatColor
+								.translateAlternateColorCodes('&', plugin.msg.EditwarpPriceSuccess)
+								.replace("{warp}", name).replace("{price}", String.valueOf(price));
 
-					String pricesuccess = ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpPriceSuccess)
-							.replace("{warp}", name).replace("{price}", String.valueOf(price));
-
-					if (price == 1) {
-						sender.sendMessage(pricesuccess.replace("{currency}",
-								plugin.getConfig().getString("Economy.CurrencySingular")));
-					} else {
-						sender.sendMessage(pricesuccess.replace("{currency}",
-								plugin.getConfig().getString("Economy.CurrencyPlural")));
+						if (price == 1) {
+							sender.sendMessage(pricesuccess.replace("{currency}",
+									plugin.getConfig().getString("Economy.CurrencySingular")));
+						} else {
+							sender.sendMessage(pricesuccess.replace("{currency}",
+									plugin.getConfig().getString("Economy.CurrencyPlural")));
+						}
 					}
 				} else if (args[1].equalsIgnoreCase("name")) {
 					String newname = args[2].toLowerCase();
-					File newfile = new File("plugins/ClickWarp/Warps", newname + ".yml");
-					FileConfiguration newcfg = YamlConfiguration.loadConfiguration(newfile);
 					if ((newname.contains(".yml")) || (newname.contains("\\")) || (newname.contains("|"))
 							|| (newname.contains("/")) || (newname.contains(":"))) {
 						sender.sendMessage(
 								ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpInvalidName));
 						return true;
 					}
-					newcfg.set(newname + ".name", args[2]);
-					newcfg.set(newname + ".world", cfg.getString(str + ".world"));
-					newcfg.set(newname + ".x", cfg.getDouble(str + ".x"));
-					newcfg.set(newname + ".y", cfg.getDouble(str + ".y"));
-					newcfg.set(newname + ".z", cfg.getDouble(str + ".z"));
-					newcfg.set(newname + ".yaw", cfg.getDouble(str + ".yaw"));
-					newcfg.set(newname + ".pitch", cfg.getDouble(str + ".pitch"));
-					newcfg.set(newname + ".item", cfg.getInt(str + ".item"));
-					newcfg.set(newname + ".message", cfg.getString(str + ".message"));
-					newcfg.set(newname + ".sound", cfg.getString(str + ".sound"));
-					try {
-						newcfg.save(newfile);
+					this.plugin.methods.setWarp(args[2], this.plugin.methods.getWarp(str));
+					this.plugin.methods.setItem(args[2], this.plugin.methods.getItemMaterial(str).toString(), this.plugin.methods.getItemVariant(str));
+					this.plugin.methods.setLore(args[2], this.plugin.methods.getLore(str));
+					this.plugin.methods.setPrice(args[2], this.plugin.methods.getPrice(str));
+					this.plugin.methods.setMessage(args[2], this.plugin.methods.getMessage(str));
+					this.plugin.methods.setSound(args[2], this.plugin.methods.getSound(str));
+
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpSuccess)
 								.replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[2])));
-					} catch (IOException e) {
+
 						sender.sendMessage(
 								ChatColor.translateAlternateColorCodes('&', this.plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-					}
-					file.delete();
+					this.plugin.methods.delWarp(str);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.DelwarpSuccess)
 							.replace("{warp}", name));
 					return true;
 				} else if (args[1].equalsIgnoreCase("message")) {
-					String message = args[2];
+					boolean result = this.plugin.methods.setMessage(str, args[2]);
 
-					cfg.set(str + ".message", message);
-
-					try {
-						cfg.save(file);
-					} catch (IOException e) {
+					if (result) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
+								.replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
+										args[2].replace("_", " ").replace(":", "§r:"))));
+					} else {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-						return true;
 					}
 
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
-							.replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
-									message.replace("_", " ").replace(":", "§r:"))));
 					return true;
 				} else if (args[1].equalsIgnoreCase("sound")) {
-					String sound_name = args[2];
 					Sound sound;
 					try {
-						sound = Sound.valueOf(sound_name);
-						cfg.set(str + ".sound", sound.toString());
+						sound = Sound.valueOf(args[2]);
 					} catch (NullPointerException e) {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
 						return true;
 					}
 
-					try {
-						cfg.save(file);
-					} catch (IOException e) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-						return true;
-					}
+					boolean result = this.plugin.methods.setSound(str, sound);
 
-					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpItemSuccess)
-							.replace("{warp}", name).replace("{item}", sound.toString()));
+					if (result) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpItemSuccess)
+								.replace("{warp}", name).replace("{item}", sound.toString()));
+					} else {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
+					}
 				} else if (args[1].equalsIgnoreCase("excmd")) {
-					List<String> excmds = new ArrayList<String>();
-					excmds = cfg.getStringList(str + ".excmd");
 					if (args[2].equalsIgnoreCase("add")) {
+						boolean result;
 						if (args[4] != null) {
-							excmds.add(Integer.valueOf(args[4]), args[3]);
+							result = this.plugin.methods.addExCmd(str, args[3], Integer.valueOf(args[4]));
 						} else {
-							excmds.add(args[2]);
+							result = this.plugin.methods.addExCmd(str, args[3]);
 						}
-						cfg.set(str + ".excmd", excmds);
-						try {
-							cfg.save(file);
-						} catch (IOException e) {
+						if (result) {
+						} else {
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-							e.printStackTrace();
 							return true;
 						}
 					} else if (args[2].equalsIgnoreCase("remove")) {
-						if (excmds.contains(args[3])) {
-							excmds.remove(args[3]);
-						}
-						cfg.set(str + ".excmd", excmds);
-						try {
-							cfg.save(file);
-						} catch (IOException e) {
+						boolean result = this.plugin.methods.removeExCmd(str, args[3]);
+
+						if (result) {
+						} else {
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-							e.printStackTrace();
 							return true;
 						}
 					} else if (args[2].equalsIgnoreCase("list")) {
+						List<String> excmds = this.plugin.methods.getExCmds(str);
 						String excmd_names = "§6";
 						for (String excmd : excmds) {
 							excmd_names += excmd + "§7, §6";
@@ -231,35 +156,28 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						sender.sendMessage(excmd_names);
 					}
 				} else if (args[1].equalsIgnoreCase("cmd")) {
-					List<String> cmds = new ArrayList<String>();
-					cmds = cfg.getStringList(str + ".cmd");
 					if (args[2].equalsIgnoreCase("add")) {
+						boolean result;
 						if (args[4] != null) {
-							cmds.add(Integer.valueOf(args[4]), args[3]);
+							result = this.plugin.methods.addCmd(str, args[3], Integer.valueOf(args[4]));
 						} else {
-							cmds.add(args[2]);
+							result = this.plugin.methods.addCmd(str, args[3]);
 						}
-						cfg.set(str + ".cmd", cmds);
-						try {
-							cfg.save(file);
-						} catch (IOException e) {
+						if (result) {
+						} else {
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-							e.printStackTrace();
 							return true;
 						}
 					} else if (args[2].equalsIgnoreCase("remove")) {
-						if (cmds.contains(args[3])) {
-							cmds.remove(args[3]);
-						}
-						cfg.set(str + ".cmd", cmds);
-						try {
-							cfg.save(file);
-						} catch (IOException e) {
+						boolean result = this.plugin.methods.removeCmd(str, args[3]);
+
+						if (result) {
+						} else {
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-							e.printStackTrace();
 							return true;
 						}
 					} else if (args[2].equalsIgnoreCase("list")) {
+						List<String> cmds = this.plugin.methods.getCmds(str);
 						String cmd_names = "§6";
 						for (String cmd : cmds) {
 							cmd_names += cmd + "§7, §6";
@@ -268,20 +186,21 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						sender.sendMessage(cmd_names);
 					}
 				} else if (args[1].equalsIgnoreCase("mindist")) {
-					Double dist;
+					double dist;
+
 					try {
 						dist = Double.parseDouble(args[2]);
 					} catch (NumberFormatException e) {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
 						return true;
 					}
-					cfg.set(str + ".mindist", dist);
-					try {
-						cfg.save(file);
-					} catch (IOException e) {
+
+					boolean result = this.plugin.methods.setMinDist(str, dist);
+
+					if (result) {
+
+					} else {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-						e.printStackTrace();
-						return true;
 					}
 				} else {
 					sender.sendMessage("§e/editwarp <warp> name <newname>");

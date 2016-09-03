@@ -1,7 +1,5 @@
 package de.comniemeer.ClickWarp.Listeners;
 
-import java.io.File;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;

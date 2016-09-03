@@ -60,6 +60,7 @@ public class ClickWarp extends JavaPlugin {
 	public LanguageKorean ko;
 
 	public WarpHandler warphandler;
+	public Methods methods;
 
 	public HashMap<String, String> InvHM = new HashMap<String, String>();
 	public HashMap<String, Boolean> warp_delay = new HashMap<String, Boolean>();
@@ -70,25 +71,25 @@ public class ClickWarp extends JavaPlugin {
 	public Economy economy = null;
 	public Warps IWarps = null;
 
-	public boolean setupEconomy() {
+	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        economy = rsp.getProvider();
-        return economy != null;
+			return false;
+		}
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if (rsp == null) {
+			return false;
+		}
+		economy = rsp.getProvider();
+		return economy != null;
 	}
 
 	private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        permission = rsp.getProvider();
-        return permission != null;
-    }
-	
-	public boolean setupIWarps() {
+		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+		permission = rsp.getProvider();
+		return permission != null;
+	}
+
+	private boolean setupIWarps() {
 		Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
 		if ((ess == null) || (!(ess instanceof Essentials))) {
 			return false;
@@ -121,6 +122,7 @@ public class ClickWarp extends JavaPlugin {
 		this.msg = new Messages(this);
 
 		this.warphandler = new WarpHandler(this);
+		this.methods = new Methods(this);
 
 		this.en.load();
 		this.de.load();

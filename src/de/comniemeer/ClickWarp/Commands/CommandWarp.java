@@ -6,10 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -29,50 +26,22 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 		if (args.length == 0) {
 			if (plugin.getConfig().getBoolean("InvwarpInsteadWarp") == false) {
 				if (sender.hasPermission("clickwarp.warps")) {
-					File warps_folder = new File(plugin.getDataFolder() + "/Warps");
+					List<String> warps = this.plugin.methods.getWarps();
 
-					if (warps_folder.isDirectory()) {
-						File[] warps = warps_folder.listFiles();
+					if (warps.size() == 0) {
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
+					} else {
 
-						if (warps.length == 0) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
-						} else {
-							List<String> list = new ArrayList<String>();
+						String warp_names = "§6";
 
-							for (int i = 0; i < warps.length; i++) {
-								if (sender.hasPermission("clickwarp.warp." + warps[i].getName().replace(".yml", ""))
-										|| sender.hasPermission("clickwarp.warp.*")) {
-									list.add(warps[i].getName().replace(".yml", ""));
-								}
-							}
+						for (int i = 0; i < warps.size(); i++) {
 
-							if (list.size() == 0) {
-								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
-							} else {
-								String warp_names = "§6";
-
-								for (int i = 0; i < list.size(); i++) {
-									File warp = new File("plugins/ClickWarp/Warps", list.get(i) + ".yml");
-									FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
-
-									if (cfg.getString(warp.getName().replace(".yml", "") + ".name") == null) {
-										warp_names += warp.getName().replace(".yml", "");
-									} else {
-										warp_names += ChatColor.translateAlternateColorCodes('&',
-												cfg.getString(warp.getName().replace(".yml", "") + ".name"));
-									}
-
-									if (i + 1 < list.size()) {
-										warp_names = warp_names + "§7, §6";
-									}
-								}
-
-								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
-								sender.sendMessage(warp_names);
+							if (i + 1 < warps.size()) {
+								warp_names = warp_names + warps.get(i) + "§7, §6";
 							}
 						}
-					} else {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
+						sender.sendMessage(warp_names);
 					}
 				} else {
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -102,37 +71,12 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 						if (sender.hasPermission("clickwarp.warp.getitem.*")
 								|| sender.hasPermission("clickwarp.getwarpitem." + args[0])) {
 							String str = args[0].toLowerCase();
-							File file = new File("plugins/ClickWarp/Warps", str + ".yml");
-							if (!file.exists()) {
+							if (!this.plugin.methods.existWarp(str)) {
 								sender.sendMessage(
 										ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
 												.replace("{warp}", args[0]));
 							} else {
-
-								FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-								String item__;
-								int variant = 0;
-								if (cfg.getString(str + ".item") == null) {
-									if (this.plugin.getConfig().getString("DefaultWarpItem").contains(":")) {
-										String[] item_split = this.plugin.getConfig().getString("DefaultWarpItem")
-												.split(":");
-										item__ = item_split[0].toUpperCase();
-										variant = Integer.parseInt(item_split[1]);
-									} else {
-										item__ = this.plugin.getConfig().getString("DefaultWarpItem").toUpperCase();
-									}
-								} else {
-									if (cfg.getString(str + ".item").contains(":")) {
-										String[] item_split = cfg.getString(str + ".item").split(":");
-										item__ = item_split[0].toUpperCase();
-										variant = Integer.parseInt(item_split[1]);
-									} else {
-										item__ = cfg.getString(str + ".item").toUpperCase();
-									}
-								}
-
-								Material material = Material.getMaterial(item__);
-								ItemStack itemstack = new ItemStack(material, 1, (byte) variant);
+								ItemStack itemstack = this.plugin.methods.getItemStack(str);
 
 								List<String> lore = new ArrayList<String>();
 								Boolean useeconomy = Boolean
@@ -140,8 +84,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 								if (useeconomy.booleanValue()) {
 									Boolean useshowprice = Boolean
 											.valueOf(this.plugin.getConfig().getBoolean("Economy.ShowPrice"));
-									if ((useshowprice.booleanValue()) && (cfg.getString(str + ".price") != null)) {
-										Double price = Double.valueOf(cfg.getDouble(str + ".price"));
+									if ((useshowprice.booleanValue())) {
+										Double price = this.plugin.methods.getPrice(str);
 										String priceformat = ChatColor.translateAlternateColorCodes('&',
 												this.plugin.getConfig().getString("Economy.PriceFormat")
 														.replace("{price}", String.valueOf(price)));
@@ -155,14 +99,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 									}
 								}
 								ItemMeta item_lore = itemstack.getItemMeta();
-								if (cfg.get(str + ".lore") != null
-										&& !cfg.getString(str + ".lore").equalsIgnoreCase("none")) {
-									String[] lore_ = cfg.get(str + ".lore").toString().split(":");
-									for (int l = 0; l < lore_.length; l++) {
-										lore.add(ChatColor.translateAlternateColorCodes('&',
-												lore_[l].replaceAll("_", " ")));
-									}
-								}
+								lore = this.plugin.methods.getPreparedLore(str);
 								item_lore.setLore(lore);
 								String item_prefix = ChatColor.translateAlternateColorCodes('&',
 										this.plugin.getConfig().getString("Sign.FirstLine")) + " ";

@@ -1,12 +1,8 @@
 package de.comniemeer.ClickWarp.Listeners;
 
-import java.io.File;
-
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,10 +33,7 @@ public class SignListener implements Listener {
 					return;
 				} else {
 					String _line = e.getLine(1);
-					String line = _line.toLowerCase();
-					File file = new File("plugins/ClickWarp/Warps", line + ".yml");
-
-					if (!file.exists()) {
+					if (!this.plugin.methods.existWarp(_line)) {
 						e.setCancelled(true);
 						e.getBlock().breakNaturally();
 						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
@@ -48,14 +41,7 @@ public class SignListener implements Listener {
 						return;
 					}
 
-					FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-					String name = "";
-
-					if (cfg.getString(line + ".name") == null) {
-						name = line;
-					} else {
-						name = ChatColor.translateAlternateColorCodes('&', cfg.getString(line + ".name"));
-					}
+					String name = this.plugin.methods.getName(_line);
 
 					e.setLine(0, ChatColor.translateAlternateColorCodes('&',
 							plugin.getConfig().getString("Sign.FirstLine")));
