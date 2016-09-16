@@ -200,7 +200,7 @@ public class ClickWarp extends JavaPlugin {
 		}
 
 		Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
-		Boolean enableIWarps = this.getConfig().getBoolean("ImportEssentialsWarps");
+		Boolean enableIWarps = this.getConfig().getBoolean("EnableEssentialsWarps");
 
 		if (enableEconomy.booleanValue()) {
 			try {
@@ -220,11 +220,12 @@ public class ClickWarp extends JavaPlugin {
 			} catch (NoClassDefFoundError ncdfe) {
 				this.log.severe("[ClickWarp] Failed to load Essentials!");
 				this.log.severe(
-						"[ClickWarp] Install Essentials or set \"EnableIWarps\" in the config.yml to \"false\"");
+						"[ClickWarp] Install Essentials or set \"EnableEssentialsWarps\" in the config.yml to \"false\"");
 				this.getServer().getPluginManager().disablePlugin(this);
 				return;
 			}
 		}
+
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
 		new CommandWarp(this, "warp", "Warp command", "warps");
 		new CommandDelwarp(this, "delwarp", "Deletes a warp");

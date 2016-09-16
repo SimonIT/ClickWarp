@@ -372,7 +372,7 @@ public class Methods {
 		String str = warp.toLowerCase();
 		FileConfiguration cfg = getWarpConfiguartion(warp);
 		String[] message_lines_orig = null;
-		List<String> message_lines = null;
+		List<String> message_lines = new ArrayList<String>();
 		if (cfg.get(str + ".message") != null) {
 			message_lines_orig = cfg.getString(str + ".message").split(":");
 			for (int l = 0; l < message_lines_orig.length; l++) {

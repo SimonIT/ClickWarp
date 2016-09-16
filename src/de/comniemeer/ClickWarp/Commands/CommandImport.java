@@ -33,8 +33,8 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 									e1.printStackTrace();
 								}
 							} else {
-								this.plugin.log.severe("[ClickWarp] Failed to load Essentials!");
-								this.plugin.log.severe(
+								sender.sendMessage("[ClickWarp] Failed to load Essentials!");
+								sender.sendMessage(
 										"[ClickWarp] Install Essentials or set \"ImportEssentialsWarps\" in the config.yml to \"false\"");
 							}
 							if (this.plugin.methods.existWarp(EWarp)) {
@@ -46,11 +46,11 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 							}
 							boolean result = this.plugin.methods.setWarp(Name, loc);
 							if (result) {
-								this.plugin.log
-										.severe(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
+								sender.sendMessage(
+										ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
 												.replace("{warp}", ChatColor.translateAlternateColorCodes('&', Name)));
 							} else {
-								this.plugin.log.severe(
+								sender.sendMessage(
 										ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
 							}
 							warp_names += Name + "§7, §6";
@@ -66,8 +66,8 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 								e1.printStackTrace();
 							}
 						} else {
-							this.plugin.log.severe("[ClickWarp] Failed to load Essentials!");
-							this.plugin.log.severe(
+							sender.sendMessage("[ClickWarp] Failed to load Essentials!");
+							sender.sendMessage(
 									"[ClickWarp] Install Essentials or set \"ImportEssentialsWarps\" in the config.yml to \"false\"");
 						}
 						if (this.plugin.methods.existWarp(Name)) {
@@ -79,12 +79,11 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 						}
 						boolean result = this.plugin.methods.setWarp(Name, loc);
 						if (result) {
-							this.plugin.log
-									.severe(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
-											.replace("{warp}", ChatColor.translateAlternateColorCodes('&', Name)));
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
+									.replace("{warp}", ChatColor.translateAlternateColorCodes('&', Name)));
 						} else {
-							this.plugin.log
-									.severe(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+							sender.sendMessage(
+									ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
 						}
 					}
 

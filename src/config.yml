@@ -6,7 +6,7 @@
 #                                         |_|
 # Plugin by comniemeer
 # The configurable command method is from PostCrafter (excellent german video tutorials on YouTube: http://www.youtube.com/user/PostCrafter)
-# Version 1.3.8
+# Version 1.4.0
 # Main configuration File
 
 # Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese), cz (Czech) or ko (Korean)
@@ -107,7 +107,7 @@ Economy:
   CurrencySingular: 'Dollar'
   CurrencyPlural: 'Dollars'
 
-# If ClickWarp should import the warps from Essentials at the start
+# If you want import/export the warps from/to Essentials
 # Essentials must be installed for this option
-ImportEssentialsWarps: false
+EnableEssentialsWarps: false
 # End of the config #
