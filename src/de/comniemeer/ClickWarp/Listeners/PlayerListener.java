@@ -10,13 +10,10 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
-
 import de.comniemeer.ClickWarp.ClickWarp;
 
 public class PlayerListener implements Listener {
@@ -27,32 +24,31 @@ public class PlayerListener implements Listener {
 		plugin = clickwarp;
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
 		if (e.getAction() == Action.RIGHT_CLICK_AIR) {
 			Player p = e.getPlayer();
-			ItemStack hand = p.getInventory().getItemInMainHand();
 			String invwarpitem = plugin.getConfig().getString("InvwarpItem").toUpperCase();
-			int invwarpitem_variant = 0;
+			byte invwarpitem_variant = e.getItem().getData().getData();
 			if (invwarpitem.contains(":")) {
 				String[] invwarpitem_split = invwarpitem.split(":");
 				invwarpitem = invwarpitem_split[0].toUpperCase();
-				invwarpitem_variant = Integer.parseInt(invwarpitem_split[1]);
+				invwarpitem_variant = Byte.parseByte(invwarpitem_split[1]);
 			}
 			Material invwarpmaterial = Material.getMaterial(invwarpitem);
 			String invtpitem = plugin.getConfig().getString("InvtpItem").toUpperCase();
-			int invtpitem_variant = 0;
+			byte invtpitem_variant = e.getItem().getData().getData();
 			if (invtpitem.contains(":")) {
 				String[] invtpitem_split = invtpitem.split(":");
 				invtpitem = invtpitem_split[0].toUpperCase();
-				invtpitem_variant = Integer.parseInt(invtpitem_split[1]);
+				invtpitem_variant = Byte.parseByte(invtpitem_split[1]);
 			}
 			Material invtpmaterial = Material.getMaterial(invtpitem);
 
 			String item_prefix = ChatColor.translateAlternateColorCodes('&',
 					this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
 
-			if (hand != null && hand.getType() == invwarpmaterial) {
+			if (e.getItem() != null && e.getItem().getType() == invwarpmaterial && e.getItem().getData().getData() == invwarpitem_variant) {
 				Boolean enableinvwarp = plugin.getConfig().getBoolean("EnableInvwarpItem");
 
 				if (enableinvwarp.booleanValue()) {
@@ -65,7 +61,7 @@ public class PlayerListener implements Listener {
 						return;
 					}
 				}
-			} else if (hand != null && hand.getType() == invtpmaterial) {
+			} else if (e.getItem() != null && e.getItem().getType() == invtpmaterial && e.getItem().getData().getData() == invtpitem_variant) {
 				Boolean enableinvtp = plugin.getConfig().getBoolean("EnableInvtpItem");
 
 				if (enableinvtp.booleanValue()) {

@@ -17,7 +17,7 @@ public class CommandExport extends AutoCommand<ClickWarp> {
 
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (sender.hasPermission("clickwarp.importwarp")) {
+		if (sender.hasPermission("clickwarp.export")) {
 			if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("Essentials") && args[1] != null) {
 					if (this.plugin.IWarps != null) {

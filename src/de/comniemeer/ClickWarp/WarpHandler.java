@@ -113,7 +113,7 @@ public class WarpHandler {
 			Boolean usedelay = plugin.getConfig().getBoolean("Delay.Warp.EnableDelay");
 
 			if (!usedelay.booleanValue()) {
-				if (player.getLocation().distance(loc) >= minDistance) {
+				if (loc.getWorld() != player.getWorld() || player.getLocation().distance(loc) >= minDistance) {
 					player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 					player.playSound(player.getLocation(), warp_sound, 1, 0);
 					player.teleport(loc);
@@ -158,7 +158,7 @@ public class WarpHandler {
 					Boolean usesigndelay = plugin.getConfig().getBoolean("Delay.Warp.Sign.Enable");
 
 					if (!usesigndelay.booleanValue()) {
-						if (player.getLocation().distance(loc) >= minDistance) {
+						if (loc.getWorld() != player.getWorld() || player.getLocation().distance(loc) >= minDistance) {
 							player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 							player.playSound(player.getLocation(), warp_sound, 1, 0);
 							player.teleport(loc);
@@ -205,7 +205,7 @@ public class WarpHandler {
 				}
 
 				if (player.hasPermission("clickwarp.warp.instant")) {
-					if (player.getLocation().distance(loc) >= 1) {
+					if (loc.getWorld() != player.getWorld() || player.getLocation().distance(loc) >= minDistance) {
 						player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 						player.playSound(player.getLocation(), warp_sound, 1, 0);
 						player.teleport(loc);
@@ -268,7 +268,7 @@ public class WarpHandler {
 					plugin.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 						@Override
 						public void run() {
-							if (player.getLocation().distance(loc) >= _minDistance) {
+							if (loc.getWorld() != player.getWorld() || player.getLocation().distance(loc) >= _minDistance) {
 								player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 								player.playSound(player.getLocation(), _warp_sound, 1, 0);
 								player.teleport(loc);

@@ -69,7 +69,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 				if (sender instanceof Player) {
 					if (this.plugin.getConfig().getBoolean("GetWarpItem")) {
 						if (sender.hasPermission("clickwarp.warp.getitem.*")
-								|| sender.hasPermission("clickwarp.getwarpitem." + args[0])) {
+								|| sender.hasPermission("clickwarp.warp.getitem." + args[0])) {
 							String str = args[0].toLowerCase();
 							if (!this.plugin.methods.existWarp(str)) {
 								sender.sendMessage(

@@ -17,7 +17,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 
 	@Override
 	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (sender.hasPermission("clickwarp.importwarp")) {
+		if (sender.hasPermission("clickwarp.setwarp")) {
 			if (args.length == 2) {
 				if (args[0].equalsIgnoreCase("Essentials") && args[1] != null) {
 					if (args[1].equalsIgnoreCase("all")) {
