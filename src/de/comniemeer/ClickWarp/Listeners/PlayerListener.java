@@ -26,7 +26,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
-		if (e.getAction() == Action.RIGHT_CLICK_AIR) {
+		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			Player p = e.getPlayer();
 			String invwarpitem = plugin.getConfig().getString("InvwarpItem").toUpperCase();
 			byte invwarpitem_variant = e.getItem().getData().getData();

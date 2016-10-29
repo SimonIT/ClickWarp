@@ -53,10 +53,9 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 		} else if (args.length == 1) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
-
-				if (player.hasPermission("clickwarp.warp")) {
-					String str = args[0].toLowerCase();
-
+				String str = args[0].toLowerCase();
+				
+				if (player.hasPermission("clickwarp.warp." + str) || player.hasPermission("clickwarp.warp.*")) {
 					plugin.warphandler.handleWarp(player, str, args[0], false);
 				} else {
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
