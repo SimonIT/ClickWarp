@@ -26,7 +26,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
-		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) && e.getItem() != null) {
 			Player p = e.getPlayer();
 			String invwarpitem = plugin.getConfig().getString("InvwarpItem").toUpperCase();
 			byte invwarpitem_variant = e.getItem().getData().getData();
@@ -48,7 +48,8 @@ public class PlayerListener implements Listener {
 			String item_prefix = ChatColor.translateAlternateColorCodes('&',
 					this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
 
-			if (e.getItem() != null && e.getItem().getType() == invwarpmaterial && e.getItem().getData().getData() == invwarpitem_variant) {
+			if (e.getItem() != null && e.getItem().getType() == invwarpmaterial
+					&& e.getItem().getData().getData() == invwarpitem_variant) {
 				Boolean enableinvwarp = plugin.getConfig().getBoolean("EnableInvwarpItem");
 
 				if (enableinvwarp.booleanValue()) {
@@ -61,7 +62,8 @@ public class PlayerListener implements Listener {
 						return;
 					}
 				}
-			} else if (e.getItem() != null && e.getItem().getType() == invtpmaterial && e.getItem().getData().getData() == invtpitem_variant) {
+			} else if (e.getItem() != null && e.getItem().getType() == invtpmaterial
+					&& e.getItem().getData().getData() == invtpitem_variant) {
 				Boolean enableinvtp = plugin.getConfig().getBoolean("EnableInvtpItem");
 
 				if (enableinvtp.booleanValue()) {

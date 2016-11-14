@@ -33,7 +33,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 						meta.setDisplayName("§l" + p.getName());
 						lore.add(p.getUniqueId().toString());
 						meta.setLore(lore);
-						ItemStack itemstack = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+						ItemStack itemstack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
 						itemstack.setItemMeta(meta);
 						Player player = (Player) sender;
 						PlayerInventory inventory = player.getInventory();
