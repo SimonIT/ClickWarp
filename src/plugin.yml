@@ -7,6 +7,7 @@ main: de.comniemeer.ClickWarp.ClickWarp
 softdepend:
 - Essentials
 - Vault
+- WGCustomFlags
 permissions:
   clickwarp.*:
     default: op

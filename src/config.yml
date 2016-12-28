@@ -6,7 +6,7 @@
 #                                         |_|
 # Plugin by comniemeer
 # The configurable command method is from PostCrafter (excellent german video tutorials on YouTube: http://www.youtube.com/user/PostCrafter)
-# Version 1.4.0
+# Version 1.4.1
 # Main configuration File
 
 # Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese), cz (Czech) or ko (Korean)
@@ -31,7 +31,7 @@ DefaultWarpItem: grass
 # If you wish to use an item that opens the "/invwarp" menu, enable it here and define an item.
 # Only players with the permission "clickwarp.invwarp.item" can use this function.
 EnableInvwarpItem: true
-InvwarpItem: clock
+InvwarpItem: watch
 
 #show Invwarp-menu on /warp
 InvwarpInsteadWarp: false
@@ -110,4 +110,9 @@ Economy:
 # If you want import/export the warps from/to Essentials
 # Essentials must be installed for this option
 EnableEssentialsWarps: false
+
+# For this function you need WGCustomFlags and WorldGuard enabled on your server
+# For now, you can't use this feature because WGCustomFlags doesn't add the flag to WorldGuard.
+Flags:
+  Enable: false
 # End of the config #

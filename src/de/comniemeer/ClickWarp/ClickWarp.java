@@ -45,6 +45,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.Warps;
+import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 
 public class ClickWarp extends JavaPlugin {
 
@@ -70,7 +73,11 @@ public class ClickWarp extends JavaPlugin {
 	public Permission permission = null;
 	public Economy economy = null;
 	public Warps IWarps = null;
+	public WGCustomFlagsPlugin wgcf = null;
+	public WorldGuardPlugin wg = null;
 
+	public StateFlag Warp_Flag = new StateFlag("warp", true);
+	
 	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
 			return false;
@@ -97,6 +104,29 @@ public class ClickWarp extends JavaPlugin {
 		this.IWarps = ((Essentials) ess).getWarps();
 
 		return true;
+	}
+
+	private WGCustomFlagsPlugin getWGCustomFlags()
+	{
+	  Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
+	  
+	  if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin))
+	  {
+	    return null;
+	  }
+
+	  return (WGCustomFlagsPlugin) plugin;
+	}
+	
+	private WorldGuardPlugin getWorldGuard() {
+	    Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+	    // WorldGuard may not be loaded
+	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+	        return null; // Maybe you want throw an exception instead
+	    }
+
+	    return (WorldGuardPlugin) plugin;
 	}
 
 	public void onDisable() {
@@ -200,6 +230,7 @@ public class ClickWarp extends JavaPlugin {
 		}
 
 		Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
+		Boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
 		Boolean enableIWarps = this.getConfig().getBoolean("EnableEssentialsWarps");
 
 		if (enableEconomy.booleanValue()) {
@@ -226,6 +257,13 @@ public class ClickWarp extends JavaPlugin {
 			}
 		}
 
+		if(enableFlags){
+			wg = this.getWorldGuard();
+			wgcf = this.getWGCustomFlags();
+			
+			wgcf.addCustomFlag(Warp_Flag);
+		}
+		
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
 		new CommandWarp(this, "warp", "Warp command", "warps", "cwarp");
 		new CommandDelwarp(this, "delwarp", "Deletes a warp", "delcwarp");

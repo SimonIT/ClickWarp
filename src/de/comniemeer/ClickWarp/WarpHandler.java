@@ -15,6 +15,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import com.mewin.util.Util;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+
 public class WarpHandler {
 
 	private ClickWarp plugin;
@@ -32,7 +35,17 @@ public class WarpHandler {
 			return;
 		}
 
-		if (player.hasPermission("clickwarp.warp." + str) || player.hasPermission("clickwarp.warp.*")) {
+		Boolean flag = true;
+		if (this.plugin.getConfig().getBoolean("Flags.Enable")) {
+			if (Util.getFlagValue(this.plugin.wg, player.getLocation(), this.plugin.Warp_Flag,
+					player) == StateFlag.State.ALLOW) {
+				flag = true;
+			} else {
+				flag = false;
+			}
+		}
+
+		if ((player.hasPermission("clickwarp.warp." + str) || player.hasPermission("clickwarp.warp.*")) && flag) {
 			Boolean use_vehicle = false;
 			Entity vec = null;
 			if (player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp")
@@ -212,7 +225,7 @@ public class WarpHandler {
 					}
 				}
 
-				if (player.hasPermission("clickwarp.warp.instant")) {
+				if (player.hasPermission("clickwarp.warp.instant") && flag) {
 					if (loc.getWorld() != player.getWorld() || player.getLocation().distance(loc) >= minDistance) {
 						player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 						player.playSound(player.getLocation(), warp_sound, 1, 0);
