@@ -39,7 +39,7 @@ public class InventoryListener implements Listener {
 						String dispname = item.getItemMeta().getDisplayName();
 						if (dispname != null) {
 							String name = ChatColor.stripColor(dispname.toLowerCase());
-							
+
 							plugin.warphandler.handleWarp(player, name, dispname, false);
 							this.closeInv(player);
 							return;
@@ -78,12 +78,16 @@ public class InventoryListener implements Listener {
 								player.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
 								player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess)
 										.replace("{player}", p_.getName()));
+								this.plugin.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
+										+ " to " + p_.getName() + "]");
 							} else {
 								if (player.hasPermission("clickwarp.teleport.instant")) {
 									player.teleport(p_);
 									player.sendMessage(
 											ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess)
 													.replace("{player}", p_.getName()));
+									this.plugin.log.info("[ClickWarp] [" + player.getName() + ": Warped "
+											+ player.getName() + " to " + p_.getName() + "]");
 								} else {
 									Boolean usedontmove = plugin.getConfig()
 											.getBoolean("Delay.Teleport.EnableDontMove");

@@ -11,8 +11,8 @@ import de.comniemeer.ClickWarp.ClickWarp;
 
 public class CommandSetwarp extends AutoCommand<ClickWarp> {
 
-	public CommandSetwarp(ClickWarp plugin, String cmd, String description) {
-		super(plugin, cmd, description);
+	public CommandSetwarp(ClickWarp plugin, String cmd, String description, String... alias) {
+		super(plugin, cmd, description, alias);
 	}
 
 	@Override

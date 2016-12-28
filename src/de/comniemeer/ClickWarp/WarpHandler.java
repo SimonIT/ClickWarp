@@ -155,6 +155,8 @@ public class WarpHandler {
 									.replace("{warp}", name));
 						}
 					}
+					this.plugin.log.info(
+							"[ClickWarp] [" + player.getName() + ": Warped " + player.getName() + " to " + name_ + "]");
 				} else {
 
 				}
@@ -201,7 +203,8 @@ public class WarpHandler {
 													.replace("{warp}", name));
 								}
 							}
-
+							this.plugin.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
+									+ " to " + name_ + "]");
 							return;
 						} else {
 
@@ -248,6 +251,8 @@ public class WarpHandler {
 										.replace("{warp}", name));
 							}
 						}
+						this.plugin.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
+								+ " to " + name_ + "]");
 					} else {
 
 					}

@@ -227,12 +227,12 @@ public class ClickWarp extends JavaPlugin {
 		}
 
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
-		new CommandWarp(this, "warp", "Warp command", "warps");
-		new CommandDelwarp(this, "delwarp", "Deletes a warp");
+		new CommandWarp(this, "warp", "Warp command", "warps", "cwarp");
+		new CommandDelwarp(this, "delwarp", "Deletes a warp", "delcwarp");
 		new CommandEditwarp(this, "editwarp", "Allows to edit warps");
 		new CommandInvtp(this, "invtp", "Inventory-Teleport command", "invteleport");
 		new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
-		new CommandSetwarp(this, "setwarp", "Sets a warp at the current location");
+		new CommandSetwarp(this, "setwarp", "Sets a warp at the current location", "setcwarp");
 		new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
 		new CommandImport(this, "import", "Import the Warps from other Plugins.");
 		new CommandExport(this, "export", "Export the Warps to other Plugins.");
