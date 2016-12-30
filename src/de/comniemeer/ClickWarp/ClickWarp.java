@@ -45,6 +45,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.Warps;
+import com.mccraftaholics.warpportals.bukkit.PortalPlugin;
+import com.mccraftaholics.warpportals.manager.PortalDestManager;
 import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -75,6 +77,7 @@ public class ClickWarp extends JavaPlugin {
 	public Warps IWarps = null;
 	public WGCustomFlagsPlugin wgcf = null;
 	public WorldGuardPlugin wg = null;
+	public PortalDestManager pdm = null;
 
 	public StateFlag Warp_Flag = new StateFlag("warp", true);
 	
@@ -102,6 +105,16 @@ public class ClickWarp extends JavaPlugin {
 			return false;
 		}
 		this.IWarps = ((Essentials) ess).getWarps();
+
+		return true;
+	}
+	
+	private boolean setupWarpPortals() {
+		Plugin wapo = getServer().getPluginManager().getPlugin("WarpPortals");
+		if ((wapo == null) || (!(wapo instanceof PortalPlugin))) {
+			return false;
+		}
+		this.pdm = ((PortalPlugin) wapo).mPortalManager.mPortalDestManager;
 
 		return true;
 	}
@@ -231,7 +244,8 @@ public class ClickWarp extends JavaPlugin {
 
 		Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
 		Boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
-		Boolean enableIWarps = this.getConfig().getBoolean("EnableEssentialsWarps");
+		Boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
+		Boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
 
 		if (enableEconomy.booleanValue()) {
 			try {
@@ -251,17 +265,37 @@ public class ClickWarp extends JavaPlugin {
 			} catch (NoClassDefFoundError ncdfe) {
 				this.log.severe("[ClickWarp] Failed to load Essentials!");
 				this.log.severe(
-						"[ClickWarp] Install Essentials or set \"EnableEssentialsWarps\" in the config.yml to \"false\"");
+						"[ClickWarp] Install Essentials or set \"EnableEssentials\" in the config.yml to \"false\"");
 				this.getServer().getPluginManager().disablePlugin(this);
 				return;
 			}
 		}
 
-		if(enableFlags){
-			wg = this.getWorldGuard();
-			wgcf = this.getWGCustomFlags();
-			
+		if(enableFlags){	
+			try {
+				wg = this.getWorldGuard();
+				wgcf = this.getWGCustomFlags();
+			} catch (NoClassDefFoundError ncdfe) {
+				this.log.severe("[ClickWarp] Failed to load WGCustomFlags or WorldGuard!");
+				this.log.severe(
+						"[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
+				this.getServer().getPluginManager().disablePlugin(this);
+				return;
+			}
 			wgcf.addCustomFlag(Warp_Flag);
+			
+		}
+		
+		if (enableWarpPortals){
+			try {
+				this.setupWarpPortals();
+			} catch (NoClassDefFoundError ncdfe) {
+				this.log.severe("[ClickWarp] Failed to load WarpPortals!");
+				this.log.severe(
+						"[ClickWarp] Install Essentials or set \"EnableWarpPortals\" in the config.yml to \"false\"");
+				this.getServer().getPluginManager().disablePlugin(this);
+				return;
+			}
 		}
 		
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");

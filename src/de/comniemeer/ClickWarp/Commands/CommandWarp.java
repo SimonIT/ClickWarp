@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -54,7 +55,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				String str = args[0].toLowerCase();
-				
+
 				if (player.hasPermission("clickwarp.warp." + str) || player.hasPermission("clickwarp.warp.*")) {
 					plugin.warphandler.handleWarp(player, str, args[0], false);
 				} else {
@@ -102,7 +103,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 								item_lore.setLore(lore);
 								String item_prefix = ChatColor.translateAlternateColorCodes('&',
 										this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
-								item_lore.setDisplayName(item_prefix + args[0]);
+								item_lore.setDisplayName(item_prefix + this.plugin.methods.getName(args[0]));
 								itemstack.setItemMeta(item_lore);
 								Player player = (Player) sender;
 								PlayerInventory inventory = player.getInventory();
@@ -175,7 +176,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 				for (int i = 0; i < warps.length; i++) {
 					if (sender.hasPermission("clickwarp.warp." + warps[i].getName().replace(".yml", ""))
 							|| sender.hasPermission("clickwarp.warp.*")) {
-						warpList.add(warps[i].getName().replace(".yml", ""));
+						warpList.add(this.plugin.methods.getName(warps[i].getName().replace(".yml", "")));
 					}
 				}
 			}
@@ -187,14 +188,37 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 			List<String> tabList = new ArrayList<>();
 
 			for (String warp : warpList) {
-				if (warp.startsWith(args[0].toLowerCase())) {
-					if (sender.hasPermission("clickwarp.warp." + warp) || sender.hasPermission("clickwarp.warp.*")) {
+				if (warp.toLowerCase().startsWith(args[0].toLowerCase())) {
+					if (sender.hasPermission("clickwarp.warp." + warp.toLowerCase())
+							|| sender.hasPermission("clickwarp.warp.*")) {
 						tabList.add(warp);
 					}
 				}
 			}
 
 			return tabList;
+		} else if (args.length == 2) {
+			List<String> tabList = new ArrayList<>();
+			if ("getitem".startsWith(args[1].toLowerCase())) {
+				tabList.add("getitem");
+			}
+
+			List<String> playerList = new ArrayList<>();
+
+			for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+				if (p != null) {
+					playerList.add(p.getName());
+				}
+			}
+
+			for (String player : playerList) {
+				if (player != null && player.toLowerCase().startsWith(args[1].toLowerCase())) {
+					tabList.add(player);
+				}
+			}
+
+			return tabList;
+
 		}
 		return null;
 	}

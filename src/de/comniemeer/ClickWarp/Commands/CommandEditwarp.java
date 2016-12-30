@@ -81,17 +81,17 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						return true;
 					}
 					this.plugin.methods.setWarp(args[2], this.plugin.methods.getWarp(str));
-					this.plugin.methods.setItem(args[2], this.plugin.methods.getItemMaterial(str).toString(), this.plugin.methods.getItemVariant(str));
+					this.plugin.methods.setItem(args[2], this.plugin.methods.getItemMaterial(str).toString(),
+							this.plugin.methods.getItemVariant(str));
 					this.plugin.methods.setLore(args[2], this.plugin.methods.getLore(str));
 					this.plugin.methods.setPrice(args[2], this.plugin.methods.getPrice(str));
 					this.plugin.methods.setMessage(args[2], this.plugin.methods.getMessage(str));
 					this.plugin.methods.setSound(args[2], this.plugin.methods.getSound(str));
 
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpSuccess)
-								.replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[2])));
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpSuccess)
+							.replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[2])));
 
-						sender.sendMessage(
-								ChatColor.translateAlternateColorCodes('&', this.plugin.msg.ErrorFileSaving));
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.ErrorFileSaving));
 					this.plugin.methods.delWarp(str);
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.DelwarpSuccess)
 							.replace("{warp}", name));
@@ -212,8 +212,10 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 					sender.sendMessage("§e/editwarp <warp> mindist <Distance>");
 					sender.sendMessage("§e/editwarp <warp> cmd add <cmd>");
 					sender.sendMessage("§e/editwarp <warp> cmd remove <cmd>");
+					sender.sendMessage("§e/editwarp <warp> cmd list");
 					sender.sendMessage("§e/editwarp <warp> excmd add <cmd>");
 					sender.sendMessage("§e/editwarp <warp> excmd remove <cmd>");
+					sender.sendMessage("§e/editwarp <warp> excmd list");
 				}
 			} else {
 				sender.sendMessage("§e/editwarp <warp> name <newname>");
@@ -225,8 +227,10 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 				sender.sendMessage("§e/editwarp <warp> mindist <Distance>");
 				sender.sendMessage("§e/editwarp <warp> cmd add <cmd>");
 				sender.sendMessage("§e/editwarp <warp> cmd remove <cmd>");
+				sender.sendMessage("§e/editwarp <warp> cmd list");
 				sender.sendMessage("§e/editwarp <warp> excmd add <cmd>");
 				sender.sendMessage("§e/editwarp <warp> excmd remove <cmd>");
+				sender.sendMessage("§e/editwarp <warp> excmd list");
 			}
 		} else {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -247,6 +251,11 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 			parameters.add("mindist");
 			parameters.add("excmd");
 			parameters.add("cmd");
+
+			List<String> cmd_parameters = new ArrayList<>();
+			cmd_parameters.add("add");
+			cmd_parameters.add("remove");
+			cmd_parameters.add("list");
 
 			List<String> warpList = new ArrayList<>();
 			File warps_folder = new File("plugins/ClickWarp/Warps");
@@ -274,72 +283,55 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 			if (args.length == 0) {
 				return warpList;
 			} else if (args.length == 1) {
-				if (!warpList.contains(args[0])) {
-					List<String> tabList = new ArrayList<>();
+				List<String> tabList = new ArrayList<>();
 
-					for (String warp : warpList) {
-						if (warp.startsWith(args[0].toLowerCase())) {
-							tabList.add(warp);
-						}
+				for (String warp : warpList) {
+					if (warp.startsWith(args[0].toLowerCase())) {
+						tabList.add(warp);
 					}
+				}
 
-					return tabList;
-				} else {
-					List<String> tabList = new ArrayList<>();
+				return tabList;
+			} else if (args.length == 2) {
+				List<String> tabList = new ArrayList<>();
 
-					for (String parameter : parameters) {
+				for (String parameter : parameters) {
+					if (parameter.startsWith(args[1].toLowerCase())) {
 						tabList.add(parameter);
 					}
-					return tabList;
 				}
-			} else if (args.length == 2) {
-				if (!parameters.contains(args[1])) {
-					List<String> tabList = new ArrayList<>();
 
-					for (String parameter : parameters) {
-						if (parameter.startsWith(args[1].toLowerCase())) {
-							tabList.add(parameter);
-						}
-					}
+				return tabList;
 
-					return tabList;
-				} else {
-					List<String> tabList = new ArrayList<>();
-
-					if (args[1].equalsIgnoreCase(parameters.get(1))) {
-						for (String material : materialList) {
-							tabList.add(material);
-						}
-					} else if (args[1].equalsIgnoreCase(parameters.get(5))) {
-						for (String sound : soundList) {
-							tabList.add(sound);
-						}
-					}
-					return tabList;
-				}
 			} else if (args.length == 3) {
 				if (args[1].equalsIgnoreCase(parameters.get(1))) {
-					if (!materialList.contains(args[2])) {
-						List<String> tabList = new ArrayList<>();
+					List<String> tabList = new ArrayList<>();
 
-						for (String material : materialList) {
-							if (material.startsWith(args[2].toUpperCase())) {
-								tabList.add(material);
-							}
+					for (String material : materialList) {
+						if (material.startsWith(args[2].toUpperCase())) {
+							tabList.add(material);
 						}
 					}
 				} else if (args[1].equalsIgnoreCase(parameters.get(5))) {
-					if (!soundList.contains(args[2])) {
-						List<String> tabList = new ArrayList<>();
+					List<String> tabList = new ArrayList<>();
 
-						for (String sound : soundList) {
-							if (sound.startsWith(args[2].toUpperCase())) {
-								tabList.add(sound);
-							}
+					for (String sound : soundList) {
+						if (sound.startsWith(args[2].toUpperCase())) {
+							tabList.add(sound);
 						}
-
-						return tabList;
 					}
+
+					return tabList;
+				} else if (args[1].equalsIgnoreCase(parameters.get(7)) || args[1].equalsIgnoreCase(parameters.get(8))) {
+					List<String> tabList = new ArrayList<>();
+
+					for (String cmd_parameter : cmd_parameters) {
+						if (cmd_parameter.toLowerCase().startsWith(args[2].toLowerCase())) {
+							tabList.add(cmd_parameter);
+						}
+					}
+
+					return tabList;
 				}
 			}
 		}

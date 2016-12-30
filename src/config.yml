@@ -6,7 +6,7 @@
 #                                         |_|
 # Plugin by comniemeer
 # The configurable command method is from PostCrafter (excellent german video tutorials on YouTube: http://www.youtube.com/user/PostCrafter)
-# Version 1.4.1
+# Version 1.4.2
 # Main configuration File
 
 # Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese), cz (Czech) or ko (Korean)
@@ -22,6 +22,8 @@ Commands:
   invtp: invtp
   invtpa: invtpa
   gettpskull: gettpskull
+  import: import
+  export: export
 
 # Define here the default item for /invwarp
 # Attention! If you use an item with an additional meta, like blue wool (wool:11),
@@ -93,7 +95,7 @@ Inventory:
   Teleport: '&4&lTeleport'
 
 # For this function you need Vault enabled on your server
-# Download it at http://dev.bukkit.org/server-mods/vault/
+# Download it at https://dev.bukkit.org/server-mods/vault/
 Economy:
   # After setting this to "true", you have to reload/restart your server!
   Enable: false
@@ -109,7 +111,14 @@ Economy:
 
 # If you want import/export the warps from/to Essentials
 # Essentials must be installed for this option
-EnableEssentialsWarps: false
+Essentials: 
+  Enable: false
+
+# If you want import/export the warps as destinations from/to WarpPortals
+# WarpPortals must be installed for this option
+# Download it at https://dev.bukkit.org/projects/warp-portals
+WarpPortals:
+  Enable: false
 
 # For this function you need WGCustomFlags and WorldGuard enabled on your server
 # For now, you can't use this feature because WGCustomFlags doesn't add the flag to WorldGuard.

@@ -1,10 +1,14 @@
 package de.comniemeer.ClickWarp.Commands;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+
+import com.mccraftaholics.warpportals.objects.CoordsPY;
 
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
@@ -53,10 +57,10 @@ public class CommandExport extends AutoCommand<ClickWarp> {
 					} else {
 						this.plugin.log.severe("[ClickWarp] Failed to load Essentials!");
 						this.plugin.log.severe(
-								"[ClickWarp] Install Essentials or set \"ImportEssentialsWarps\" in the config.yml to \"false\"");
+								"[ClickWarp] Install Essentials or set \"EnableEssentials\" in the config.yml to \"false\"");
 					}
 				} else if (args[0].equalsIgnoreCase("WarpPortals") && args[1] != null) {
-					/*if (this.plugin.pdm != null) {
+					if (this.plugin.pdm != null) {
 						List<String> warps = this.plugin.methods.getWarps();
 
 						if (warps.size() == 0) {
@@ -83,8 +87,7 @@ public class CommandExport extends AutoCommand<ClickWarp> {
 						this.plugin.log.severe("[ClickWarp] Failed to load WarpPortals!");
 						this.plugin.log.severe(
 								"[ClickWarp] Install WarpPortals or set \"EnableWarpPortals\" in the config.yml to \"false\"");
-					}*/
-					sender.sendMessage("Does not working");
+					}
 				}
 			}
 		}
@@ -93,6 +96,45 @@ public class CommandExport extends AutoCommand<ClickWarp> {
 
 	@Override
 	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+		if (sender.hasPermission("clickwarp.export")) {
+			List<String> pluginList = new ArrayList<>();
+			List<String> warpList = new ArrayList<>();
+			if (this.plugin.IWarps != null) {
+				pluginList.add("Essentials");
+			}
+			if (this.plugin.pdm != null) {
+				pluginList.add("WarpPortals");
+			}
+			File warps_folder = new File("plugins/ClickWarp/Warps");
+
+			if (warps_folder.isDirectory()) {
+				File[] warps = warps_folder.listFiles();
+
+				if (warps.length > 1) {
+					for (int i = 0; i < warps.length; i++) {
+						warpList.add(this.plugin.methods.getName(warps[i].getName().replace(".yml", "")));
+					}
+				}
+			}
+
+			if (args.length == 1) {
+				return pluginList;
+			} else if (args.length == 2) {
+				List<String> tabList = new ArrayList<>();
+
+				if ("all".startsWith(args[1].toLowerCase())) {
+					tabList.add("all");
+				}
+				
+				for (String warp : warpList) {
+					if (warp.toLowerCase().startsWith(args[1].toLowerCase())) {
+						tabList.add(warp);
+					}
+				}
+
+				return tabList;
+			}
+		}
 		return null;
 	}
 

@@ -31,7 +31,6 @@ public class InventoryListener implements Listener {
 			if (plugin.InvHM.containsKey(player.getName())) {
 				if (plugin.InvHM.get(player.getName()).equals("InventarWarp")) {
 					e.setCancelled(true);
-					// player.updateInventory();
 					ItemStack item = e.getCurrentItem();
 
 					if (item != null && item.getType() != Material.AIR) {
@@ -46,7 +45,6 @@ public class InventoryListener implements Listener {
 					}
 				} else if (plugin.InvHM.get(player.getName()).equals("InventarTP")) {
 					e.setCancelled(true);
-					// player.updateInventory();
 					ItemStack item = e.getCurrentItem();
 
 					if (item != null && item.getType() != Material.AIR) {
