@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import de.comniemeer.ClickWarp.ClickWarp;
 
@@ -26,7 +27,8 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onClick(PlayerInteractEvent e) {
-		if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) && e.getItem() != null) {
+		if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
+				&& e.getItem() != null) {
 			Player p = e.getPlayer();
 			String invwarpitem = plugin.getConfig().getString("InvwarpItem").toUpperCase();
 			byte invwarpitem_variant = e.getItem().getData().getData();
@@ -152,6 +154,19 @@ public class PlayerListener implements Listener {
 				Bukkit.getScheduler().cancelTask(plugin.delaytask);
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.DelayTeleportCanceled));
 			}
+		}
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		if (player.hasPermission("clickwarp.update") && ClickWarp.update) {
+			player.sendMessage("An update is available: " + ClickWarp.name + ", a " + ClickWarp.type + " for "
+					+ ClickWarp.version_update + " available at " + ClickWarp.link);
+			// Will look like - An update is available: AntiCheat v1.5.9, a
+			// release for CB 1.6.2-R0.1 available at
+			// http://media.curseforge.com/XYZ
+			player.sendMessage("Type /clickwarp update if you would like to automatically update.");
 		}
 	}
 }

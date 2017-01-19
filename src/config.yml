@@ -4,9 +4,9 @@
 # | |___| | | (__|   <  \ V  V / (_| | |  | |_) |
 #  \____|_|_|\___|_|\_\  \_/\_/ \__,_|_|  | .__/
 #                                         |_|
-# Plugin by comniemeer
+# Plugin by comniemeer and SimonIT
 # The configurable command method is from PostCrafter (excellent german video tutorials on YouTube: http://www.youtube.com/user/PostCrafter)
-# Version 1.4.2
+# Version 1.4.3
 # Main configuration File
 
 # Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese), cz (Czech) or ko (Korean)
@@ -95,7 +95,7 @@ Inventory:
   Teleport: '&4&lTeleport'
 
 # For this function you need Vault enabled on your server
-# Download it at https://dev.bukkit.org/server-mods/vault/
+# Download it at https://dev.bukkit.org/projects/vault
 Economy:
   # After setting this to "true", you have to reload/restart your server!
   Enable: false

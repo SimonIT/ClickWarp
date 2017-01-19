@@ -1,6 +1,7 @@
 package de.comniemeer.ClickWarp;
 
 import de.comniemeer.ClickWarp.Metrics.Graph;
+import de.comniemeer.ClickWarp.Updater.ReleaseType;
 import de.comniemeer.ClickWarp.Commands.CommandClickwarp;
 import de.comniemeer.ClickWarp.Commands.CommandDelwarp;
 import de.comniemeer.ClickWarp.Commands.CommandEditwarp;
@@ -55,6 +56,7 @@ public class ClickWarp extends JavaPlugin {
 
 	public final Logger log = Logger.getLogger("Minecraft");
 	public String version;
+	public String authors;
 
 	public Messages msg;
 	public LanguageEnglish en;
@@ -80,7 +82,16 @@ public class ClickWarp extends JavaPlugin {
 	public PortalDestManager pdm = null;
 
 	public StateFlag Warp_Flag = new StateFlag("warp", true);
-	
+
+	public static boolean update = false;
+	public static String name = "";
+	public static ReleaseType type = null;
+	public static String version_update = "";
+	public static String link = "";
+	public static final int id = 53812;
+	public static File file = null;
+	public static Plugin pl = null;
+
 	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
 			return false;
@@ -108,7 +119,7 @@ public class ClickWarp extends JavaPlugin {
 
 		return true;
 	}
-	
+
 	private boolean setupWarpPortals() {
 		Plugin wapo = getServer().getPluginManager().getPlugin("WarpPortals");
 		if ((wapo == null) || (!(wapo instanceof PortalPlugin))) {
@@ -119,27 +130,25 @@ public class ClickWarp extends JavaPlugin {
 		return true;
 	}
 
-	private WGCustomFlagsPlugin getWGCustomFlags()
-	{
-	  Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
-	  
-	  if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin))
-	  {
-	    return null;
-	  }
+	private WGCustomFlagsPlugin getWGCustomFlags() {
+		Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
 
-	  return (WGCustomFlagsPlugin) plugin;
+		if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
+			return null;
+		}
+
+		return (WGCustomFlagsPlugin) plugin;
 	}
-	
+
 	private WorldGuardPlugin getWorldGuard() {
-	    Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
-	    // WorldGuard may not be loaded
-	    if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-	        return null; // Maybe you want throw an exception instead
-	    }
+		// WorldGuard may not be loaded
+		if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+			return null; // Maybe you want throw an exception instead
+		}
 
-	    return (WorldGuardPlugin) plugin;
+		return (WorldGuardPlugin) plugin;
 	}
 
 	public void onDisable() {
@@ -150,7 +159,7 @@ public class ClickWarp extends JavaPlugin {
 			}
 		}
 
-		this.log.info("[ClickWarp] Plugin v" + this.version + " by comniemeer disabled.");
+		this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " disabled.");
 	}
 
 	public void onEnable() {
@@ -271,22 +280,21 @@ public class ClickWarp extends JavaPlugin {
 			}
 		}
 
-		if(enableFlags){	
+		if (enableFlags) {
 			try {
 				wg = this.getWorldGuard();
 				wgcf = this.getWGCustomFlags();
 			} catch (NoClassDefFoundError ncdfe) {
 				this.log.severe("[ClickWarp] Failed to load WGCustomFlags or WorldGuard!");
-				this.log.severe(
-						"[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
+				this.log.severe("[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
 				this.getServer().getPluginManager().disablePlugin(this);
 				return;
 			}
 			wgcf.addCustomFlag(Warp_Flag);
-			
+
 		}
-		
-		if (enableWarpPortals){
+
+		if (enableWarpPortals) {
 			try {
 				this.setupWarpPortals();
 			} catch (NoClassDefFoundError ncdfe) {
@@ -297,7 +305,7 @@ public class ClickWarp extends JavaPlugin {
 				return;
 			}
 		}
-		
+
 		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
 		new CommandWarp(this, "warp", "Warp command", "warps", "cwarp");
 		new CommandDelwarp(this, "delwarp", "Deletes a warp", "delcwarp");
@@ -330,7 +338,33 @@ public class ClickWarp extends JavaPlugin {
 		pm.registerEvents(new PlayerListener(this), this);
 
 		this.version = this.getDescription().getVersion();
+		this.authors = String.join(" and ", this.getDescription().getAuthors());
 
-		this.log.info("[ClickWarp] Plugin v" + this.version + " by comniemeer enabled.");
+		this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " enabled.");
+
+		Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
+																										// Updater
+																										// but
+																										// just
+																										// do
+																										// a
+																										// version
+																										// check
+		update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
+																				// if
+																				// there
+																				// is
+																				// an
+																				// update
+																				// ready
+																				// for
+																				// us
+		name = updater.getLatestName(); // Get the latest name
+		version_update = updater.getLatestGameVersion(); // Get the latest game
+															// version
+		type = updater.getLatestType(); // Get the latest file's type
+		link = updater.getLatestFileLink(); // Get the latest link
+		file = this.getFile();
+		pl = this;
 	}
 }

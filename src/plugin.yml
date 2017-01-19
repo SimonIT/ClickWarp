@@ -1,6 +1,8 @@
 name: ClickWarp
-version: 1.4.2
-author: comniemeer
+version: 1.4.3
+authors:
+- comniemeer
+- SimonIT
 description: Teleports to a warp by clicking on it in an inventory
 website: http://dev.bukkit.org/server-mods/clickwarp/
 main: de.comniemeer.ClickWarp.ClickWarp

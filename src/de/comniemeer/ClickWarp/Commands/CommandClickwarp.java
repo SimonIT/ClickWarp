@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
+import de.comniemeer.ClickWarp.Updater;
 
 public class CommandClickwarp extends AutoCommand<ClickWarp> {
 
@@ -22,11 +23,22 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 				if (args[0].equalsIgnoreCase("reload")) {
 					this.reload();
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.PluginReloaded));
-				} else if (args.length == 1 && args[0].equalsIgnoreCase("version")) {
+				} else if (args[0].equalsIgnoreCase("version")) {
 					sender.sendMessage("§7[§6ClickWarp§7] Version §6" + plugin.version + "§7 by §6comniemeer");
+				} else if (args[0].equalsIgnoreCase("update")) {
+					new Updater(ClickWarp.pl, ClickWarp.id, ClickWarp.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
+																														// straight
+																														// to
+																														// downloading,
+																														// and
+																														// announce
+																														// progress
+																														// to
+																														// console.
+					sender.sendMessage("The Update is downloading");
 				}
 			} else {
-				sender.sendMessage("§e/clickwarp <version | reload>");
+				sender.sendMessage("§e/clickwarp <version | reload | update>");
 			}
 		} else {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
