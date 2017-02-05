@@ -105,7 +105,7 @@ public class PlayerListener implements Listener {
 						p.playSound(p_.getLocation(), warp_sound, 1, 0);
 						if (use_vehicle) {
 							vec.teleport(p_.getLocation());
-							vec.setPassenger(p);
+							vec.addPassenger(p);
 						}
 						p.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPSuccess)
@@ -117,7 +117,7 @@ public class PlayerListener implements Listener {
 						p.playSound(p_.getLocation(), warp_sound, 1, 0);
 						if (use_vehicle) {
 							vec.teleport(p_.getLocation());
-							vec.setPassenger(p);
+							vec.addPassenger(p);
 						}
 						p.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPSuccess)

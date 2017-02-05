@@ -6,7 +6,7 @@
 #                                         |_|
 # Plugin by comniemeer and SimonIT
 # The configurable command method is from PostCrafter (excellent german video tutorials on YouTube: http://www.youtube.com/user/PostCrafter)
-# Version 1.4.3
+# Version 1.4.4
 # Main configuration File
 
 # Possible languages: en (English), de (Deutsch), fr (French), pt (Portuguese), cz (Czech) or ko (Korean)
@@ -35,10 +35,10 @@ DefaultWarpItem: grass
 EnableInvwarpItem: true
 InvwarpItem: watch
 
-#show Invwarp-menu on /warp
+# Show Invwarp-menu on /warp
 InvwarpInsteadWarp: false
 
-#Warp vehicle with you
+# Warp vehicle with you
 VehicleWarp: true
 
 # If you wish to use an item that teleports you to a warp

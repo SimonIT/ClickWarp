@@ -138,7 +138,7 @@ public class WarpHandler {
 					player.playSound(loc, warp_sound, 1, 0);
 					if (use_vehicle) {
 						vec.teleport(loc);
-						vec.setPassenger(player);
+						vec.addPassenger(player);
 					}
 					player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 					if (excmd != null) {
@@ -185,7 +185,7 @@ public class WarpHandler {
 							player.playSound(loc, warp_sound, 1, 0);
 							if (use_vehicle) {
 								vec.teleport(loc);
-								vec.setPassenger(player);
+								vec.addPassenger(player);
 							}
 							player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 							if (excmd != null) {
@@ -233,7 +233,7 @@ public class WarpHandler {
 						player.playSound(loc, warp_sound, 1, 0);
 						if (use_vehicle) {
 							vec.teleport(loc);
-							vec.setPassenger(player);
+							vec.addPassenger(player);
 						}
 						player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 						if (excmd != null) {
@@ -301,7 +301,7 @@ public class WarpHandler {
 
 								if (_use_vehicle) {
 									_vec.teleport(loc);
-									_vec.setPassenger(player);
+									_vec.addPassenger(player);
 								}
 								player.playEffect(loc, Effect.ENDER_SIGNAL, null);
 								if (_excmd != null) {

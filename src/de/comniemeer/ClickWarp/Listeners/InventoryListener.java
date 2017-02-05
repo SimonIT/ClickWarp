@@ -70,7 +70,7 @@ public class InventoryListener implements Listener {
 								player.playSound(p_.getLocation(), warp_sound, 1, 0);
 								if (use_vehicle) {
 									vec.teleport(p_.getLocation());
-									vec.setPassenger(player);
+									vec.addPassenger(player);
 								}
 								player.playEffect(p_.getLocation(), Effect.ENDER_SIGNAL, null);
 								player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvTPSuccess)
