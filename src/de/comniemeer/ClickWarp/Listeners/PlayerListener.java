@@ -160,7 +160,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		if (player.hasPermission("clickwarp.update") && ClickWarp.update) {
+		if (player.hasPermission("clickwarp.update") && ClickWarp.update && this.plugin.getConfig().getBoolean("auto-update")) {
 			player.sendMessage("An update is available: " + ClickWarp.name + ", a " + ClickWarp.type + " for "
 					+ ClickWarp.version_update + " available at " + ClickWarp.link);
 			// Will look like - An update is available: AntiCheat v1.5.9, a

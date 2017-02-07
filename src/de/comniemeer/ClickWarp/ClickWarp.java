@@ -341,29 +341,32 @@ public class ClickWarp extends JavaPlugin {
 		this.authors = String.join(" and ", this.getDescription().getAuthors());
 
 		this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " enabled.");
-
-		Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
-																										// Updater
-																										// but
-																										// just
-																										// do
-																										// a
-																										// version
-																										// check
-		update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
-																				// if
-																				// there
-																				// is
-																				// an
-																				// update
-																				// ready
-																				// for
-																				// us
-		name = updater.getLatestName(); // Get the latest name
-		version_update = updater.getLatestGameVersion(); // Get the latest game
-															// version
-		type = updater.getLatestType(); // Get the latest file's type
-		link = updater.getLatestFileLink(); // Get the latest link
+		
+		if (getConfig().getBoolean("auto-update")) {
+			Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
+																											// Updater
+																											// but
+																											// just
+																											// do
+																											// a
+																											// version
+																											// check
+			update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
+																					// if
+																					// there
+																					// is
+																					// an
+																					// update
+																					// ready
+																					// for
+																					// us
+			name = updater.getLatestName(); // Get the latest name
+			version_update = updater.getLatestGameVersion(); // Get the latest
+																// game
+																// version
+			type = updater.getLatestType(); // Get the latest file's type
+			link = updater.getLatestFileLink(); // Get the latest link
+		}
 		file = this.getFile();
 		pl = this;
 	}

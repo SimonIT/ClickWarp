@@ -128,7 +128,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 				} else if (args[1].equalsIgnoreCase("excmd")) {
 					if (args[2].equalsIgnoreCase("add")) {
 						boolean result;
-						if (args[4] != null) {
+						if (args.length > 4) {
 							result = this.plugin.methods.addExCmd(str, args[3], Integer.valueOf(args[4]));
 						} else {
 							result = this.plugin.methods.addExCmd(str, args[3]);
@@ -158,7 +158,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 				} else if (args[1].equalsIgnoreCase("cmd")) {
 					if (args[2].equalsIgnoreCase("add")) {
 						boolean result;
-						if (args[4] != null) {
+						if (args.length > 4) {
 							result = this.plugin.methods.addCmd(str, args[3], Integer.valueOf(args[4]));
 						} else {
 							result = this.plugin.methods.addCmd(str, args[3]);

@@ -13,6 +13,8 @@
 # Or add your own language file to the "Languages" folder and type here the name of the file.
 Language: en
 
+auto-update: true
+
 Commands:
   warp: warp
   invwarp: invwarp
