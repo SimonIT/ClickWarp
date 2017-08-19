@@ -30,7 +30,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 						SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
 						meta.setOwner(p.getName());
 						List<String> lore = new ArrayList<String>();
-						meta.setDisplayName("§l" + p.getName());
+						meta.setDisplayName("Â§l" + p.getName());
 						lore.add(p.getUniqueId().toString());
 						meta.setLore(lore);
 						ItemStack itemstack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -42,7 +42,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.OnlyPlayers));
 					}
 				} else {
-					sender.sendMessage("§e/gettpskull <user>");
+					sender.sendMessage("Â§e/gettpskull <user>");
 				}
 			} else {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.NoPermission));

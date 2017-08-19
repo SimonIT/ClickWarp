@@ -58,7 +58,7 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 							SkullMeta meta = (SkullMeta) item.getItemMeta();
 							
 							meta.setOwner(p_.getName());					
-							meta.setDisplayName("§l" + p_.getName());
+							meta.setDisplayName("Â§l" + p_.getName());
 							item.setItemMeta(meta);
 							inv.setItem(slot, item);
 							slot++;
@@ -68,7 +68,7 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 					p.openInventory(inv);
 					plugin.InvHM.put(p.getName(), "InventarTP");
 				} else {
-					sender.sendMessage("§e/invtp");
+					sender.sendMessage("Â§e/invtp");
 				}
 			} else {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));

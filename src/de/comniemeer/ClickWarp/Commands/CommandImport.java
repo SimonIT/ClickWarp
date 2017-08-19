@@ -27,7 +27,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 				if (args[0].equalsIgnoreCase("Essentials") && args[1] != null) {
 					if (args[1].equalsIgnoreCase("all")) {
 						Collection<String> EWarps = this.plugin.IWarps.getList();
-						String warp_names = "ง6";
+						String warp_names = "ยง6";
 						for (String EWarp : EWarps) {
 							Location loc = null;
 							String Name = EWarp;
@@ -44,7 +44,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 								Name = name_new;
 							}
 							this.plugin.methods.setWarp(Name, loc);
-							warp_names += Name + "ง7, ง6";
+							warp_names += Name + "ยง7, ยง6";
 						}
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
 								.replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp_names)));
@@ -83,7 +83,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 				} else if (args[0].equalsIgnoreCase("WarpPortals") && args[1] != null) {
 					if (args[1].equalsIgnoreCase("all")) {
 						Set<String> PortalDests = this.plugin.pdm.getDestinations();
-						String warp_names = "ง6";
+						String warp_names = "ยง6";
 						for (String PortalDest : PortalDests) {
 							CoordsPY coords = null;
 							Location loc = null;
@@ -103,7 +103,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
 								Name = name_new;
 							}
 							this.plugin.methods.setWarp(Name, loc);
-							warp_names += Name + "ง7, ง6";
+							warp_names += Name + "ยง7, ยง6";
 						}
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
 								.replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp_names)));

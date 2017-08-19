@@ -65,7 +65,7 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 
 								ItemMeta meta = itemstack.getItemMeta();
 
-								meta.setDisplayName("§r" + name);
+								meta.setDisplayName("Â§r" + name);
 
 								if (this.plugin.methods.getPreparedLore(list.get(i)) != null) {
 									List<String> lore = this.plugin.methods.getPreparedLore(list.get(i));
@@ -134,7 +134,7 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
 					}
 				} else {
-					sender.sendMessage("§e/invwarp");
+					sender.sendMessage("Â§e/invwarp");
 				}
 			} else {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));

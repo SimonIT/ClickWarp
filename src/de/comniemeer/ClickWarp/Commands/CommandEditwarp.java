@@ -44,7 +44,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 					if (result) {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
 								.replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
-										args[2].replace("_", " ").replace(":", "§r:"))));
+										args[2].replace("_", " ").replace(":", "Â§r:"))));
 					}
 					return true;
 				} else if (args[1].equalsIgnoreCase("price")) {
@@ -102,7 +102,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 					if (result) {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
 								.replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
-										args[2].replace("_", " ").replace(":", "§r:"))));
+										args[2].replace("_", " ").replace(":", "Â§r:"))));
 					} else {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
 					}
@@ -148,9 +148,9 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						}
 					} else if (args[2].equalsIgnoreCase("list")) {
 						List<String> excmds = this.plugin.methods.getExCmds(str);
-						String excmd_names = "§6";
+						String excmd_names = "Â§6";
 						for (String excmd : excmds) {
-							excmd_names += excmd + "§7, §6";
+							excmd_names += excmd + "Â§7, Â§6";
 						}
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
 						sender.sendMessage(excmd_names);
@@ -178,9 +178,9 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						}
 					} else if (args[2].equalsIgnoreCase("list")) {
 						List<String> cmds = this.plugin.methods.getCmds(str);
-						String cmd_names = "§6";
+						String cmd_names = "Â§6";
 						for (String cmd : cmds) {
-							cmd_names += cmd + "§7, §6";
+							cmd_names += cmd + "Â§7, Â§6";
 						}
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
 						sender.sendMessage(cmd_names);
@@ -203,34 +203,34 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
 					}
 				} else {
-					sender.sendMessage("§e/editwarp <warp> name <newname>");
-					sender.sendMessage("§e/editwarp <warp> item <item-ID>");
-					sender.sendMessage("§e/editwarp <warp> lore <Line_1:Line_2:...>");
-					sender.sendMessage("§e/editwarp <warp> price <Price>");
-					sender.sendMessage("§e/editwarp <warp> message <Message>");
-					sender.sendMessage("§e/editwarp <warp> sound <Sound>");
-					sender.sendMessage("§e/editwarp <warp> mindist <Distance>");
-					sender.sendMessage("§e/editwarp <warp> cmd add <cmd>");
-					sender.sendMessage("§e/editwarp <warp> cmd remove <cmd>");
-					sender.sendMessage("§e/editwarp <warp> cmd list");
-					sender.sendMessage("§e/editwarp <warp> excmd add <cmd>");
-					sender.sendMessage("§e/editwarp <warp> excmd remove <cmd>");
-					sender.sendMessage("§e/editwarp <warp> excmd list");
+					sender.sendMessage("Â§e/editwarp <warp> name <newname>");
+					sender.sendMessage("Â§e/editwarp <warp> item <item-ID>");
+					sender.sendMessage("Â§e/editwarp <warp> lore <Line_1:Line_2:...>");
+					sender.sendMessage("Â§e/editwarp <warp> price <Price>");
+					sender.sendMessage("Â§e/editwarp <warp> message <Message>");
+					sender.sendMessage("Â§e/editwarp <warp> sound <Sound>");
+					sender.sendMessage("Â§e/editwarp <warp> mindist <Distance>");
+					sender.sendMessage("Â§e/editwarp <warp> cmd add <cmd>");
+					sender.sendMessage("Â§e/editwarp <warp> cmd remove <cmd>");
+					sender.sendMessage("Â§e/editwarp <warp> cmd list");
+					sender.sendMessage("Â§e/editwarp <warp> excmd add <cmd>");
+					sender.sendMessage("Â§e/editwarp <warp> excmd remove <cmd>");
+					sender.sendMessage("Â§e/editwarp <warp> excmd list");
 				}
 			} else {
-				sender.sendMessage("§e/editwarp <warp> name <newname>");
-				sender.sendMessage("§e/editwarp <warp> item <item-ID>");
-				sender.sendMessage("§e/editwarp <warp> lore <Line_1:Line_2:...>");
-				sender.sendMessage("§e/editwarp <warp> price <Price>");
-				sender.sendMessage("§e/editwarp <warp> message <Message>");
-				sender.sendMessage("§e/editwarp <warp> sound <Sound>");
-				sender.sendMessage("§e/editwarp <warp> mindist <Distance>");
-				sender.sendMessage("§e/editwarp <warp> cmd add <cmd>");
-				sender.sendMessage("§e/editwarp <warp> cmd remove <cmd>");
-				sender.sendMessage("§e/editwarp <warp> cmd list");
-				sender.sendMessage("§e/editwarp <warp> excmd add <cmd>");
-				sender.sendMessage("§e/editwarp <warp> excmd remove <cmd>");
-				sender.sendMessage("§e/editwarp <warp> excmd list");
+				sender.sendMessage("Â§e/editwarp <warp> name <newname>");
+				sender.sendMessage("Â§e/editwarp <warp> item <item-ID>");
+				sender.sendMessage("Â§e/editwarp <warp> lore <Line_1:Line_2:...>");
+				sender.sendMessage("Â§e/editwarp <warp> price <Price>");
+				sender.sendMessage("Â§e/editwarp <warp> message <Message>");
+				sender.sendMessage("Â§e/editwarp <warp> sound <Sound>");
+				sender.sendMessage("Â§e/editwarp <warp> mindist <Distance>");
+				sender.sendMessage("Â§e/editwarp <warp> cmd add <cmd>");
+				sender.sendMessage("Â§e/editwarp <warp> cmd remove <cmd>");
+				sender.sendMessage("Â§e/editwarp <warp> cmd list");
+				sender.sendMessage("Â§e/editwarp <warp> excmd add <cmd>");
+				sender.sendMessage("Â§e/editwarp <warp> excmd remove <cmd>");
+				sender.sendMessage("Â§e/editwarp <warp> excmd list");
 			}
 		} else {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));

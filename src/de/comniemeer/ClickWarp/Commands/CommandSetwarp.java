@@ -65,9 +65,9 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
 						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
 					}
 				} else {
-					sender.sendMessage("§e/setwarp <name>");
-					sender.sendMessage("§e/setwarp <name> <item>");
-					sender.sendMessage("§e/setwarp <name> <item> <price>");
+					sender.sendMessage("Â§e/setwarp <name>");
+					sender.sendMessage("Â§e/setwarp <name> <item>");
+					sender.sendMessage("Â§e/setwarp <name> <item> <price>");
 				}
 			} else {
 				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));

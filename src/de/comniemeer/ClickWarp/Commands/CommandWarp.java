@@ -33,12 +33,12 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
 					} else {
 
-						String warp_names = "ง6";
+						String warp_names = "ยง6";
 
 						for (int i = 0; i < warps.size(); i++) {
 
 							if (i + 1 < warps.size()) {
-								warp_names = warp_names + warps.get(i) + "ง7, ง6";
+								warp_names = warp_names + warps.get(i) + "ยง7, ยง6";
 							}
 						}
 						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
@@ -155,10 +155,10 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 				}
 			}
 		} else {
-			sender.sendMessage("งe/warps");
-			sender.sendMessage("งe/warp <warp>");
-			sender.sendMessage("งe/warp <warp> <user>");
-			sender.sendMessage("งe/warp <warp> getitem");
+			sender.sendMessage("ยงe/warps");
+			sender.sendMessage("ยงe/warp <warp>");
+			sender.sendMessage("ยงe/warp <warp> <user>");
+			sender.sendMessage("ยงe/warp <warp> getitem");
 		}
 
 		return true;
