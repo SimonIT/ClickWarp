@@ -24,7 +24,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
                     this.reload();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.PluginReloaded));
                 } else if (args[0].equalsIgnoreCase("version")) {
-                    sender.sendMessage("§7[§6ClickWarp§7] Version §6" + plugin.version + "§7 by §6comniemeer");
+                    sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + "ClickWarp" + ChatColor.GRAY + "] Version " + ChatColor.GOLD + plugin.version + ChatColor.GRAY + " by " + ChatColor.GOLD + plugin.authors);
                 } else if (args[0].equalsIgnoreCase("update")) {
                     new Updater(ClickWarp.pl, ClickWarp.id, ClickWarp.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
                     // straight
@@ -38,7 +38,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
                     sender.sendMessage("The Update is downloading");
                 }
             } else {
-                sender.sendMessage("§e/clickwarp <version | reload | update>");
+                sender.sendMessage(ChatColor.YELLOW + "/clickwarp <version | reload | update>");
             }
         } else {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -73,7 +73,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
         return null;
     }
 
-    public void reload() {
+    private void reload() {
         plugin.reloadConfig();
 
         plugin.en.load();

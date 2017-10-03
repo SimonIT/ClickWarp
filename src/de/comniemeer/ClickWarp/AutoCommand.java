@@ -2,6 +2,7 @@ package de.comniemeer.ClickWarp;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -13,71 +14,69 @@ import org.bukkit.plugin.java.JavaPlugin;
 public abstract class AutoCommand<P extends JavaPlugin> extends Command {
 
 	/*
-	 * AutoCommand method by PostCrafter Visit his YouTube channel:
+     * AutoCommand method by PostCrafter Visit his YouTube channel:
 	 * http://www.youtube.com/PostCrafter Visit his forum:
 	 * http://postcrafter.de/
 	 */
 
-	private static String VERSION;
+    private static String VERSION;
 
-	static {
-		String path = Bukkit.getServer().getClass().getPackage().getName();
+    static {
+        String path = Bukkit.getServer().getClass().getPackage().getName();
 
-		AutoCommand.VERSION = path.substring(path.lastIndexOf(".") + 1, path.length());
+        AutoCommand.VERSION = path.substring(path.lastIndexOf(".") + 1, path.length());
 
-		System.out.println("[ClickWarp] AutoCommand hook for Bukkit " + AutoCommand.VERSION + " by PostCrafter");
-		System.out.println(
-				"[ClickWarp] Visit his YouTube channel for very good german video tutorials: http://www.youtube.com/PostCrafter");
-		System.out.println("[ClickWarp] Visit his german forum for help with Bukkit-plugins: http://postcrafter.de/");
-	}
+        System.out.println("[ClickWarp] AutoCommand hook for Bukkit " + AutoCommand.VERSION + " by PostCrafter");
+        System.out.println(
+                "[ClickWarp] Visit his YouTube channel for very good german video tutorials: http://www.youtube.com/PostCrafter");
+        System.out.println("[ClickWarp] Visit his german forum for help with Bukkit-plugins: http://postcrafter.de/");
+    }
 
-	protected final P plugin;
-	protected final String command;
+    protected final P plugin;
+    protected final String command;
 
-	public AutoCommand(P plugin, String command, String description, String... aliases) {
-		super(command);
-		this.plugin = plugin;
-		this.command = command;
+    public AutoCommand(P plugin, String command, String description, String... aliases) {
+        super(command);
+        this.plugin = plugin;
+        this.command = command;
 
-		super.setDescription(description);
-		List<String> aliasList = new ArrayList<String>();
-		for (String alias : aliases) {
-			aliasList.add(alias);
-		}
-		super.setAliases(aliasList);
+        super.setDescription(description);
+        List<String> aliasList = new ArrayList<String>();
+        aliasList.addAll(Arrays.asList(aliases));
+        super.setAliases(aliasList);
 
-		this.register();
-	}
+        this.register();
+    }
 
-	public void register() {
-		try {
-			Field f = Class.forName("org.bukkit.craftbukkit." + AutoCommand.VERSION + ".CraftServer")
-					.getDeclaredField("commandMap");
-			f.setAccessible(true);
+    public void register() {
+        try {
+            Field f = Class.forName("org.bukkit.craftbukkit." + AutoCommand.VERSION + ".CraftServer")
+                    .getDeclaredField("commandMap");
+            f.setAccessible(true);
 
-			CommandMap map = (CommandMap) f.get(Bukkit.getServer());
-			map.register(this.plugin.getName(), this);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
+            CommandMap map = (CommandMap) f.get(Bukkit.getServer());
+            map.register(this.plugin.getName(), this);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+    }
 
-	public abstract boolean execute(CommandSender cs, String label, String[] args);
+    public abstract boolean execute(CommandSender cs, String label, String[] args);
 
-	public abstract List<String> tabComplete(CommandSender cs, String label, String[] args);
+    public abstract List<String> tabComplete(CommandSender cs, String label, String[] args);
 
-	public String buildString(String[] args, int start) {
-		String str = "";
-		if (args.length > start) {
-			str += args[start];
-			for (int i = start + 1; i < args.length; i++) {
-				str += " " + args[i];
-			}
-		}
-		return str;
-	}
+    public String buildString(String[] args, int start) {
+        StringBuilder str = new StringBuilder();
+        if (args.length > start) {
+            str.append(args[start]);
+            for (int i = start + 1; i < args.length; i++) {
+                str.append(" ").append(args[i]);
+            }
+        }
+        return str.toString();
+    }
 
-	public P getPlugin() {
-		return this.plugin;
-	}
+    public P getPlugin() {
+        return this.plugin;
+    }
 }

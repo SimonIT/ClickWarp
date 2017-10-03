@@ -30,7 +30,6 @@ public class SignListener implements Listener {
 					e.setCancelled(true);
 					e.getBlock().breakNaturally();
 					player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSpecifyWarp));
-					return;
 				} else {
 					String _line = e.getLine(1);
 					if (!this.plugin.methods.existWarp(_line)) {
@@ -48,13 +47,11 @@ public class SignListener implements Listener {
 					e.setLine(1, name);
 					player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSuccess)
 							.replace("{warp}", name));
-					return;
 				}
 			} else {
 				e.setCancelled(true);
 				e.getBlock().breakNaturally();
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
-				return;
 			}
 		}
 	}
@@ -77,11 +74,9 @@ public class SignListener implements Listener {
 						String str = ChatColor.stripColor(sign.getLine(1).toLowerCase());
 
 						plugin.warphandler.handleWarp(player, str, sign.getLine(1), true);
-						return;
 					} else {
 						event.setCancelled(true);
 						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
-						return;
 					}
 				}
 			}

@@ -46,7 +46,7 @@ public class LanguageCzech {
 	private String DelayTeleportCanceled = "&cPortovani bylo zruseno, pohl ses!";
 	private String PluginReloaded = "&7[&6ClickWarp&7] Plugin znovu nacten.";
 	private String ErrorFileSaving = "&cError pri ukladani, zkontroluj konzoli!";
-	private String NoPermission = "&cNa tohle nem·s pr·vo!";
+	private String NoPermission = "&cNa tohle nem√°s pr√°vo!";
 	private String OnlyPlayers = "&cJenom hrac muze vykonat tuhle akci.";
 
 	private String NoWarpsPath = "Warp.NoWarps";

@@ -23,6 +23,7 @@ import de.comniemeer.ClickWarp.Messages.LanguageGerman;
 import de.comniemeer.ClickWarp.Messages.LanguageKorean;
 import de.comniemeer.ClickWarp.Messages.LanguagePortuguese;
 import de.comniemeer.ClickWarp.Messages.Messages;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,320 +55,320 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 
 public class ClickWarp extends JavaPlugin {
 
-	public final Logger log = Logger.getLogger("Minecraft");
-	public String version;
-	public String authors;
+    public final Logger log = Logger.getLogger("Minecraft");
+    public String version;
+    public String authors;
 
-	public Messages msg;
-	public LanguageEnglish en;
-	public LanguageGerman de;
-	public LanguageFrench fr;
-	public LanguagePortuguese pt;
-	public LanguageCzech cz;
-	public LanguageKorean ko;
+    public Messages msg;
+    public LanguageEnglish en;
+    public LanguageGerman de;
+    public LanguageFrench fr;
+    public LanguagePortuguese pt;
+    public LanguageCzech cz;
+    public LanguageKorean ko;
 
-	public WarpHandler warphandler;
-	public Methods methods;
+    public WarpHandler warphandler;
+    public Methods methods;
 
-	public HashMap<String, String> InvHM = new HashMap<String, String>();
-	public HashMap<String, Boolean> warp_delay = new HashMap<String, Boolean>();
-	public HashMap<List<String>, List<String>> cmd = new HashMap<List<String>, List<String>>();
-	public int delaytask;
+    public HashMap<String, String> InvHM = new HashMap<String, String>();
+    public HashMap<String, Boolean> warp_delay = new HashMap<String, Boolean>();
+    public HashMap<List<String>, List<String>> cmd = new HashMap<List<String>, List<String>>();
+    public int delaytask;
 
-	public Permission permission = null;
-	public Economy economy = null;
-	public Warps IWarps = null;
-	public WGCustomFlagsPlugin wgcf = null;
-	public WorldGuardPlugin wg = null;
-	public PortalDestManager pdm = null;
+    public Permission permission = null;
+    public Economy economy = null;
+    public Warps IWarps = null;
+    public WGCustomFlagsPlugin wgcf = null;
+    public WorldGuardPlugin wg = null;
+    public PortalDestManager pdm = null;
 
-	public StateFlag Warp_Flag = new StateFlag("warp", true);
+    //public StateFlag Warp_Flag = new StateFlag("warp", true);
 
-	public static boolean update = false;
-	public static String name = "";
-	public static ReleaseType type = null;
-	public static String version_update = "";
-	public static String link = "";
-	public static final int id = 53812;
-	public static File file = null;
-	public static Plugin pl = null;
+    public static boolean update = false;
+    public static String name = "";
+    public static ReleaseType type = null;
+    public static String version_update = "";
+    public static String link = "";
+    public static final int id = 53812;
+    public static File file = null;
+    public static Plugin pl = null;
 
-	private boolean setupEconomy() {
-		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-			return false;
-		}
-		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-		if (rsp == null) {
-			return false;
-		}
-		economy = rsp.getProvider();
-		return economy != null;
-	}
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return economy != null;
+    }
 
-	private boolean setupPermissions() {
-		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-		permission = rsp.getProvider();
-		return permission != null;
-	}
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+        permission = rsp.getProvider();
+        return permission != null;
+    }
 
-	private boolean setupIWarps() {
-		Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
-		if ((ess == null) || (!(ess instanceof Essentials))) {
-			return false;
-		}
-		this.IWarps = ((Essentials) ess).getWarps();
+    private boolean setupIWarps() {
+        Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
+        if ((ess == null) || (!(ess instanceof Essentials))) {
+            return false;
+        }
+        this.IWarps = ((Essentials) ess).getWarps();
 
-		return true;
-	}
+        return true;
+    }
 
-	private boolean setupWarpPortals() {
-		Plugin wapo = getServer().getPluginManager().getPlugin("WarpPortals");
-		if ((wapo == null) || (!(wapo instanceof PortalPlugin))) {
-			return false;
-		}
-		this.pdm = ((PortalPlugin) wapo).mPortalManager.mPortalDestManager;
+    private boolean setupWarpPortals() {
+        Plugin wapo = getServer().getPluginManager().getPlugin("WarpPortals");
+        if ((wapo == null) || (!(wapo instanceof PortalPlugin))) {
+            return false;
+        }
+        this.pdm = ((PortalPlugin) wapo).mPortalManager.mPortalDestManager;
 
-		return true;
-	}
+        return true;
+    }
 
-	private WGCustomFlagsPlugin getWGCustomFlags() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
+    private WGCustomFlagsPlugin getWGCustomFlags() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
 
-		if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
-			return null;
-		}
+        if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
+            return null;
+        }
 
-		return (WGCustomFlagsPlugin) plugin;
-	}
+        return (WGCustomFlagsPlugin) plugin;
+    }
 
-	private WorldGuardPlugin getWorldGuard() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+    private WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
-		// WorldGuard may not be loaded
-		if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-			return null; // Maybe you want throw an exception instead
-		}
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null; // Maybe you want throw an exception instead
+        }
 
-		return (WorldGuardPlugin) plugin;
-	}
+        return (WorldGuardPlugin) plugin;
+    }
 
-	public void onDisable() {
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (this.InvHM.containsKey(p.getName())) {
-				p.closeInventory();
-				this.InvHM.remove(p.getName());
-			}
-		}
+    public void onDisable() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (this.InvHM.containsKey(p.getName())) {
+                p.closeInventory();
+                this.InvHM.remove(p.getName());
+            }
+        }
 
-		this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " disabled.");
-	}
+        this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " disabled.");
+    }
 
-	public void onEnable() {
-		this.saveDefaultConfig();
+    public void onEnable() {
+        this.saveDefaultConfig();
 
-		this.en = new LanguageEnglish(this);
-		this.de = new LanguageGerman(this);
-		this.fr = new LanguageFrench(this);
-		this.pt = new LanguagePortuguese(this);
-		this.cz = new LanguageCzech(this);
-		this.ko = new LanguageKorean(this);
-		this.msg = new Messages(this);
+        this.en = new LanguageEnglish(this);
+        this.de = new LanguageGerman(this);
+        this.fr = new LanguageFrench(this);
+        this.pt = new LanguagePortuguese(this);
+        this.cz = new LanguageCzech(this);
+        this.ko = new LanguageKorean(this);
+        this.msg = new Messages(this);
 
-		this.warphandler = new WarpHandler(this);
-		this.methods = new Methods(this);
+        this.warphandler = new WarpHandler(this);
+        this.methods = new Methods(this);
 
-		this.en.load();
-		this.de.load();
-		this.fr.load();
-		this.pt.load();
-		this.cz.load();
-		this.ko.load();
-		this.msg.load();
+        this.en.load();
+        this.de.load();
+        this.fr.load();
+        this.pt.load();
+        this.cz.load();
+        this.ko.load();
+        this.msg.load();
 
-		try {
-			Metrics metrics = new Metrics(this);
+        try {
+            Metrics metrics = new Metrics(this);
 
-			metrics.start();
-			this.log.info("[ClickWarp] Metrics started!");
-		} catch (IOException e) {
-			this.log.severe("[ClickWarp] Failed to submit the stats!");
-		}
+            metrics.start();
+            this.log.info("[ClickWarp] Metrics started!");
+        } catch (IOException e) {
+            this.log.severe("[ClickWarp] Failed to submit the stats!");
+        }
 
-		File warps_folder = new File("plugins/ClickWarp/Warps");
+        File warps_folder = new File("plugins/ClickWarp/Warps");
 
-		if (warps_folder.isDirectory()) {
-			File[] warps = warps_folder.listFiles();
+        if (warps_folder.isDirectory()) {
+            File[] warps = warps_folder.listFiles();
 
-			final int files = warps.length;
+            final int files = warps.length;
 
-			if (files != 0) {
-				try {
-					Metrics metrics = new Metrics(this);
+            if (files != 0) {
+                try {
+                    Metrics metrics = new Metrics(this);
 
-					Graph Warps = metrics.createGraph("Warps");
+                    Graph Warps = metrics.createGraph("Warps");
 
-					Warps.addPlotter(new Metrics.Plotter("Warps") {
-						public int getValue() {
-							return files;
-						}
-					});
+                    Warps.addPlotter(new Metrics.Plotter("Warps") {
+                        public int getValue() {
+                            return files;
+                        }
+                    });
 
-					metrics.start();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				for (File warp : warps) {
-					FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
+                    metrics.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                for (File warp : warps) {
+                    FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
 
-					String str = warp.getName().replace(".yml", "");
-					List<String> infos = new ArrayList<String>();
-					infos.add(cfg.getString(str + ".name"));
-					if (cfg.get(str + ".price") != null) {
-						Double price = cfg.getDouble(str + ".price");
-						String priceformat = ChatColor.translateAlternateColorCodes('&',
-								getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
+                    String str = warp.getName().replace(".yml", "");
+                    List<String> infos = new ArrayList<String>();
+                    infos.add(cfg.getString(str + ".name"));
+                    if (cfg.get(str + ".price") != null) {
+                        Double price = cfg.getDouble(str + ".price");
+                        String priceformat = ChatColor.translateAlternateColorCodes('&',
+                                getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
 
-						if (price == 1) {
-							infos.add(priceformat.replace("{currency}",
-									getConfig().getString("Economy.CurrencySingular")));
-						} else {
-							infos.add(
-									priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
-						}
-					} else {
-						infos.add("free");
-					}
-					if (cfg.get(str + ".lore") != null) {
-						String description = cfg.getString(str + ".lore");
-						description = description.replace(":", " ");
-						description = description.replace("_", " ");
-						infos.add(description);
-					} else {
-						infos.add("");
-					}
-					cmd.put(infos, cfg.getStringList(str + ".cmd"));
-				}
-			}
+                        if (price == 1) {
+                            infos.add(priceformat.replace("{currency}",
+                                    getConfig().getString("Economy.CurrencySingular")));
+                        } else {
+                            infos.add(
+                                    priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
+                        }
+                    } else {
+                        infos.add("free");
+                    }
+                    if (cfg.get(str + ".lore") != null) {
+                        String description = cfg.getString(str + ".lore");
+                        description = description.replace(":", " ");
+                        description = description.replace("_", " ");
+                        infos.add(description);
+                    } else {
+                        infos.add("");
+                    }
+                    cmd.put(infos, cfg.getStringList(str + ".cmd"));
+                }
+            }
 
-		}
+        }
 
-		Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
-		Boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
-		Boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
-		Boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
+        Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
+        Boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
+        Boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
+        Boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
 
-		if (enableEconomy.booleanValue()) {
-			try {
-				this.setupEconomy();
-				this.setupPermissions();
-			} catch (NoClassDefFoundError ncdfe) {
-				this.log.severe("[ClickWarp] Failed to load Vault!");
-				this.log.severe("[ClickWarp] Install Vault or set \"EnableEconomy\" in the config.yml to \"false\"");
-				this.getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
-		}
+        if (enableEconomy.booleanValue()) {
+            try {
+                this.setupEconomy();
+                this.setupPermissions();
+            } catch (NoClassDefFoundError ncdfe) {
+                this.log.severe("[ClickWarp] Failed to load Vault!");
+                this.log.severe("[ClickWarp] Install Vault or set \"EnableEconomy\" in the config.yml to \"false\"");
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
 
-		if (enableIWarps.booleanValue()) {
-			try {
-				this.setupIWarps();
-			} catch (NoClassDefFoundError ncdfe) {
-				this.log.severe("[ClickWarp] Failed to load Essentials!");
-				this.log.severe(
-						"[ClickWarp] Install Essentials or set \"EnableEssentials\" in the config.yml to \"false\"");
-				this.getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
-		}
+        if (enableIWarps.booleanValue()) {
+            try {
+                this.setupIWarps();
+            } catch (NoClassDefFoundError ncdfe) {
+                this.log.severe("[ClickWarp] Failed to load Essentials!");
+                this.log.severe(
+                        "[ClickWarp] Install Essentials or set \"EnableEssentials\" in the config.yml to \"false\"");
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
 
-		if (enableFlags) {
-			try {
-				wg = this.getWorldGuard();
-				wgcf = this.getWGCustomFlags();
-			} catch (NoClassDefFoundError ncdfe) {
-				this.log.severe("[ClickWarp] Failed to load WGCustomFlags or WorldGuard!");
-				this.log.severe("[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
-				this.getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
-			wgcf.addCustomFlag(Warp_Flag);
+        if (enableFlags) {
+            try {
+                wg = this.getWorldGuard();
+                wgcf = this.getWGCustomFlags();
+            } catch (NoClassDefFoundError ncdfe) {
+                this.log.severe("[ClickWarp] Failed to load WGCustomFlags or WorldGuard!");
+                this.log.severe("[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+            //wgcf.addCustomFlag(Warp_Flag);
 
-		}
+        }
 
-		if (enableWarpPortals) {
-			try {
-				this.setupWarpPortals();
-			} catch (NoClassDefFoundError ncdfe) {
-				this.log.severe("[ClickWarp] Failed to load WarpPortals!");
-				this.log.severe(
-						"[ClickWarp] Install Essentials or set \"EnableWarpPortals\" in the config.yml to \"false\"");
-				this.getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
-		}
+        if (enableWarpPortals) {
+            try {
+                this.setupWarpPortals();
+            } catch (NoClassDefFoundError ncdfe) {
+                this.log.severe("[ClickWarp] Failed to load WarpPortals!");
+                this.log.severe(
+                        "[ClickWarp] Install Essentials or set \"EnableWarpPortals\" in the config.yml to \"false\"");
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
 
-		new CommandClickwarp(this, "clickwarp", "ClickWarp command");
-		new CommandWarp(this, "warp", "Warp command", "warps", "cwarp");
-		new CommandDelwarp(this, "delwarp", "Deletes a warp", "delcwarp");
-		new CommandEditwarp(this, "editwarp", "Allows to edit warps");
-		new CommandInvtp(this, "invtp", "Inventory-Teleport command", "invteleport");
-		new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
-		new CommandSetwarp(this, "setwarp", "Sets a warp at the current location", "setcwarp");
-		new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
-		new CommandImport(this, "import", "Import the Warps from other Plugins.");
-		new CommandExport(this, "export", "Export the Warps to other Plugins.");
-		for (Entry<List<String>, List<String>> entry : cmd.entrySet()) {
-			List<String> key = entry.getKey();
-			List<String> value = entry.getValue();
+        new CommandClickwarp(this, "clickwarp", "ClickWarp command");
+        new CommandWarp(this, "warp", "Warp command", "warps", "cwarp");
+        new CommandDelwarp(this, "delwarp", "Deletes a warp", "delcwarp");
+        new CommandEditwarp(this, "editwarp", "Allows to edit warps");
+        new CommandInvtp(this, "invtp", "Inventory-Teleport command", "invteleport");
+        new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
+        new CommandSetwarp(this, "setwarp", "Sets a warp at the current location", "setcwarp");
+        new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
+        new CommandImport(this, "import", "Import the Warps from other Plugins.");
+        new CommandExport(this, "export", "Export the Warps to other Plugins.");
+        for (Entry<List<String>, List<String>> entry : cmd.entrySet()) {
+            List<String> key = entry.getKey();
+            List<String> value = entry.getValue();
 
-			if (value.size() > 0) {
-				String mainCommand = value.get(0);
-				value.remove(0);
-				String[] alias = value.toArray(new String[value.size()]);
+            if (value.size() > 0) {
+                String mainCommand = value.get(0);
+                value.remove(0);
+                String[] alias = value.toArray(new String[value.size()]);
 
-				new CustomCommands(this, mainCommand,
-						ChatColor.translateAlternateColorCodes('&', getConfig().getString("Sign.FirstLine")) + " "
-								+ key.get(0) + " | " + key.get(1) + " | " + key.get(2),
-						alias);
-			}
-		}
+                new CustomCommands(this, mainCommand,
+                        ChatColor.translateAlternateColorCodes('&', getConfig().getString("Sign.FirstLine")) + " "
+                                + key.get(0) + " | " + key.get(1) + " | " + key.get(2),
+                        alias);
+            }
+        }
 
-		PluginManager pm = this.getServer().getPluginManager();
-		pm.registerEvents(new InventoryListener(this), this);
-		pm.registerEvents(new SignListener(this), this);
-		pm.registerEvents(new PlayerListener(this), this);
+        PluginManager pm = this.getServer().getPluginManager();
+        pm.registerEvents(new InventoryListener(this), this);
+        pm.registerEvents(new SignListener(this), this);
+        pm.registerEvents(new PlayerListener(this), this);
 
-		this.version = this.getDescription().getVersion();
-		this.authors = String.join(" and ", this.getDescription().getAuthors());
+        this.version = this.getDescription().getVersion();
+        this.authors = String.join(" and ", this.getDescription().getAuthors());
 
-		this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " enabled.");
-		
-		if (getConfig().getBoolean("auto-update")) {
-			Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
-																											// Updater
-																											// but
-																											// just
-																											// do
-																											// a
-																											// version
-																											// check
-			update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
-																					// if
-																					// there
-																					// is
-																					// an
-																					// update
-																					// ready
-																					// for
-																					// us
-			name = updater.getLatestName(); // Get the latest name
-			version_update = updater.getLatestGameVersion(); // Get the latest
-																// game
-																// version
-			type = updater.getLatestType(); // Get the latest file's type
-			link = updater.getLatestFileLink(); // Get the latest link
-		}
-		file = this.getFile();
-		pl = this;
-	}
+        this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " enabled.");
+
+        if (getConfig().getBoolean("auto-update")) {
+            Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
+            // Updater
+            // but
+            // just
+            // do
+            // a
+            // version
+            // check
+            update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
+            // if
+            // there
+            // is
+            // an
+            // update
+            // ready
+            // for
+            // us
+            name = updater.getLatestName(); // Get the latest name
+            version_update = updater.getLatestGameVersion(); // Get the latest
+            // game
+            // version
+            type = updater.getLatestType(); // Get the latest file's type
+            link = updater.getLatestFileLink(); // Get the latest link
+        }
+        file = this.getFile();
+        pl = this;
+    }
 }

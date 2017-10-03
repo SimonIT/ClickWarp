@@ -56,8 +56,7 @@ public class Methods {
         if (!(file.exists())) {
             return null;
         }
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-        return cfg;
+        return YamlConfiguration.loadConfiguration(file);
     }
 
     public boolean setWarp(String name, Location loc) {
@@ -108,12 +107,7 @@ public class Methods {
     public boolean delWarp(String name) {
         File file = new File(plugin.getDataFolder() + "/Warps", name.toLowerCase() + ".yml");
 
-        if (file.exists()) {
-            file.delete();
-            return true;
-        } else {
-            return false;
-        }
+        return file.exists() && file.delete();
     }
 
     public List<String> getWarps() {
@@ -123,10 +117,10 @@ public class Methods {
 
         List<String> list = new ArrayList<String>();
 
-        if (warps.length > 0) {
-            for (int i = 0; i < warps.length; i++) {
-                FileConfiguration cfg = YamlConfiguration.loadConfiguration(warps[i]);
-                String Name = cfg.getString(warps[i].getName().replace(".yml", "") + ".name");
+        if (warps != null && warps.length > 0) {
+            for (File warp : warps) {
+                FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
+                String Name = cfg.getString(warp.getName().replace(".yml", "") + ".name");
                 list.add(Name);
             }
 
@@ -138,10 +132,7 @@ public class Methods {
         String str = warp.toLowerCase();
         File file = new File("plugins/ClickWarp/Warps", str + ".yml");
 
-        if (!(file.exists())) {
-            return false;
-        }
-        return true;
+        return file.exists();
     }
 
     public boolean setName(String warp, String name) {
@@ -206,8 +197,6 @@ public class Methods {
 
         FileConfiguration cfg = getWarpConfiguartion(warp);
 
-        variant = 0;
-
         Material item_name;
 
         try {
@@ -227,8 +216,7 @@ public class Methods {
     }
 
     public ItemStack getItemStack(String warp) {
-        ItemStack itemstack = new ItemStack(getItemMaterial(warp), 1, getItemVariant(warp));
-        return itemstack;
+        return new ItemStack(getItemMaterial(warp), 1, getItemVariant(warp));
     }
 
     public Material getItemMaterial(String warp) {
@@ -251,8 +239,7 @@ public class Methods {
                 item__ = cfg.getString(str + ".item").toUpperCase();
             }
         }
-        Material material = Material.getMaterial(item__);
-        return material;
+        return Material.getMaterial(item__);
 
     }
 
@@ -343,7 +330,7 @@ public class Methods {
         FileConfiguration cfg = getWarpConfiguartion(warp);
         Double price = (double) 0;
         if (cfg.get(str + ".lore") != null) {
-            price = Double.valueOf(cfg.getDouble(str + ".price"));
+            price = cfg.getDouble(str + ".price");
         }
         return price;
     }
@@ -371,13 +358,13 @@ public class Methods {
     public List<String> getPreparedMessage(String warp) {
         String str = warp.toLowerCase();
         FileConfiguration cfg = getWarpConfiguartion(warp);
-        String[] message_lines_orig = null;
+        String[] message_lines_orig;
         List<String> message_lines = new ArrayList<String>();
         if (cfg.get(str + ".message") != null) {
             message_lines_orig = cfg.getString(str + ".message").split(":");
-            for (int l = 0; l < message_lines_orig.length; l++) {
+            for (String aMessage_lines_orig : message_lines_orig) {
                 message_lines
-                        .add(ChatColor.translateAlternateColorCodes('&', message_lines_orig[l].replaceAll("_", " ")));
+                        .add(ChatColor.translateAlternateColorCodes('&', aMessage_lines_orig.replaceAll("_", " ")));
             }
 
         }
@@ -390,7 +377,6 @@ public class Methods {
         String message = null;
         if (cfg.get(str + ".message") != null) {
             message = cfg.getString(str + ".message");
-
         }
         return message;
     }
@@ -456,7 +442,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> excmds = new ArrayList<String>();
+        List<String> excmds;
         excmds = cfg.getStringList(str + ".excmd");
 
         excmds.add(cmd);
@@ -480,7 +466,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> excmds = new ArrayList<String>();
+        List<String> excmds;
         excmds = cfg.getStringList(str + ".excmd");
 
         excmds.add(priority, cmd);
@@ -504,7 +490,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> excmds = new ArrayList<String>();
+        List<String> excmds;
         excmds = cfg.getStringList(str + ".excmd");
 
         if (excmds.contains(cmd)) {
@@ -531,7 +517,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> excmds = new ArrayList<String>();
+        List<String> excmds;
         excmds = cfg.getStringList(str + ".excmd");
 
         return excmds;
@@ -566,7 +552,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> cmds = new ArrayList<String>();
+        List<String> cmds;
         cmds = cfg.getStringList(str + ".cmd");
 
         cmds.add(cmd);
@@ -590,7 +576,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> cmds = new ArrayList<String>();
+        List<String> cmds;
         cmds = cfg.getStringList(str + ".cmd");
 
         cmds.add(priority, cmd);
@@ -614,7 +600,7 @@ public class Methods {
         }
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 
-        List<String> cmds = new ArrayList<String>();
+        List<String> cmds;
         cmds = cfg.getStringList(str + ".cmd");
 
         if (cmds.contains(cmd)) {
@@ -636,7 +622,7 @@ public class Methods {
         String str = warp.toLowerCase();
         FileConfiguration cfg = getWarpConfiguartion(warp);
 
-        List<String> cmds = new ArrayList<String>();
+        List<String> cmds;
         cmds = cfg.getStringList(str + ".cmd");
 
         return cmds;
@@ -665,7 +651,7 @@ public class Methods {
     public Double getMinDistance(String warp) {
         String str = warp.toLowerCase();
         FileConfiguration cfg = getWarpConfiguartion(warp);
-        double minDistance = (double) 1;
+        double minDistance;
         if (cfg.get(str + ".mindist") != null) {
             minDistance = cfg.getDouble(str + ".mindist");
         } else {

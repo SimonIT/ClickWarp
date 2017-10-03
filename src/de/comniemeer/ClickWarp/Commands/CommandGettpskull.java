@@ -17,67 +17,67 @@ import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
 
 public class CommandGettpskull extends AutoCommand<ClickWarp> {
-	public CommandGettpskull(ClickWarp plugin, String cmd, String description) {
-		super(plugin, cmd, description);
-	}
+    public CommandGettpskull(ClickWarp plugin, String cmd, String description) {
+        super(plugin, cmd, description);
+    }
 
-	public boolean execute(CommandSender sender, String label, String[] args) {
-		if (this.plugin.getConfig().getBoolean("GetTpSkull")) {
-			if (sender.hasPermission("clickwarp.gettpskull")) {
-				if (args.length == 1) {
-					if (sender instanceof Player) {
-						OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
-						SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
-						meta.setOwner(p.getName());
-						List<String> lore = new ArrayList<String>();
-						meta.setDisplayName("§l" + p.getName());
-						lore.add(p.getUniqueId().toString());
-						meta.setLore(lore);
-						ItemStack itemstack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-						itemstack.setItemMeta(meta);
-						Player player = (Player) sender;
-						PlayerInventory inventory = player.getInventory();
-						inventory.setItemInMainHand(itemstack);
-					} else {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.OnlyPlayers));
-					}
-				} else {
-					sender.sendMessage("§e/gettpskull <user>");
-				}
-			} else {
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.NoPermission));
+    public boolean execute(CommandSender sender, String label, String[] args) {
+        if (this.plugin.getConfig().getBoolean("GetTpSkull")) {
+            if (sender.hasPermission("clickwarp.gettpskull")) {
+                if (args.length == 1) {
+                    if (sender instanceof Player) {
+                        OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
+                        SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
+                        meta.setOwner(p.getName());
+                        List<String> lore = new ArrayList<String>();
+                        meta.setDisplayName(ChatColor.BOLD + p.getName());
+                        lore.add(p.getUniqueId().toString());
+                        meta.setLore(lore);
+                        ItemStack itemstack = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                        itemstack.setItemMeta(meta);
+                        Player player = (Player) sender;
+                        PlayerInventory inventory = player.getInventory();
+                        inventory.setItemInMainHand(itemstack);
+                    } else {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.OnlyPlayers));
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.YELLOW + "/gettpskull <user>");
+                }
+            } else {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.NoPermission));
 
-			}
+            }
 
-		}
-		return true;
-	}
+        }
+        return true;
+    }
 
-	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
-		if (sender.hasPermission("clickwarp.gettpskull")) {
-			List<String> playerList = new ArrayList<>();
+    @Override
+    public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+        if (sender.hasPermission("clickwarp.gettpskull")) {
+            List<String> playerList = new ArrayList<>();
 
-			for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-				if (p != null) {
-					playerList.add(p.getName());
-				}
-			}
+            for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+                if (p != null) {
+                    playerList.add(p.getName());
+                }
+            }
 
-			if (args.length == 0) {
-				return playerList;
-			} else if (args.length == 1) {
-				List<String> tabList = new ArrayList<>();
+            if (args.length == 0) {
+                return playerList;
+            } else if (args.length == 1) {
+                List<String> tabList = new ArrayList<>();
 
-				for (String player : playerList) {
-					if (player != null && player.toLowerCase().startsWith(args[0].toLowerCase())) {
-						tabList.add(player);
-					}
-				}
+                for (String player : playerList) {
+                    if (player != null && player.toLowerCase().startsWith(args[0].toLowerCase())) {
+                        tabList.add(player);
+                    }
+                }
 
-				return tabList;
-			}
-		}
-		return null;
-	}
+                return tabList;
+            }
+        }
+        return null;
+    }
 }

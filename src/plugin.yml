@@ -1,5 +1,5 @@
 name: ClickWarp
-version: 1.4.4
+version: 1.4.5
 authors:
 - comniemeer
 - SimonIT
@@ -9,6 +9,7 @@ main: de.comniemeer.ClickWarp.ClickWarp
 softdepend:
 - Essentials
 - Vault
+- WorldGuard
 - WGCustomFlags
 - WarpPortals
 permissions:
