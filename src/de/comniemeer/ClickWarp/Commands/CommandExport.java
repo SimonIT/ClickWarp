@@ -35,7 +35,6 @@ public class CommandExport extends AutoCommand<ClickWarp> {
                                 try {
                                     this.plugin.IWarps.setWarp(warp.getName(), warp.getLocation());
                                 } catch (Exception e) {
-                                    e.printStackTrace();
                                 }
                             }
                         }
@@ -45,10 +44,8 @@ public class CommandExport extends AutoCommand<ClickWarp> {
                             try {
                                 this.plugin.IWarps.setWarp(warp.getName(), warp.getLocation());
                             } catch (Exception e) {
-                                e.printStackTrace();
                             }
                         } catch (WarpNoExist warpNoExist) {
-                            warpNoExist.printStackTrace();
                         }
                     }
                 }
@@ -78,7 +75,6 @@ public class CommandExport extends AutoCommand<ClickWarp> {
                         CoordsPY coords = new CoordsPY(warp.getLocation());
                         this.plugin.pdm.addDestination(warp.getName(), coords);
                     } catch (WarpNoExist warpNoExist) {
-                        warpNoExist.printStackTrace();
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
                                 .replace("{warp}", args[0]));
                     }

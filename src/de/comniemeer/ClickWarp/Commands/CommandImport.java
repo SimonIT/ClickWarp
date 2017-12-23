@@ -36,7 +36,6 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                             try {
                                 loc = this.plugin.IWarps.getWarp(EWarp);
                             } catch (Exception e1) {
-                                e1.printStackTrace();
                             }
                             try {
                                 Warp warp = new Warp(EWarp, loc);
@@ -48,9 +47,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                                 warp.save();
                                 warp_names.append(warp.getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
                             } catch (InvalidName invalidName) {
-                                invalidName.printStackTrace();
                             } catch (IOException e) {
-                                e.printStackTrace();
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                             }
 
@@ -63,7 +60,6 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                             try {
                                 loc = this.plugin.IWarps.getWarp(args[1]);
                             } catch (Exception e1) {
-                                e1.printStackTrace();
                             }
                         } else {
                             sender.sendMessage("[ClickWarp] Failed to load Essentials!");
@@ -81,9 +77,7 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                     .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
                         } catch (InvalidName invalidName) {
-                            invalidName.printStackTrace();
                         } catch (IOException e) {
-                            e.printStackTrace();
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                         }
 
@@ -108,10 +102,9 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                                 warp.save();
                                 warp_names.append(warp.getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
                             } catch (InvalidName invalidName) {
-                                invalidName.printStackTrace();
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                             }
 
                         }
@@ -135,10 +128,9 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                         .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
                             } catch (InvalidName invalidName) {
-                                invalidName.printStackTrace();
                                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                             }
                         } else {
                             sender.sendMessage("[ClickWarp] Failed to load WarpPortals!");

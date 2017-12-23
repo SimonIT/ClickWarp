@@ -67,7 +67,6 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpSuccess)
                                     .replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[2])));
                         } catch (InvalidName invalidName) {
-                            invalidName.printStackTrace();
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
                         }
                     } else if (args[1].equalsIgnoreCase("message")) {
@@ -146,17 +145,13 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
                     }
                     warp.save();
                 } catch (WarpNoExist warpNoExist) {
-                    warpNoExist.printStackTrace();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
                             .replace("{warp}", args[0]));
                 } catch (InvalidItem invalidItem) {
-                    invalidItem.printStackTrace();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
                 } catch (IOException e) {
-                    e.printStackTrace();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                 } catch (CommandNoExist commandNoExist) {
-                    commandNoExist.printStackTrace();
                 }
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> name <name>");

@@ -31,10 +31,9 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                 .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
                     } catch (InvalidName invalidName) {
-                        invalidName.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                     }
                 } else if (args.length == 2) {
                     try {
@@ -44,13 +43,11 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                 .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
                     } catch (InvalidName invalidName) {
-                        invalidName.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
                     } catch (InvalidItem invalidItem) {
-                        invalidItem.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                     }
                 } else if (args.length == 3) {
                     try {
@@ -62,16 +59,13 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                 .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
                     } catch (InvalidName invalidName) {
-                        invalidName.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
                     } catch (InvalidItem invalidItem) {
-                        invalidItem.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
-                        return true;
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                     }
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "/setwarp <name>");

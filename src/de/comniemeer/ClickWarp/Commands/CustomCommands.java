@@ -24,7 +24,8 @@ public class CustomCommands extends AutoCommand<ClickWarp> {
                 Warp warp = new Warp(splits[1]);
                 warp.handleWarp((Player) sender, false);
             } catch (WarpNoExist warpNoExist) {
-                warpNoExist.printStackTrace();
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                        .replace("{warp}", splits[1]));
             }
         } else {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));

@@ -61,7 +61,6 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         Warp warp = new Warp(args[0]);
                         warp.handleWarp(player, false);
                     } catch (WarpNoExist warpNoExist) {
-                        warpNoExist.printStackTrace();
                         sender.sendMessage(
                                 ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
                                         .replace("{warp}", args[0]));
@@ -112,7 +111,6 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                                 PlayerInventory inventory = player.getInventory();
                                 inventory.setItemInMainHand(itemstack);
                             } catch (WarpNoExist warpNoExist) {
-                                warpNoExist.printStackTrace();
                                 sender.sendMessage(
                                         ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
                                                 .replace("{warp}", args[0]));
@@ -138,7 +136,6 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         sender.sendMessage(ChatColor.BLUE + "Price: " + ChatColor.GOLD + warp.getPrice());
                         sender.sendMessage(ChatColor.BLUE + "Lore: " + ChatColor.GOLD + String.join("\n", warp.getPreparedLore()));
                     } catch (WarpNoExist warpNoExist) {
-                        warpNoExist.printStackTrace();
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist).replace("{warp}", args[0]));
                     }
                 }
@@ -149,7 +146,9 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                             Warp warp = new Warp(args[0]);
                             warp.handleWarp(player, false);
                         } catch (WarpNoExist warpNoExist) {
-                            warpNoExist.printStackTrace();
+                            sender.sendMessage(
+                                    ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                                            .replace("{warp}", args[0]));
                         }
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -169,7 +168,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         }
                     }
                 } catch (WarpNoExist warpNoExist) {
-                    warpNoExist.printStackTrace();
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                            .replace("{warp}", args[0]));
                 }
             } else if (Bukkit.getPlayer(args[1]) != null) {
                 Player player = Bukkit.getPlayer(args[1]);
@@ -179,7 +179,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                             Warp warp = new Warp(args[0]);
                             warp.handleWarp(player, false);
                         } catch (WarpNoExist warpNoExist) {
-                            warpNoExist.printStackTrace();
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                                    .replace("{warp}", args[0]));
                         }
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
