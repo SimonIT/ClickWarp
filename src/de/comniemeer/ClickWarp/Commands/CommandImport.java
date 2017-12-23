@@ -1,10 +1,13 @@
 package de.comniemeer.ClickWarp.Commands;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import de.comniemeer.ClickWarp.Exceptions.InvalidName;
+import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -30,30 +33,35 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                         StringBuilder warp_names = new StringBuilder(ChatColor.GOLD.toString());
                         for (String EWarp : EWarps) {
                             Location loc = null;
-                            String Name = EWarp;
                             try {
-                                loc = this.plugin.IWarps.getWarp(Name);
+                                loc = this.plugin.IWarps.getWarp(EWarp);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                             }
-                            if (this.plugin.methods.existWarp(EWarp)) {
-                                String name_new = Name;
-                                for (int i = 1; this.plugin.methods.existWarp(name_new); i++) {
-                                    name_new = Name + i;
+                            try {
+                                Warp warp = new Warp(EWarp, loc);
+                                if (warp.existWarp()) {
+                                    for (int i = 1; warp.existWarp(); i++) {
+                                        warp = new Warp(EWarp + i, loc);
+                                    }
                                 }
-                                Name = name_new;
+                                warp.save();
+                                warp_names.append(warp.getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
+                            } catch (InvalidName invalidName) {
+                                invalidName.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                             }
-                            this.plugin.methods.setWarp(Name, loc);
-                            warp_names.append(Name).append(ChatColor.GRAY + ", " + ChatColor.GOLD);
+
                         }
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                 .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp_names.toString())));
                     } else {
                         Location loc = null;
-                        String Name = args[1];
                         if (this.plugin.IWarps != null) {
                             try {
-                                loc = this.plugin.IWarps.getWarp(Name);
+                                loc = this.plugin.IWarps.getWarp(args[1]);
                             } catch (Exception e1) {
                                 e1.printStackTrace();
                             }
@@ -62,24 +70,24 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                             sender.sendMessage(
                                     "[ClickWarp] Install Essentials or set \"ImportEssentialsWarps\" in the config.yml to \"false\"");
                         }
-                        if (this.plugin.methods.existWarp(Name)) {
-                            String name_new = Name;
-                            for (int i = 1; this.plugin.methods.existWarp(name_new); i++) {
-                                name_new = Name + i;
+                        try {
+                            Warp warp = new Warp(args[1], loc);
+                            if (warp.existWarp()) {
+                                for (int i = 1; warp.existWarp(); i++) {
+                                    warp = new Warp(args[1] + i, loc);
+                                }
                             }
-                            Name = name_new;
-                        }
-                        boolean result = this.plugin.methods.setWarp(Name, loc);
-                        if (result) {
+                            warp.save();
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
-                                    .replace("{warp}", ChatColor.translateAlternateColorCodes('&', Name)));
-                        } else {
-                            sender.sendMessage(
-                                    ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                                    .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                        } catch (InvalidName invalidName) {
+                            invalidName.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
                         }
-                    }
 
-                    this.plugin.methods.updateMetrics();
+                    }
                 } else if (args[0].equalsIgnoreCase("WarpPortals") && args[1] != null) {
                     if (args[1].equalsIgnoreCase("all")) {
                         Set<String> PortalDests = this.plugin.pdm.getDestinations();
@@ -87,61 +95,57 @@ public class CommandImport extends AutoCommand<ClickWarp> {
                         for (String PortalDest : PortalDests) {
                             CoordsPY coords;
                             Location loc = null;
-                            String Name = PortalDest;
                             try {
-                                coords = this.plugin.pdm.getDestCoords(Name);
+                                coords = this.plugin.pdm.getDestCoords(PortalDest);
                                 loc = new Location(coords.world, coords.x, coords.y, coords.z, coords.yaw,
                                         coords.pitch);
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
-                            }
-                            if (this.plugin.methods.existWarp(PortalDest)) {
-                                String name_new = Name;
-                                for (int i = 1; this.plugin.methods.existWarp(name_new); i++) {
-                                    name_new = Name + i;
+                                Warp warp = new Warp(PortalDest, loc);
+                                if (warp.existWarp()) {
+                                    for (int i = 1; warp.existWarp(); i++) {
+                                        warp = new Warp(PortalDest + i, loc);
+                                    }
                                 }
-                                Name = name_new;
+                                warp.save();
+                                warp_names.append(warp.getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
+                            } catch (InvalidName invalidName) {
+                                invalidName.printStackTrace();
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                            this.plugin.methods.setWarp(Name, loc);
-                            warp_names.append(Name).append(ChatColor.GRAY + ", " + ChatColor.GOLD);
+
                         }
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                 .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp_names.toString())));
                     } else {
                         CoordsPY coords;
                         Location loc = null;
-                        String Name = args[1];
                         if (this.plugin.pdm != null) {
                             try {
-                                coords = this.plugin.pdm.getDestCoords(Name);
+                                coords = this.plugin.pdm.getDestCoords(args[1]);
                                 loc = new Location(coords.world, coords.x, coords.y, coords.z, coords.yaw,
                                         coords.pitch);
-                            } catch (Exception e1) {
-                                e1.printStackTrace();
+                                Warp warp = new Warp(args[1], loc);
+                                if (warp.existWarp()) {
+                                    for (int i = 1; warp.existWarp(); i++) {
+                                        warp = new Warp(args[1] + i, loc);
+                                    }
+                                }
+                                warp.save();
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
+                                        .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                            } catch (InvalidName invalidName) {
+                                invalidName.printStackTrace();
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         } else {
                             sender.sendMessage("[ClickWarp] Failed to load WarpPortals!");
                             sender.sendMessage(
                                     "[ClickWarp] Install Essentials or set \"ImportWarpPortalsDestinations\" in the config.yml to \"false\"");
                         }
-                        if (this.plugin.methods.existWarp(Name)) {
-                            String name_new = Name;
-                            for (int i = 1; this.plugin.methods.existWarp(name_new); i++) {
-                                name_new = Name + i;
-                            }
-                            Name = name_new;
-                        }
-                        boolean result = this.plugin.methods.setWarp(Name, loc);
-                        if (result) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
-                                    .replace("{warp}", ChatColor.translateAlternateColorCodes('&', Name)));
-                        } else {
-                            sender.sendMessage(
-                                    ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
-                        }
                     }
-
-                    this.plugin.methods.updateMetrics();
                 }
             }
         }

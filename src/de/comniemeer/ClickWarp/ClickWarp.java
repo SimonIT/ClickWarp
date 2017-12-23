@@ -67,12 +67,9 @@ public class ClickWarp extends JavaPlugin {
     public LanguageCzech cz;
     public LanguageKorean ko;
 
-    public WarpHandler warphandler;
-    public Methods methods;
-
-    public HashMap<String, String> InvHM = new HashMap<String, String>();
-    public HashMap<String, Boolean> warp_delay = new HashMap<String, Boolean>();
-    public HashMap<List<String>, List<String>> cmd = new HashMap<List<String>, List<String>>();
+    public HashMap<String, String> InvHM = new HashMap<>();
+    public HashMap<String, Boolean> warp_delay = new HashMap<>();
+    public HashMap<List<String>, List<String>> cmd = new HashMap<>();
     public int delaytask;
 
     public Permission permission = null;
@@ -84,14 +81,14 @@ public class ClickWarp extends JavaPlugin {
 
     //public StateFlag Warp_Flag = new StateFlag("warp", true);
 
-    public static boolean update = false;
-    public static String name = "";
-    public static ReleaseType type = null;
-    public static String version_update = "";
-    public static String link = "";
-    public static final int id = 53812;
-    public static File file = null;
-    public static Plugin pl = null;
+    public boolean update = false;
+    public String name = "";
+    public ReleaseType type = null;
+    public String version_update = "";
+    public String link = "";
+    public final int id = 53812;
+    public File file = null;
+    public Plugin pl = null;
 
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -174,9 +171,6 @@ public class ClickWarp extends JavaPlugin {
         this.ko = new LanguageKorean(this);
         this.msg = new Messages(this);
 
-        this.warphandler = new WarpHandler(this);
-        this.methods = new Methods(this);
-
         this.en.load();
         this.de.load();
         this.fr.load();
@@ -199,54 +193,58 @@ public class ClickWarp extends JavaPlugin {
         if (warps_folder.isDirectory()) {
             File[] warps = warps_folder.listFiles();
 
-            final int files = warps.length;
+            final int files;
+            if (warps != null) {
+                files = warps.length;
 
-            if (files != 0) {
-                try {
-                    Metrics metrics = new Metrics(this);
 
-                    Graph Warps = metrics.createGraph("Warps");
+                if (files != 0) {
+                    try {
+                        Metrics metrics = new Metrics(this);
 
-                    Warps.addPlotter(new Metrics.Plotter("Warps") {
-                        public int getValue() {
-                            return files;
-                        }
-                    });
+                        Graph Warps = metrics.createGraph("Warps");
 
-                    metrics.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                for (File warp : warps) {
-                    FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
+                        Warps.addPlotter(new Metrics.Plotter("Warps") {
+                            public int getValue() {
+                                return files;
+                            }
+                        });
 
-                    String str = warp.getName().replace(".yml", "");
-                    List<String> infos = new ArrayList<String>();
-                    infos.add(cfg.getString(str + ".name"));
-                    if (cfg.get(str + ".price") != null) {
-                        Double price = cfg.getDouble(str + ".price");
-                        String priceformat = ChatColor.translateAlternateColorCodes('&',
-                                getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
+                        metrics.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    for (File warp : warps) {
+                        FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
 
-                        if (price == 1) {
-                            infos.add(priceformat.replace("{currency}",
-                                    getConfig().getString("Economy.CurrencySingular")));
+                        String str = warp.getName().replace(".yml", "");
+                        List<String> infos = new ArrayList<>();
+                        infos.add(cfg.getString(str + ".name"));
+                        if (cfg.get(str + ".price") != null) {
+                            Double price = cfg.getDouble(str + ".price");
+                            String priceformat = ChatColor.translateAlternateColorCodes('&',
+                                    getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
+
+                            if (price == 1) {
+                                infos.add(priceformat.replace("{currency}",
+                                        getConfig().getString("Economy.CurrencySingular")));
+                            } else {
+                                infos.add(
+                                        priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
+                            }
                         } else {
-                            infos.add(
-                                    priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
+                            infos.add("free");
                         }
-                    } else {
-                        infos.add("free");
+                        if (cfg.get(str + ".lore") != null) {
+                            String description = cfg.getString(str + ".lore");
+                            description = description.replace(":", " ");
+                            description = description.replace("_", " ");
+                            infos.add(description);
+                        } else {
+                            infos.add("");
+                        }
+                        cmd.put(infos, cfg.getStringList(str + ".cmd"));
                     }
-                    if (cfg.get(str + ".lore") != null) {
-                        String description = cfg.getString(str + ".lore");
-                        description = description.replace(":", " ");
-                        description = description.replace("_", " ");
-                        infos.add(description);
-                    } else {
-                        infos.add("");
-                    }
-                    cmd.put(infos, cfg.getStringList(str + ".cmd"));
                 }
             }
 
@@ -257,7 +255,7 @@ public class ClickWarp extends JavaPlugin {
         Boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
         Boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
 
-        if (enableEconomy.booleanValue()) {
+        if (enableEconomy) {
             try {
                 this.setupEconomy();
                 this.setupPermissions();
@@ -269,7 +267,7 @@ public class ClickWarp extends JavaPlugin {
             }
         }
 
-        if (enableIWarps.booleanValue()) {
+        if (enableIWarps) {
             try {
                 this.setupIWarps();
             } catch (NoClassDefFoundError ncdfe) {
@@ -344,31 +342,14 @@ public class ClickWarp extends JavaPlugin {
         this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " enabled.");
 
         if (getConfig().getBoolean("auto-update")) {
-            Updater updater = new Updater(this, id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
-            // Updater
-            // but
-            // just
-            // do
-            // a
-            // version
-            // check
-            update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
-            // if
-            // there
-            // is
-            // an
-            // update
-            // ready
-            // for
-            // us
-            name = updater.getLatestName(); // Get the latest name
-            version_update = updater.getLatestGameVersion(); // Get the latest
-            // game
-            // version
-            type = updater.getLatestType(); // Get the latest file's type
-            link = updater.getLatestFileLink(); // Get the latest link
+            Updater updater = new Updater(this, this.id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
+            this.update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
+            this.name = updater.getLatestName(); // Get the latest name
+            this.version_update = updater.getLatestGameVersion(); // Get the latest
+            this.type = updater.getLatestType(); // Get the latest file's type
+            this.link = updater.getLatestFileLink(); // Get the latest link
         }
-        file = this.getFile();
-        pl = this;
+        this.file = this.getFile();
+        this.pl = this;
     }
 }

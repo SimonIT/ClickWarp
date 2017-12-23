@@ -7,6 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.comniemeer.ClickWarp.Warp;
+import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -19,11 +21,12 @@ public class CommandDelwarp extends AutoCommand<ClickWarp> {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (sender.hasPermission("clickwarp.delwarp")) {
             if (args.length == 1) {
-                boolean result = this.plugin.methods.delWarp(args[0]);
-                if (result) {
+                try {
+                    Warp warp = new Warp(args[0]);
+                    warp.delWarp();
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.DelwarpSuccess)
                             .replace("{warp}", args[0]));
-                } else {
+                } catch (WarpNoExist warpNoExist) {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
                             .replace("{warp}", args[0]));
                 }
@@ -46,7 +49,7 @@ public class CommandDelwarp extends AutoCommand<ClickWarp> {
             if (warps_folder.isDirectory()) {
                 File[] warps = warps_folder.listFiles();
 
-                if (warps.length != 0) {
+                if (warps != null && warps.length != 0) {
                     for (File warp : warps) {
                         warpList.add(warp.getName().replace(".yml", ""));
                     }

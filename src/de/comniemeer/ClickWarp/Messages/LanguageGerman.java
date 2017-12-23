@@ -87,7 +87,7 @@ public class LanguageGerman {
 	private String OnlyPlayersPath = "Various.OnlyPlayers";
 
 	public void load() {
-		file = new File("plugins/ClickWarp/Languages", "de.yml");
+		file = new File(this.plugin.getDataFolder() + "/Languages", "de.yml");
 		cfg = YamlConfiguration.loadConfiguration(file);
 
 		if (!file.exists()) {

@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
+import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -27,112 +29,111 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
             if (sender instanceof Player) {
                 if (args.length == 0) {
                     Player p = (Player) sender;
-                    File warps_folder = new File("plugins/ClickWarp/Warps");
 
-                    if (warps_folder.isDirectory()) {
-                        File[] warps = warps_folder.listFiles();
+                    List<Warp> warps = Warp.getWarps();
 
-                        if (warps.length == 0) {
+                    if (warps != null) {
+                        if (warps.size() == 0) {
                             p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
                             return true;
-                        } else if (warps.length > 54) {
+                        } else if (warps.size() > 54) {
                             p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.InvwarpTooManyWarps));
                             return true;
                         }
+                    }
 
-                        int lines = 0;
+                    int lines = 0;
 
-                        while (lines * 9 < warps.length) {
+                    if (warps != null) {
+                        while (lines * 9 < warps.size()) {
                             lines++;
                         }
+                    }
 
-                        if (lines > 6) {
-                            lines = 6;
-                        }
+                    if (lines > 6) {
+                        lines = 6;
+                    }
 
-                        Inventory inv = Bukkit.createInventory(null, lines * 9, ChatColor
-                                .translateAlternateColorCodes('&', plugin.getConfig().getString("Inventory.Warp")));
-                        int slot = 0;
-                        List<String> list = this.plugin.methods.getWarps();
+                    Inventory inv = Bukkit.createInventory(null, lines * 9, ChatColor
+                            .translateAlternateColorCodes('&', plugin.getConfig().getString("Inventory.Warp")));
+                    int slot = 0;
 
-                        if (list.size() == 0) {
-                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
-                        } else {
-                            for (String aList : list) {
-                                ItemStack itemstack = this.plugin.methods.getItemStack(aList);
 
-                                String name = this.plugin.methods.getName(aList);
+                    if (warps.size() == 0) {
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
+                    } else {
+                        for (Warp aList : warps) {
+                            ItemStack itemstack = aList.getItemStack();
 
-                                ItemMeta meta = itemstack.getItemMeta();
+                            String name = aList.getName();
 
-                                meta.setDisplayName(ChatColor.RESET + name);
+                            ItemMeta meta = itemstack.getItemMeta();
 
-                                if (this.plugin.methods.getPreparedLore(aList) != null) {
-                                    List<String> lore = this.plugin.methods.getPreparedLore(aList);
+                            meta.setDisplayName(ChatColor.RESET + name);
 
-                                    Boolean useeconomy = plugin.getConfig().getBoolean("Economy.Enable");
+                            if (aList.getPreparedLore() != null) {
+                                List<String> lore = aList.getPreparedLore();
 
-                                    if (useeconomy) {
-                                        Boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
+                                Boolean useeconomy = plugin.getConfig().getBoolean("Economy.Enable");
 
-                                        if (useshowprice) {
-                                            if (this.plugin.methods.getPrice(aList) != null) {
-                                                Double price = this.plugin.methods.getPrice(aList);
-                                                String priceformat = ChatColor.translateAlternateColorCodes('&',
-                                                        plugin.getConfig().getString("Economy.PriceFormat")
-                                                                .replace("{price}", String.valueOf(price)));
+                                if (useeconomy) {
+                                    Boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
 
-                                                if (price == 1) {
-                                                    lore.add(priceformat.replace("{currency}",
-                                                            plugin.getConfig().getString("Economy.CurrencySingular")));
-                                                } else {
-                                                    lore.add(priceformat.replace("{currency}",
-                                                            plugin.getConfig().getString("Economy.CurrencyPlural")));
-                                                }
-                                            }
-                                        }
-                                    }
+                                    if (useshowprice) {
+                                        if (aList.getPrice() != null) {
+                                            Double price = aList.getPrice();
+                                            String priceformat = ChatColor.translateAlternateColorCodes('&',
+                                                    plugin.getConfig().getString("Economy.PriceFormat")
+                                                            .replace("{price}", String.valueOf(price)));
 
-                                    meta.setLore(lore);
-                                } else {
-                                    Boolean useeconomy = plugin.getConfig().getBoolean("Economy.Enable");
-
-                                    if (useeconomy) {
-                                        Boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
-
-                                        if (useshowprice) {
-                                            if (this.plugin.methods.getPrice(aList) != null) {
-                                                List<String> lore = new ArrayList<String>();
-                                                Double price = this.plugin.methods.getPrice(aList);
-                                                String priceformat = ChatColor.translateAlternateColorCodes('&',
-                                                        plugin.getConfig().getString("Economy.PriceFormat")
-                                                                .replace("{price}", String.valueOf(price)));
-
-                                                if (price == 1) {
-                                                    lore.add(priceformat.replace("{currency}",
-                                                            plugin.getConfig().getString("Economy.CurrencySingular")));
-                                                } else {
-                                                    lore.add(priceformat.replace("{currency}",
-                                                            plugin.getConfig().getString("Economy.CurrencyPlural")));
-                                                }
-
-                                                meta.setLore(lore);
+                                            if (price == 1) {
+                                                lore.add(priceformat.replace("{currency}",
+                                                        plugin.getConfig().getString("Economy.CurrencySingular")));
+                                            } else {
+                                                lore.add(priceformat.replace("{currency}",
+                                                        plugin.getConfig().getString("Economy.CurrencyPlural")));
                                             }
                                         }
                                     }
                                 }
 
-                                itemstack.setItemMeta(meta);
-                                inv.setItem(slot, itemstack);
-                                slot++;
-                            }
-                        }
+                                meta.setLore(lore);
+                            } else {
+                                Boolean useeconomy = plugin.getConfig().getBoolean("Economy.Enable");
 
-                        p.openInventory(inv);
-                        plugin.InvHM.put(p.getName(), "InventarWarp");
-                    } else {
-                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
+                                if (useeconomy) {
+                                    Boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
+
+                                    if (useshowprice) {
+                                        if (aList.getPrice() != null) {
+                                            List<String> lore = new ArrayList<String>();
+                                            Double price = aList.getPrice();
+                                            String priceformat = ChatColor.translateAlternateColorCodes('&',
+                                                    plugin.getConfig().getString("Economy.PriceFormat")
+                                                            .replace("{price}", String.valueOf(price)));
+
+                                            if (price == 1) {
+                                                lore.add(priceformat.replace("{currency}",
+                                                        plugin.getConfig().getString("Economy.CurrencySingular")));
+                                            } else {
+                                                lore.add(priceformat.replace("{currency}",
+                                                        plugin.getConfig().getString("Economy.CurrencyPlural")));
+                                            }
+
+                                            meta.setLore(lore);
+                                        }
+                                    }
+                                }
+                            }
+
+                            itemstack.setItemMeta(meta);
+                            inv.setItem(slot, itemstack);
+                            slot++;
+                        }
                     }
+
+                    p.openInventory(inv);
+                    plugin.InvHM.put(p.getName(), "InventarWarp");
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "/invwarp");
                 }

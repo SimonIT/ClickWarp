@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
+import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -25,7 +27,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
         if (args.length == 0) {
             if (!plugin.getConfig().getBoolean("InvwarpInsteadWarp")) {
                 if (sender.hasPermission("clickwarp.warps")) {
-                    List<String> warps = this.plugin.methods.getWarps();
+                    List<Warp> warps = Warp.getWarps();
 
                     if (warps.size() == 0) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
@@ -36,7 +38,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         for (int i = 0; i < warps.size(); i++) {
 
                             if (i < warps.size()) {
-                                warp_names.append(warps.get(i)).append(ChatColor.GRAY + ", " + ChatColor.GOLD);
+                                warp_names.append(warps.get(i).getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
                             }
                         }
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
@@ -55,7 +57,15 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                 String str = args[0].toLowerCase();
 
                 if (player.hasPermission("clickwarp.warp." + str) || player.hasPermission("clickwarp.warp.*")) {
-                    plugin.warphandler.handleWarp(player, str, args[0], false);
+                    try {
+                        Warp warp = new Warp(args[0]);
+                        warp.handleWarp(player, false);
+                    } catch (WarpNoExist warpNoExist) {
+                        warpNoExist.printStackTrace();
+                        sender.sendMessage(
+                                ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                                        .replace("{warp}", args[0]));
+                    }
                 } else {
                     sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
                 }
@@ -69,20 +79,16 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         String str = args[0].toLowerCase();
                         if (sender.hasPermission("clickwarp.warp.getitem.*")
                                 || sender.hasPermission("clickwarp.warp.getitem." + str)) {
-
-                            if (!this.plugin.methods.existWarp(str)) {
-                                sender.sendMessage(
-                                        ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
-                                                .replace("{warp}", args[0]));
-                            } else {
-                                ItemStack itemstack = this.plugin.methods.getItemStack(str);
+                            try {
+                                Warp warp = new Warp(args[0]);
+                                ItemStack itemstack = warp.getItemStack();
 
                                 List<String> lore = new ArrayList<String>();
                                 Boolean useeconomy = this.plugin.getConfig().getBoolean("Economy.Enable");
                                 if (useeconomy) {
                                     Boolean useshowprice = this.plugin.getConfig().getBoolean("Economy.ShowPrice");
                                     if ((useshowprice)) {
-                                        Double price = this.plugin.methods.getPrice(str);
+                                        Double price = warp.getPrice();
                                         String priceformat = ChatColor.translateAlternateColorCodes('&',
                                                 this.plugin.getConfig().getString("Economy.PriceFormat")
                                                         .replace("{price}", String.valueOf(price)));
@@ -96,15 +102,20 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                                     }
                                 }
                                 ItemMeta item_lore = itemstack.getItemMeta();
-                                lore = this.plugin.methods.getPreparedLore(str);
+                                lore = warp.getPreparedLore();
                                 item_lore.setLore(lore);
                                 String item_prefix = ChatColor.translateAlternateColorCodes('&',
                                         this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
-                                item_lore.setDisplayName(item_prefix + this.plugin.methods.getName(args[0]));
+                                item_lore.setDisplayName(item_prefix + warp.getName());
                                 itemstack.setItemMeta(item_lore);
                                 Player player = (Player) sender;
                                 PlayerInventory inventory = player.getInventory();
                                 inventory.setItemInMainHand(itemstack);
+                            } catch (WarpNoExist warpNoExist) {
+                                warpNoExist.printStackTrace();
+                                sender.sendMessage(
+                                        ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                                                .replace("{warp}", args[0]));
                             }
                         } else {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -116,44 +127,60 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
             } else if (args[1].equalsIgnoreCase("info")) {
                 String str = args[0].toLowerCase();
                 if (sender.hasPermission("clickwarp.warp.info.*") || sender.hasPermission("clickwarp.warp.info." + str) || sender.hasPermission("clickwarp.warp.*")) {
-                    Location loc = plugin.methods.getWarp(args[0]);
-                    sender.sendMessage(ChatColor.GRAY + "============= Warp Info =============");
-                    sender.sendMessage(ChatColor.BLUE + "Name: " + ChatColor.GOLD + plugin.methods.getName(args[0]));
-                    sender.sendMessage(ChatColor.BLUE + "Coordinates: " + ChatColor.GOLD + Math.round(loc.getX()) + ", " + Math.round(loc.getY()) + ", " + Math.round(loc.getZ()));
-                    sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + plugin.methods.getItemMaterial(args[0]).name().toLowerCase() + ":" + plugin.methods.getItemVariant(args[0]));
-                    sender.sendMessage(ChatColor.BLUE + "Price: " + ChatColor.GOLD + plugin.methods.getPrice(args[0]));
-                    sender.sendMessage(ChatColor.BLUE + "Lore: " + ChatColor.GOLD + String.join("\n", plugin.methods.getPreparedLore(args[0])));
+                    try {
+                        Warp warp = new Warp(args[0]);
+                        Location loc = warp.getLocation();
+
+                        sender.sendMessage(ChatColor.GRAY + "============= Warp Info =============");
+                        sender.sendMessage(ChatColor.BLUE + "Name: " + ChatColor.GOLD + warp.getName());
+                        sender.sendMessage(ChatColor.BLUE + "Coordinates: " + ChatColor.GOLD + Math.round(loc.getX()) + ", " + Math.round(loc.getY()) + ", " + Math.round(loc.getZ()));
+                        sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + warp.getItemMaterial().name().toLowerCase() + ":" + warp.getItemVariant());
+                        sender.sendMessage(ChatColor.BLUE + "Price: " + ChatColor.GOLD + warp.getPrice());
+                        sender.sendMessage(ChatColor.BLUE + "Lore: " + ChatColor.GOLD + String.join("\n", warp.getPreparedLore()));
+                    } catch (WarpNoExist warpNoExist) {
+                        warpNoExist.printStackTrace();
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist).replace("{warp}", args[0]));
+                    }
                 }
             } else if (args[1].equalsIgnoreCase("all")) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.hasPermission("clickwarp.warp")) {
-                        String str = args[0].toLowerCase();
-
-                        plugin.warphandler.handleWarp(player, str, args[0], false);
+                        try {
+                            Warp warp = new Warp(args[0]);
+                            warp.handleWarp(player, false);
+                        } catch (WarpNoExist warpNoExist) {
+                            warpNoExist.printStackTrace();
+                        }
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
                     }
                 }
             } else if (args[1].contains("g:")) {
                 String group = args[1].replace("g:", "");
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (plugin.permission.playerInGroup(player.getWorld().getName(), player, group)) {
-                        if (player.hasPermission("clickwarp.warp")) {
-                            String str = args[0].toLowerCase();
-
-                            plugin.warphandler.handleWarp(player, str, args[0], false);
-                        } else {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+                try {
+                    Warp warp = new Warp(args[0]);
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (plugin.permission.playerInGroup(player.getWorld().getName(), player, group)) {
+                            if (player.hasPermission("clickwarp.warp")) {
+                                warp.handleWarp(player, false);
+                            } else {
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+                            }
                         }
                     }
+                } catch (WarpNoExist warpNoExist) {
+                    warpNoExist.printStackTrace();
                 }
             } else if (Bukkit.getPlayer(args[1]) != null) {
                 Player player = Bukkit.getPlayer(args[1]);
                 if (player.isOnline()) {
                     if (player.hasPermission("clickwarp.warp")) {
-                        String str = args[0].toLowerCase();
-
-                        plugin.warphandler.handleWarp(player, str, args[0], false);
+                        try {
+                            Warp warp = new Warp(args[0]);
+                            warp.handleWarp(player, false);
+                        } catch (WarpNoExist warpNoExist) {
+                            warpNoExist.printStackTrace();
+                        }
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
                     }
@@ -176,17 +203,14 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
     @Override
     public List<String> tabComplete(CommandSender sender, String label, String[] args) {
         List<String> warpList = new ArrayList<>();
-        File warps_folder = new File("plugins/ClickWarp/Warps");
 
-        if (warps_folder.isDirectory()) {
-            File[] warps = warps_folder.listFiles();
+        List<Warp> warps = Warp.getWarps();
 
-            if (warps.length != 0) {
-                for (File warp : warps) {
-                    if (sender.hasPermission("clickwarp.warp." + warp.getName().replace(".yml", ""))
-                            || sender.hasPermission("clickwarp.warp.*")) {
-                        warpList.add(this.plugin.methods.getName(warp.getName().replace(".yml", "")));
-                    }
+        if (warps != null && warps.size() != 0) {
+            for (Warp warp : warps) {
+                if (sender.hasPermission("clickwarp.warp." + warp.getName())
+                        || sender.hasPermission("clickwarp.warp.*")) {
+                    warpList.add(warp.getName());
                 }
             }
         }

@@ -87,7 +87,7 @@ public class LanguageKorean {
 	private String OnlyPlayersPath = "Various.OnlyPlayers";
 
 	public void load() {
-		file = new File("plugins/ClickWarp/Languages", "ko.yml");
+		file = new File(this.plugin.getDataFolder() + "/Languages", "ko.yml");
 		cfg = YamlConfiguration.loadConfiguration(file);
 
 		if (!file.exists()) {

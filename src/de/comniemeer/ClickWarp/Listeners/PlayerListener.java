@@ -2,6 +2,8 @@ package de.comniemeer.ClickWarp.Listeners;
 
 import java.util.UUID;
 
+import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
+import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -77,10 +79,14 @@ public class PlayerListener implements Listener {
             } else if (e.getItem().getItemMeta().hasDisplayName()
                     && e.getItem().getItemMeta().getDisplayName().contains(item_prefix)) {
                 String dispname = e.getItem().getItemMeta().getDisplayName().split(" ")[1];
-                String name = dispname.toLowerCase();
-                this.plugin.warphandler.handleWarp(p, name, dispname, Boolean.FALSE);
+                try {
+                    Warp warp = new Warp(dispname);
+                    warp.handleWarp(p, Boolean.FALSE);
+                } catch (WarpNoExist warpNoExist) {
+                    warpNoExist.printStackTrace();
+                }
             } else if ((e.getItem().getItemMeta().hasLore())
-                    && (((String) e.getItem().getItemMeta().getLore().get(0)).matches(
+                    && (e.getItem().getItemMeta().getLore().get(0).matches(
                     "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[34][0-9a-fA-F]{3}-[89ab][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"))) {
                 Player p_ = Bukkit.getPlayer(UUID.fromString(e.getItem().getItemMeta().getLore().get(0)));
                 if (p_ != null) {
@@ -154,9 +160,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPermission("clickwarp.update") && ClickWarp.update && this.plugin.getConfig().getBoolean("auto-update")) {
-            player.sendMessage("An update is available: " + ClickWarp.name + ", a " + ClickWarp.type + " for "
-                    + ClickWarp.version_update + " available at " + ClickWarp.link);
+        if (player.hasPermission("clickwarp.update") && this.plugin.update && this.plugin.getConfig().getBoolean("auto-update")) {
+            player.sendMessage("An update is available: " + this.plugin.name + ", a " + this.plugin.type + " for "
+                    + this.plugin.version_update + " available at " + this.plugin.link);
             // Will look like - An update is available: AntiCheat v1.5.9, a
             // release for CB 1.6.2-R0.1 available at
             // http://media.curseforge.com/XYZ

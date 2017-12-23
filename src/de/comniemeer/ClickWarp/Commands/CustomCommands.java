@@ -2,6 +2,8 @@ package de.comniemeer.ClickWarp.Commands;
 
 import java.util.List;
 
+import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
+import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,7 +20,12 @@ public class CustomCommands extends AutoCommand<ClickWarp> {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (sender instanceof Player) {
             String[] splits = description.split(" ");
-            this.plugin.warphandler.handleWarp((Player) sender, splits[1].toLowerCase(), splits[1], false);
+            try {
+                Warp warp = new Warp(splits[1]);
+                warp.handleWarp((Player) sender, false);
+            } catch (WarpNoExist warpNoExist) {
+                warpNoExist.printStackTrace();
+            }
         } else {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.OnlyPlayers));
         }

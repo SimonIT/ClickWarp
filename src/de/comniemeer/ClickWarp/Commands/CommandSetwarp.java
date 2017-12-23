@@ -1,7 +1,11 @@
 package de.comniemeer.ClickWarp.Commands;
 
+import java.io.IOException;
 import java.util.List;
 
+import de.comniemeer.ClickWarp.Exceptions.InvalidItem;
+import de.comniemeer.ClickWarp.Exceptions.InvalidName;
+import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,48 +25,53 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (args.length == 1) {
-                    boolean result = this.plugin.methods.setWarp(args[0], player.getLocation());
-                    if (result) {
+                    try {
+                        Warp warp = new Warp(args[0], player.getLocation());
+                        warp.save();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
-                                .replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[0])));
-                    } else {
+                                .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                    } catch (InvalidName invalidName) {
+                        invalidName.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 } else if (args.length == 2) {
-                    boolean result = this.plugin.methods.setWarp(args[0], player.getLocation());
-                    boolean result1 = this.plugin.methods.setItem(args[0], args[1]);
-
-                    if (result) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
-                                .replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[0])));
-                    }
-                    if (!result1) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
-                    }
-
-                    this.plugin.methods.updateMetrics();
-                } else if (args.length == 3) {
-                    boolean result = this.plugin.methods.setWarp(args[0], player.getLocation());
-                    boolean result1 = this.plugin.methods.setItem(args[0], args[1]);
-
-                    Double price;
                     try {
-                        price = Double.parseDouble(args[2]);
+                        Warp warp = new Warp(args[0], player.getLocation());
+                        warp.setItem(args[1]);
+                        warp.save();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
+                                .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                    } catch (InvalidName invalidName) {
+                        invalidName.printStackTrace();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                    } catch (InvalidItem invalidItem) {
+                        invalidItem.printStackTrace();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (args.length == 3) {
+                    try {
+                        Warp warp = new Warp(args[0], player.getLocation());
+                        warp.setItem(args[1]);
+                        Double price = Double.parseDouble(args[2]);
+                        warp.setPrice(price);
+                        warp.save();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
+                                .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
+                    } catch (InvalidName invalidName) {
+                        invalidName.printStackTrace();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                    } catch (InvalidItem invalidItem) {
+                        invalidItem.printStackTrace();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
                         return true;
-                    }
-
-                    this.plugin.methods.setPrice(args[0], price);
-
-                    this.plugin.methods.updateMetrics();
-
-                    if (result) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
-                                .replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[0])));
-                    }
-                    if (!result1) {
-                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "/setwarp <name>");

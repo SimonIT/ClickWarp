@@ -1,9 +1,15 @@
 package de.comniemeer.ClickWarp.Commands;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.comniemeer.ClickWarp.Exceptions.CommandNoExist;
+import de.comniemeer.ClickWarp.Exceptions.InvalidItem;
+import de.comniemeer.ClickWarp.Exceptions.InvalidName;
+import de.comniemeer.ClickWarp.Warp;
+import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -21,48 +27,32 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (sender.hasPermission("clickwarp.editwarp")) {
             if (args.length >= 3) {
-                String str = args[0].toLowerCase();
-                if (!this.plugin.methods.existWarp(str)) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
-                            .replace("{warp}", args[0]));
-                    return true;
-                }
-
-                String name = this.plugin.methods.getName(str);
-
-                if (args[1].equalsIgnoreCase("item")) {
-                    boolean result = this.plugin.methods.setItem(str, args[2]);
-                    if (result) {
+                try {
+                    Warp warp = new Warp(args[0]);
+                    if (args[1].equalsIgnoreCase("item")) {
+                        warp.setItem(args[2]);
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpItemSuccess)
-                                .replace("{warp}", name).replace("{item}", args[2]));
-                    } else {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
-                    }
-                    return true;
-                } else if (args[1].equalsIgnoreCase("lore")) {
-                    boolean result = this.plugin.methods.setLore(str, args[2]);
-                    if (result) {
+                                .replace("{warp}", warp.getName()).replace("{item}", args[2]));
+                    } else if (args[1].equalsIgnoreCase("lore")) {
+                        warp.setLore(args[2]);
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
-                                .replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
-                                        args[2].replace("_", " ").replace(":", "§r:"))));
-                    }
-                    return true;
-                } else if (args[1].equalsIgnoreCase("price")) {
-                    double price;
+                                .replace("{warp}", warp.getName()).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
+                                        warp.getLore())));
+                    } else if (args[1].equalsIgnoreCase("price")) {
+                        double price;
 
-                    try {
-                        price = Double.parseDouble(args[2]);
-                    } catch (NumberFormatException e) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
-                        return true;
-                    }
+                        try {
+                            price = Double.parseDouble(args[2]);
+                        } catch (NumberFormatException e) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
+                            return true;
+                        }
 
-                    boolean result = this.plugin.methods.setPrice(str, price);
+                        warp.setPrice(price);
 
-                    if (result) {
                         String pricesuccess = ChatColor
                                 .translateAlternateColorCodes('&', plugin.msg.EditwarpPriceSuccess)
-                                .replace("{warp}", name).replace("{price}", String.valueOf(price));
+                                .replace("{warp}", warp.getName()).replace("{price}", String.valueOf(price));
 
                         if (price == 1) {
                             sender.sendMessage(pricesuccess.replace("{currency}",
@@ -71,148 +61,105 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
                             sender.sendMessage(pricesuccess.replace("{currency}",
                                     plugin.getConfig().getString("Economy.CurrencyPlural")));
                         }
-                    }
-                } else if (args[1].equalsIgnoreCase("name")) {
-                    String newname = args[2].toLowerCase();
-                    if ((newname.contains(".yml")) || (newname.contains("\\")) || (newname.contains("|"))
-                            || (newname.contains("/")) || (newname.contains(":"))) {
-                        sender.sendMessage(
-                                ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpInvalidName));
-                        return true;
-                    }
-                    this.plugin.methods.setWarp(args[2], this.plugin.methods.getWarp(str));
-                    this.plugin.methods.setItem(args[2], this.plugin.methods.getItemMaterial(str).toString(),
-                            this.plugin.methods.getItemVariant(str));
-                    this.plugin.methods.setLore(args[2], this.plugin.methods.getLore(str));
-                    this.plugin.methods.setPrice(args[2], this.plugin.methods.getPrice(str));
-                    this.plugin.methods.setMessage(args[2], this.plugin.methods.getMessage(str));
-                    this.plugin.methods.setSound(args[2], this.plugin.methods.getSound(str));
+                    } else if (args[1].equalsIgnoreCase("name")) {
+                        try {
+                            warp.setName(args[2]);
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpSuccess)
+                                    .replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[2])));
+                        } catch (InvalidName invalidName) {
+                            invalidName.printStackTrace();
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidName));
+                        }
+                    } else if (args[1].equalsIgnoreCase("message")) {
+                        warp.setMessage(args[2]);
+                    } else if (args[1].equalsIgnoreCase("sound")) {
+                        Sound sound;
+                        try {
+                            sound = Sound.valueOf(args[2]);
+                        } catch (NullPointerException e) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
+                            return true;
+                        }
+                        warp.setSound(sound);
+                    } else if (args[1].equalsIgnoreCase("excmd")) {
+                        if (args[2].equalsIgnoreCase("add")) {
+                            String cmd = args[3].replace("_", " ");
+                            if (args.length > 4) {
+                                warp.addExCmd(cmd, Integer.valueOf(args[4]));
+                            } else {
+                                warp.addExCmd(cmd);
+                            }
+                        } else if (args[2].equalsIgnoreCase("remove")) {
+                            String cmd = args[3].replace("_", " ");
+                            warp.removeExCmd(cmd);
+                        } else if (args[2].equalsIgnoreCase("list")) {
+                            List<String> excmds = warp.getExCmds();
+                            StringBuilder excmd_names = new StringBuilder("§6");
+                            for (String excmd : excmds) {
+                                excmd_names.append(excmd).append("§7, §6");
+                            }
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
+                            sender.sendMessage(excmd_names.toString());
+                        }
+                    } else if (args[1].equalsIgnoreCase("cmd")) {
+                        if (args[2].equalsIgnoreCase("add")) {
+                            if (args.length > 4) {
+                                warp.addCmd(args[3], Integer.valueOf(args[4]));
+                            } else {
+                                warp.addCmd(args[3]);
+                            }
+                        } else if (args[2].equalsIgnoreCase("remove")) {
+                            warp.removeCmd(args[3]);
+                        } else if (args[2].equalsIgnoreCase("list")) {
+                            List<String> cmds = warp.getCmds();
+                            StringBuilder cmd_names = new StringBuilder("§6");
+                            for (String cmd : cmds) {
+                                cmd_names.append(cmd).append("§7, §6");
+                            }
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
+                            sender.sendMessage(cmd_names.toString());
+                        }
+                    } else if (args[1].equalsIgnoreCase("mindist")) {
+                        double dist;
 
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.SetwarpSuccess)
-                            .replace("{warp}", ChatColor.translateAlternateColorCodes('&', args[2])));
-
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.ErrorFileSaving));
-                    this.plugin.methods.delWarp(str);
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.DelwarpSuccess)
-                            .replace("{warp}", name));
-                    return true;
-                } else if (args[1].equalsIgnoreCase("message")) {
-                    boolean result = this.plugin.methods.setMessage(str, args[2]);
-
-                    if (result) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpLoreSuccess)
-                                .replace("{warp}", name).replace("{lore}", ChatColor.translateAlternateColorCodes('&',
-                                        args[2].replace("_", " ").replace(":", "§r:"))));
+                        try {
+                            dist = Double.parseDouble(args[2]);
+                        } catch (NumberFormatException e) {
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
+                            return true;
+                        }
+                        warp.setMinDist(dist);
                     } else {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> name <name>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> item <item-ID>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> lore <Line_1:Line_2:...>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> price <Price>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> message <Message>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> sound <Sound>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> mindist <Distance>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> cmd add <cmd>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> cmd remove <cmd>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> cmd list");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> excmd add <cmd>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> excmd remove <cmd>");
+                        sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> excmd list");
                     }
-
-                    return true;
-                } else if (args[1].equalsIgnoreCase("sound")) {
-                    Sound sound;
-                    try {
-                        sound = Sound.valueOf(args[2]);
-                    } catch (NullPointerException e) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
-                        return true;
-                    }
-
-                    boolean result = this.plugin.methods.setSound(str, sound);
-
-                    if (result) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.EditwarpItemSuccess)
-                                .replace("{warp}", name).replace("{item}", sound.toString()));
-                    } else {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-                    }
-                } else if (args[1].equalsIgnoreCase("excmd")) {
-                    if (args[2].equalsIgnoreCase("add")) {
-                        boolean result;
-                        if (args.length > 4) {
-                            result = this.plugin.methods.addExCmd(str, args[3], Integer.valueOf(args[4]));
-                        } else {
-                            result = this.plugin.methods.addExCmd(str, args[3]);
-                        }
-                        if (!result) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-                            return true;
-                        }
-                    } else if (args[2].equalsIgnoreCase("remove")) {
-                        boolean result = this.plugin.methods.removeExCmd(str, args[3]);
-
-                        if (!result) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-                            return true;
-                        }
-                    } else if (args[2].equalsIgnoreCase("list")) {
-                        List<String> excmds = this.plugin.methods.getExCmds(str);
-                        StringBuilder excmd_names = new StringBuilder("§6");
-                        for (String excmd : excmds) {
-                            excmd_names.append(excmd).append("§7, §6");
-                        }
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
-                        sender.sendMessage(excmd_names.toString());
-                    }
-                } else if (args[1].equalsIgnoreCase("cmd")) {
-                    if (args[2].equalsIgnoreCase("add")) {
-                        boolean result;
-                        if (args.length > 4) {
-                            result = this.plugin.methods.addCmd(str, args[3], Integer.valueOf(args[4]));
-                        } else {
-                            result = this.plugin.methods.addCmd(str, args[3]);
-                        }
-                        if (!result) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-                            return true;
-                        }
-                    } else if (args[2].equalsIgnoreCase("remove")) {
-                        boolean result = this.plugin.methods.removeCmd(str, args[3]);
-
-                        if (!result) {
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-                            return true;
-                        }
-                    } else if (args[2].equalsIgnoreCase("list")) {
-                        List<String> cmds = this.plugin.methods.getCmds(str);
-                        StringBuilder cmd_names = new StringBuilder("§6");
-                        for (String cmd : cmds) {
-                            cmd_names.append(cmd).append("§7, §6");
-                        }
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
-                        sender.sendMessage(cmd_names.toString());
-                    }
-                } else if (args[1].equalsIgnoreCase("mindist")) {
-                    double dist;
-
-                    try {
-                        dist = Double.parseDouble(args[2]);
-                    } catch (NumberFormatException e) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpNeedNumber));
-                        return true;
-                    }
-
-                    boolean result = this.plugin.methods.setMinDist(str, dist);
-
-                    if (!result) {
-                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> name <newname>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> item <item-ID>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> lore <Line_1:Line_2:...>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> price <Price>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> message <Message>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> sound <Sound>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> mindist <Distance>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> cmd add <cmd>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> cmd remove <cmd>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> cmd list");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> excmd add <cmd>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> excmd remove <cmd>");
-                    sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> excmd list");
+                    warp.save();
+                } catch (WarpNoExist warpNoExist) {
+                    warpNoExist.printStackTrace();
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
+                            .replace("{warp}", args[0]));
+                } catch (InvalidItem invalidItem) {
+                    invalidItem.printStackTrace();
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpInvalidItem));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.ErrorFileSaving));
+                } catch (CommandNoExist commandNoExist) {
+                    commandNoExist.printStackTrace();
                 }
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> name <newname>");
+                sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> name <name>");
                 sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> item <item-ID>");
                 sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> lore <Line_1:Line_2:...>");
                 sender.sendMessage(ChatColor.YELLOW + "/editwarp <warp> price <Price>");
@@ -257,7 +204,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
             if (warps_folder.isDirectory()) {
                 File[] warps = warps_folder.listFiles();
 
-                if (warps.length != 0) {
+                if (warps != null && warps.length != 0) {
                     for (File warp : warps) {
                         warpList.add(warp.getName().replace(".yml", ""));
                     }

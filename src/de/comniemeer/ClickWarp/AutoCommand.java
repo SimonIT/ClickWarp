@@ -13,11 +13,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class AutoCommand<P extends JavaPlugin> extends Command {
 
-	/*
+    /*
      * AutoCommand method by PostCrafter Visit his YouTube channel:
-	 * http://www.youtube.com/PostCrafter Visit his forum:
-	 * http://postcrafter.de/
-	 */
+     * http://www.youtube.com/PostCrafter Visit his forum:
+     * http://postcrafter.de/
+     */
 
     private static String VERSION;
 
@@ -41,8 +41,7 @@ public abstract class AutoCommand<P extends JavaPlugin> extends Command {
         this.command = command;
 
         super.setDescription(description);
-        List<String> aliasList = new ArrayList<String>();
-        aliasList.addAll(Arrays.asList(aliases));
+        List<String> aliasList = new ArrayList<>(Arrays.asList(aliases));
         super.setAliases(aliasList);
 
         this.register();

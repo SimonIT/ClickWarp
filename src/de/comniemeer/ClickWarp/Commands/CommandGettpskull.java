@@ -29,7 +29,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
                         OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
                         SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
                         meta.setOwner(p.getName());
-                        List<String> lore = new ArrayList<String>();
+                        List<String> lore = new ArrayList<>();
                         meta.setDisplayName(ChatColor.BOLD + p.getName());
                         lore.add(p.getUniqueId().toString());
                         meta.setLore(lore);

@@ -79,7 +79,7 @@ public class Messages {
     private String OnlyPlayersPath = "Various.OnlyPlayers";
 
     public void load() {
-        messagesFile = new File("plugins/ClickWarp/Languages", plugin.getConfig().getString("Language") + ".yml");
+        messagesFile = new File(this.plugin.getDataFolder() + "/Languages", plugin.getConfig().getString("Language") + ".yml");
         messages = YamlConfiguration.loadConfiguration(messagesFile);
 
         NoWarps = messages.getString(NoWarpsPath);

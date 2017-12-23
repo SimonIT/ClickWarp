@@ -55,7 +55,7 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
                             ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
                             SkullMeta meta = (SkullMeta) item.getItemMeta();
 
-                            meta.setOwningPlayer(p_);
+                            meta.setOwner(p_.getName());
                             meta.setDisplayName(ChatColor.BOLD + p_.getName());
                             item.setItemMeta(meta);
                             inv.setItem(slot, item);
