@@ -1,5 +1,5 @@
 name: ClickWarp
-version: 1.4.6
+version: 1.4.7
 authors:
 - comniemeer
 - SimonIT
@@ -12,6 +12,7 @@ softdepend:
 - WorldGuard
 - WGCustomFlags
 - WarpPortals
+- CommandBook
 permissions:
   clickwarp.*:
     default: op
@@ -34,7 +35,7 @@ permissions:
       clickwarp.sign.use: true
       clickwarp.vehiclewarp: true
       clickwarp.gettpskull: true
-      clickwarp.export: true
+      clickwarp.exportwarp: true
   clickwarp.warp:
     default: op
     description: Access to the /warp command.
@@ -90,6 +91,6 @@ permissions:
   clickwarp.gettpskull:
     default: op
     description: Access to the /gettpskull command.
-  clickwarp.export:
+  clickwarp.exportwarp:
     default: op
     description: Access to the /export command.

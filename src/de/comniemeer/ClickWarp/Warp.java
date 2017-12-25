@@ -9,7 +9,6 @@ import de.comniemeer.ClickWarp.Exceptions.InvalidItem;
 import de.comniemeer.ClickWarp.Exceptions.InvalidName;
 import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
 import org.bukkit.*;
-import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -24,6 +23,7 @@ public class Warp {
     private String filename;
     private String name;
     private Location location;
+    private OfflinePlayer player;
     private ItemStack item;
     private String lore;
     private Double price;
@@ -59,6 +59,11 @@ public class Warp {
             double yaw = cfg.getDouble(this.filename + ".yaw");
             double pitch = cfg.getDouble(this.filename + ".pitch");
             this.location = new Location(w, x, y, z, (float) yaw, (float) pitch);
+
+            if (cfg.get(this.filename + ".player") != null) {
+                UUID uuid = UUID.fromString(cfg.getString(this.filename + ".player"));
+                this.player = Bukkit.getOfflinePlayer(uuid);
+            }
 
             if (cfg.getString(this.filename + ".item") != null) {
                 String item__;
@@ -106,7 +111,7 @@ public class Warp {
         }
     }
 
-    public Warp(String name, Location loc) throws InvalidName {
+    public Warp(String name, Location loc, OfflinePlayer player) throws InvalidName {
         this.clickWarp = (ClickWarp) Bukkit.getPluginManager().getPlugin("ClickWarp");
         this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
         File file = new File(this.clickWarp.getDataFolder() + "/Warps", this.filename + ".yml");
@@ -126,6 +131,11 @@ public class Warp {
             double yaw = cfg.getDouble(this.filename + ".yaw");
             double pitch = cfg.getDouble(this.filename + ".pitch");
             this.location = new Location(w, x, y, z, (float) yaw, (float) pitch);
+
+            if (cfg.get(this.filename + ".player") != null) {
+                UUID uuid = UUID.fromString(cfg.getString(this.filename + ".player"));
+                this.player = Bukkit.getOfflinePlayer(uuid);
+            }
 
             if (cfg.getString(this.filename + ".item") != null) {
                 String item__;
@@ -176,6 +186,7 @@ public class Warp {
             }
             this.name = name;
             this.location = loc;
+            this.player = player;
         }
 
     }
@@ -217,6 +228,10 @@ public class Warp {
         cfg.set(this.filename + ".z", this.location.getZ());
         cfg.set(this.filename + ".yaw", this.location.getYaw());
         cfg.set(this.filename + ".pitch", this.location.getPitch());
+
+        if (this.player != null) {
+            cfg.set(this.filename + ".player", this.player.getUniqueId().toString());
+        }
 
         if (this.item != null) {
             cfg.set(this.filename + ".item", this.item.getType() + ":" + this.item.getData().getData());
@@ -311,6 +326,14 @@ public class Warp {
         return this.name;
     }
 
+    public void setPlayer(OfflinePlayer player) {
+        this.player = player;
+    }
+
+    public OfflinePlayer getPlayer() {
+        return this.player;
+    }
+
     public void setItem(String item) throws InvalidItem {
         String item_;
         byte variant = 0;
@@ -374,7 +397,11 @@ public class Warp {
     }
 
     public String getLore() {
-        return this.lore;
+        if (this.lore != null) {
+            return this.lore;
+        } else {
+            return "";
+        }
     }
 
 
@@ -383,7 +410,11 @@ public class Warp {
     }
 
     public Double getPrice() {
-        return this.price;
+        if (this.price != null) {
+            return this.price;
+        } else {
+            return 0d;
+        }
     }
 
     public void setMessage(String message) {

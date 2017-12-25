@@ -26,7 +26,7 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                 Player player = (Player) sender;
                 if (args.length == 1) {
                     try {
-                        Warp warp = new Warp(args[0], player.getLocation());
+                        Warp warp = new Warp(args[0], player.getLocation(), player);
                         warp.save();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
                                 .replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp.getName())));
@@ -37,7 +37,7 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                     }
                 } else if (args.length == 2) {
                     try {
-                        Warp warp = new Warp(args[0], player.getLocation());
+                        Warp warp = new Warp(args[0], player.getLocation(), player);
                         warp.setItem(args[1]);
                         warp.save();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)
@@ -51,7 +51,7 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                     }
                 } else if (args.length == 3) {
                     try {
-                        Warp warp = new Warp(args[0], player.getLocation());
+                        Warp warp = new Warp(args[0], player.getLocation(), player);
                         warp.setItem(args[1]);
                         Double price = Double.parseDouble(args[2]);
                         warp.setPrice(price);

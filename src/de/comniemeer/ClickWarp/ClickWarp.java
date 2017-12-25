@@ -1,17 +1,19 @@
 package de.comniemeer.ClickWarp;
 
+import com.sk89q.commandbook.CommandBook;
+import com.sk89q.commandbook.locations.*;
 import de.comniemeer.ClickWarp.Metrics.Graph;
 import de.comniemeer.ClickWarp.Updater.ReleaseType;
 import de.comniemeer.ClickWarp.Commands.CommandClickwarp;
 import de.comniemeer.ClickWarp.Commands.CommandDelwarp;
 import de.comniemeer.ClickWarp.Commands.CommandEditwarp;
-import de.comniemeer.ClickWarp.Commands.CommandExport;
+import de.comniemeer.ClickWarp.Commands.CommandExportwarp;
 import de.comniemeer.ClickWarp.Commands.CommandGettpskull;
 import de.comniemeer.ClickWarp.Commands.CommandInvtp;
 import de.comniemeer.ClickWarp.Commands.CommandInvwarp;
 import de.comniemeer.ClickWarp.Commands.CommandSetwarp;
 import de.comniemeer.ClickWarp.Commands.CommandWarp;
-import de.comniemeer.ClickWarp.Commands.CommandImport;
+import de.comniemeer.ClickWarp.Commands.CommandImportwarp;
 import de.comniemeer.ClickWarp.Commands.CustomCommands;
 import de.comniemeer.ClickWarp.Listeners.InventoryListener;
 import de.comniemeer.ClickWarp.Listeners.PlayerListener;
@@ -37,8 +39,6 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -51,7 +51,6 @@ import com.mccraftaholics.warpportals.bukkit.PortalPlugin;
 import com.mccraftaholics.warpportals.manager.PortalDestManager;
 import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 
 public class ClickWarp extends JavaPlugin {
 
@@ -72,14 +71,15 @@ public class ClickWarp extends JavaPlugin {
     public HashMap<List<String>, List<String>> cmd = new HashMap<>();
     public int delaytask;
 
-    public Permission permission = null;
-    public Economy economy = null;
-    public Warps IWarps = null;
-    public WGCustomFlagsPlugin wgcf = null;
-    public WorldGuardPlugin wg = null;
-    public PortalDestManager pdm = null;
+    public Permission permission;
+    public Economy economy;
+    public Warps IWarps;
+    public WGCustomFlagsPlugin wgcf;
+    public WorldGuardPlugin wg;
+    public PortalDestManager pdm;
+    public FlatFileLocationsManager fflm;
 
-    //public StateFlag Warp_Flag = new StateFlag("warp", true);
+    //public StateFlag Warp_Flag = null;
 
     public boolean update = false;
     public String name = "";
@@ -128,6 +128,17 @@ public class ClickWarp extends JavaPlugin {
         return true;
     }
 
+    private boolean setupCommandBook() {
+        Plugin cb = getServer().getPluginManager().getPlugin("CommandBook");
+        if ((cb == null) || (!(cb instanceof CommandBook))) {
+            return false;
+        }
+
+        this.fflm = new FlatFileLocationsManager(new File(cb.getDataFolder(), "warps.csv"), "warps");
+
+        return true;
+    }
+
     private WGCustomFlagsPlugin getWGCustomFlags() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
 
@@ -135,6 +146,7 @@ public class ClickWarp extends JavaPlugin {
             return null;
         }
 
+        //this.Warp_Flag = new StateFlag("warp", true);
         return (WGCustomFlagsPlugin) plugin;
     }
 
@@ -188,72 +200,53 @@ public class ClickWarp extends JavaPlugin {
             this.log.severe("[ClickWarp] Failed to submit the stats!");
         }
 
-        File warps_folder = new File("plugins/ClickWarp/Warps");
+        List<Warp> warps = Warp.getWarps();
+        try {
+            Metrics metrics = new Metrics(this);
 
-        if (warps_folder.isDirectory()) {
-            File[] warps = warps_folder.listFiles();
+            Graph Warps = metrics.createGraph("Warps");
 
-            final int files;
-            if (warps != null) {
-                files = warps.length;
-
-
-                if (files != 0) {
-                    try {
-                        Metrics metrics = new Metrics(this);
-
-                        Graph Warps = metrics.createGraph("Warps");
-
-                        Warps.addPlotter(new Metrics.Plotter("Warps") {
-                            public int getValue() {
-                                return files;
-                            }
-                        });
-
-                        metrics.start();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    for (File warp : warps) {
-                        FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
-
-                        String str = warp.getName().replace(".yml", "");
-                        List<String> infos = new ArrayList<>();
-                        infos.add(cfg.getString(str + ".name"));
-                        if (cfg.get(str + ".price") != null) {
-                            Double price = cfg.getDouble(str + ".price");
-                            String priceformat = ChatColor.translateAlternateColorCodes('&',
-                                    getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
-
-                            if (price == 1) {
-                                infos.add(priceformat.replace("{currency}",
-                                        getConfig().getString("Economy.CurrencySingular")));
-                            } else {
-                                infos.add(
-                                        priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
-                            }
-                        } else {
-                            infos.add("free");
-                        }
-                        if (cfg.get(str + ".lore") != null) {
-                            String description = cfg.getString(str + ".lore");
-                            description = description.replace(":", " ");
-                            description = description.replace("_", " ");
-                            infos.add(description);
-                        } else {
-                            infos.add("");
-                        }
-                        cmd.put(infos, cfg.getStringList(str + ".cmd"));
-                    }
+            Warps.addPlotter(new Metrics.Plotter("Warps") {
+                public int getValue() {
+                    return warps.size();
                 }
-            }
+            });
 
+            metrics.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        for (Warp warp : warps) {
+            List<String> infos = new ArrayList<>();
+            infos.add(warp.getName());
+            if (warp.getPrice() != 0) {
+                Double price = warp.getPrice();
+                String priceformat = ChatColor.translateAlternateColorCodes('&',
+                        getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
+
+                if (price == 1) {
+                    infos.add(priceformat.replace("{currency}",
+                            getConfig().getString("Economy.CurrencySingular")));
+                } else {
+                    infos.add(
+                            priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
+                }
+            } else {
+                infos.add("free");
+            }
+            String description = warp.getLore();
+            description = description.replace(":", " ");
+            description = description.replace("_", " ");
+            infos.add(description);
+            cmd.put(infos, warp.getCmds());
+        }
+
 
         Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
         Boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
         Boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
         Boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
+        Boolean enableCommandBook = this.getConfig().getBoolean("CommandBook.Enable");
 
         if (enableEconomy) {
             try {
@@ -281,16 +274,17 @@ public class ClickWarp extends JavaPlugin {
 
         if (enableFlags) {
             try {
-                wg = this.getWorldGuard();
-                wgcf = this.getWGCustomFlags();
+                this.wg = this.getWorldGuard();
+                this.wgcf = this.getWGCustomFlags();
+                if (this.wgcf != null) {
+                    //this.wgcf.addCustomFlag(this.Warp_Flag);
+                }
             } catch (NoClassDefFoundError ncdfe) {
                 this.log.severe("[ClickWarp] Failed to load WGCustomFlags or WorldGuard!");
                 this.log.severe("[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
                 this.getServer().getPluginManager().disablePlugin(this);
                 return;
             }
-            //wgcf.addCustomFlag(Warp_Flag);
-
         }
 
         if (enableWarpPortals) {
@@ -305,6 +299,19 @@ public class ClickWarp extends JavaPlugin {
             }
         }
 
+        if (enableCommandBook) {
+            try {
+                this.setupCommandBook();
+            } catch (NoClassDefFoundError ncdfe) {
+                this.log.severe("[ClickWarp] Failed to load CommandBook!");
+                this.log.severe(
+                        "[ClickWarp] Install CommandBook or set \"EnableCommandBook\" in the config.yml to \"false\"");
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+        }
+
+
         new CommandClickwarp(this, "clickwarp", "ClickWarp command");
         new CommandWarp(this, "warp", "Warp command", "warps", "cwarp");
         new CommandDelwarp(this, "delwarp", "Deletes a warp", "delcwarp");
@@ -313,8 +320,8 @@ public class ClickWarp extends JavaPlugin {
         new CommandInvwarp(this, "invwarp", "Inventory-Warp command", "invwarps");
         new CommandSetwarp(this, "setwarp", "Sets a warp at the current location", "setcwarp");
         new CommandGettpskull(this, "gettpskull", "Get the skull of a player to teleport you at him");
-        new CommandImport(this, "import", "Import the Warps from other Plugins.");
-        new CommandExport(this, "export", "Export the Warps to other Plugins.");
+        new CommandImportwarp(this, "importwarp", "Import the Warps from other Plugins.");
+        new CommandExportwarp(this, "exportwarp", "Export the Warps to other Plugins.");
         for (Entry<List<String>, List<String>> entry : cmd.entrySet()) {
             List<String> key = entry.getKey();
             List<String> value = entry.getValue();

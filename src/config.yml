@@ -22,10 +22,9 @@ Commands:
   setwarp: setwarp
   delwarp: delwarp
   invtp: invtp
-  invtpa: invtpa
   gettpskull: gettpskull
-  import: import
-  export: export
+  importwarp: importwarp
+  exportwarp: exportwarp
 
 # Define here the default item for /invwarp
 # Attention! If you use an item with an additional meta, like blue wool (wool:11),
@@ -120,6 +119,12 @@ Essentials:
 # WarpPortals must be installed for this option
 # Download it at https://dev.bukkit.org/projects/warp-portals
 WarpPortals:
+  Enable: false
+
+# If you want import/export the warps as destinations from/to CommandBook
+# WarpPortals must be installed for this option
+# Download it at https://dev.bukkit.org/projects/commandbook
+CommandBook:
   Enable: false
 
 # For this function you need WGCustomFlags and WorldGuard enabled on your server

@@ -109,11 +109,10 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                                 itemstack.setItemMeta(item_lore);
                                 Player player = (Player) sender;
                                 PlayerInventory inventory = player.getInventory();
-                                inventory.setItemInMainHand(itemstack);
+                                inventory.addItem(itemstack);
                             } catch (WarpNoExist warpNoExist) {
-                                sender.sendMessage(
-                                        ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
-                                                .replace("{warp}", args[0]));
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                                        .replace("{warp}", args[0]));
                             }
                         } else {
                             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
@@ -131,6 +130,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 
                         sender.sendMessage(ChatColor.GRAY + "============= Warp Info =============");
                         sender.sendMessage(ChatColor.BLUE + "Name: " + ChatColor.GOLD + warp.getName());
+                        sender.sendMessage(ChatColor.BLUE + "Player: " + ChatColor.GOLD + warp.getPlayer().getName());
                         sender.sendMessage(ChatColor.BLUE + "Coordinates: " + ChatColor.GOLD + Math.round(loc.getX()) + ", " + Math.round(loc.getY()) + ", " + Math.round(loc.getZ()));
                         sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + warp.getItemMaterial().name().toLowerCase() + ":" + warp.getItemVariant());
                         sender.sendMessage(ChatColor.BLUE + "Price: " + ChatColor.GOLD + warp.getPrice());
@@ -155,21 +155,23 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                     }
                 }
             } else if (args[1].contains("g:")) {
-                String group = args[1].replace("g:", "");
-                try {
-                    Warp warp = new Warp(args[0]);
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (plugin.permission.playerInGroup(player.getWorld().getName(), player, group)) {
-                            if (player.hasPermission("clickwarp.warp")) {
-                                warp.handleWarp(player, false);
-                            } else {
-                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+                if (this.plugin.permission != null) {
+                    String group = args[1].replace("g:", "");
+                    try {
+                        Warp warp = new Warp(args[0]);
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            if (this.plugin.permission.playerInGroup(player.getWorld().getName(), player, group)) {
+                                if (player.hasPermission("clickwarp.warp")) {
+                                    warp.handleWarp(player, false);
+                                } else {
+                                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+                                }
                             }
                         }
+                    } catch (WarpNoExist warpNoExist) {
+                        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+                                .replace("{warp}", args[0]));
                     }
-                } catch (WarpNoExist warpNoExist) {
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
-                            .replace("{warp}", args[0]));
                 }
             } else if (Bukkit.getPlayer(args[1]) != null) {
                 Player player = Bukkit.getPlayer(args[1]);
@@ -194,6 +196,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
             sender.sendMessage(ChatColor.YELLOW + "/warps");
             sender.sendMessage(ChatColor.YELLOW + "/warp <warp>");
             sender.sendMessage(ChatColor.YELLOW + "/warp <warp> <user>");
+            sender.sendMessage(ChatColor.YELLOW + "/warp <warp> g:<group>");
+            sender.sendMessage(ChatColor.YELLOW + "/warp <warp> all");
             sender.sendMessage(ChatColor.YELLOW + "/warp <warp> info");
             sender.sendMessage(ChatColor.YELLOW + "/warp <warp> getitem");
         }

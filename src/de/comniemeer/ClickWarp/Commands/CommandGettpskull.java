@@ -28,7 +28,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
                     if (sender instanceof Player) {
                         OfflinePlayer p = Bukkit.getOfflinePlayer(args[0]);
                         SkullMeta meta = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.SKULL_ITEM);
-                        meta.setOwner(p.getName());
+                        meta.setOwningPlayer(p);
                         List<String> lore = new ArrayList<>();
                         meta.setDisplayName(ChatColor.BOLD + p.getName());
                         lore.add(p.getUniqueId().toString());
@@ -37,7 +37,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
                         itemstack.setItemMeta(meta);
                         Player player = (Player) sender;
                         PlayerInventory inventory = player.getInventory();
-                        inventory.setItemInMainHand(itemstack);
+                        inventory.addItem(itemstack);
                     } else {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.OnlyPlayers));
                     }

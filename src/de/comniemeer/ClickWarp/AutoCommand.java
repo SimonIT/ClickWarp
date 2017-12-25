@@ -47,7 +47,7 @@ public abstract class AutoCommand<P extends JavaPlugin> extends Command {
         this.register();
     }
 
-    public void register() {
+    private void register() {
         try {
             Field f = Class.forName("org.bukkit.craftbukkit." + AutoCommand.VERSION + ".CraftServer")
                     .getDeclaredField("commandMap");
