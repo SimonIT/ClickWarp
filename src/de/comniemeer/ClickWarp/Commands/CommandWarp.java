@@ -80,7 +80,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                                 || sender.hasPermission("clickwarp.warp.getitem." + str)) {
                             try {
                                 Warp warp = new Warp(args[0]);
-                                ItemStack itemstack = warp.getItemStack();
+                                ItemStack itemstack = warp.getItem();
 
                                 List<String> lore = new ArrayList<String>();
                                 Boolean useeconomy = this.plugin.getConfig().getBoolean("Economy.Enable");
@@ -132,7 +132,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         sender.sendMessage(ChatColor.BLUE + "Name: " + ChatColor.GOLD + warp.getName());
                         sender.sendMessage(ChatColor.BLUE + "Player: " + ChatColor.GOLD + warp.getPlayer().getName());
                         sender.sendMessage(ChatColor.BLUE + "Coordinates: " + ChatColor.GOLD + Math.round(loc.getX()) + ", " + Math.round(loc.getY()) + ", " + Math.round(loc.getZ()));
-                        sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + warp.getItemMaterial().name().toLowerCase() + ":" + warp.getItemVariant());
+                        sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + warp.getItem().getType().name().toLowerCase() + ":" + warp.getItem().getData().getData());
                         sender.sendMessage(ChatColor.BLUE + "Price: " + ChatColor.GOLD + warp.getPrice());
                         sender.sendMessage(ChatColor.BLUE + "Lore: " + ChatColor.GOLD + String.join("\n", warp.getPreparedLore()));
                     } catch (WarpNoExist warpNoExist) {

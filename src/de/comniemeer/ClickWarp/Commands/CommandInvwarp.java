@@ -63,7 +63,7 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
                     } else {
                         for (Warp aList : warps) {
-                            ItemStack itemstack = aList.getItemStack();
+                            ItemStack itemstack = aList.getItem();
 
                             String name = aList.getName();
 

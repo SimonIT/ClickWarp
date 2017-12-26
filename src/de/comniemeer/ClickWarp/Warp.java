@@ -356,7 +356,7 @@ public class Warp {
         this.item = new ItemStack(Material.matchMaterial(material), 1, variant);
     }
 
-    public ItemStack getItemStack() {
+    public ItemStack getItem() {
         if (this.item != null) {
             return this.item;
         } else {
@@ -371,14 +371,6 @@ public class Warp {
             }
             return new ItemStack(Material.matchMaterial(item), 1, variant);
         }
-    }
-
-    public Material getItemMaterial() {
-        return this.item.getType();
-    }
-
-    public byte getItemVariant() {
-        return this.item.getData().getData();
     }
 
     public void setLore(String lore) {
