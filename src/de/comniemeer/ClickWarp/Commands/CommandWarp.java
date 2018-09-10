@@ -27,7 +27,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
         if (args.length == 0) {
             if (!plugin.getConfig().getBoolean("InvwarpInsteadWarp")) {
                 if (sender.hasPermission("clickwarp.warps")) {
-                    List<Warp> warps = Warp.getWarps();
+                    List<Warp> warps = Warp.getWarps(this.plugin);
 
                     if (warps.size() == 0) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
@@ -35,11 +35,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 
                         StringBuilder warp_names = new StringBuilder(ChatColor.GOLD.toString());
 
-                        for (int i = 0; i < warps.size(); i++) {
-
-                            if (i < warps.size()) {
-                                warp_names.append(warps.get(i).getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
-                            }
+                        for (Warp warp : warps) {
+                            warp_names.append(warp.getName()).append(ChatColor.GRAY).append(", ").append(ChatColor.GOLD);
                         }
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpList));
                         sender.sendMessage(warp_names.toString());
@@ -83,9 +80,9 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                                 ItemStack itemstack = warp.getItem();
 
                                 List<String> lore = new ArrayList<String>();
-                                Boolean useeconomy = this.plugin.getConfig().getBoolean("Economy.Enable");
+                                boolean useeconomy = this.plugin.getConfig().getBoolean("Economy.Enable");
                                 if (useeconomy) {
-                                    Boolean useshowprice = this.plugin.getConfig().getBoolean("Economy.ShowPrice");
+                                    boolean useshowprice = this.plugin.getConfig().getBoolean("Economy.ShowPrice");
                                     if ((useshowprice)) {
                                         Double price = warp.getPrice();
                                         String priceformat = ChatColor.translateAlternateColorCodes('&',
@@ -132,7 +129,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
                         sender.sendMessage(ChatColor.BLUE + "Name: " + ChatColor.GOLD + warp.getName());
                         sender.sendMessage(ChatColor.BLUE + "Player: " + ChatColor.GOLD + warp.getPlayer().getName());
                         sender.sendMessage(ChatColor.BLUE + "Coordinates: " + ChatColor.GOLD + Math.round(loc.getX()) + ", " + Math.round(loc.getY()) + ", " + Math.round(loc.getZ()));
-                        sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + warp.getItem().getType().name().toLowerCase() + ":" + warp.getItem().getData().getData());
+                        sender.sendMessage(ChatColor.BLUE + "Item: " + ChatColor.GOLD + warp.getItem().getType().name());
                         sender.sendMessage(ChatColor.BLUE + "Price: " + ChatColor.GOLD + warp.getPrice());
                         sender.sendMessage(ChatColor.BLUE + "Lore: " + ChatColor.GOLD + String.join("\n", warp.getPreparedLore()));
                     } catch (WarpNoExist warpNoExist) {
@@ -209,7 +206,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
     public List<String> tabComplete(CommandSender sender, String label, String[] args) {
         List<String> warpList = new ArrayList<>();
 
-        List<Warp> warps = Warp.getWarps();
+        List<Warp> warps = Warp.getWarps(this.plugin);
 
         if (warps != null && warps.size() != 0) {
             for (Warp warp : warps) {

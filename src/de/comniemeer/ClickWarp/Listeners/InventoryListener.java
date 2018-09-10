@@ -56,10 +56,10 @@ public class InventoryListener implements Listener {
                         final Player p_ = Bukkit.getPlayerExact(name);
 
                         if (p_ != null) {
-                            Boolean usedelay = plugin.getConfig().getBoolean("Delay.Teleport.EnableDelay");
+                            boolean usedelay = plugin.getConfig().getBoolean("Delay.Teleport.EnableDelay");
 
                             if (!usedelay) {
-                                Boolean use_vehicle = false;
+                                boolean use_vehicle = false;
                                 Entity vec = null;
                                 if (player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp")
                                         && plugin.getConfig().getBoolean("VehicleWarp")) {
@@ -90,7 +90,7 @@ public class InventoryListener implements Listener {
                                     this.plugin.log.info("[ClickWarp] [" + player.getName() + ": Warped "
                                             + player.getName() + " to " + p_.getName() + "]");
                                 } else {
-                                    Boolean usedontmove = plugin.getConfig()
+                                    boolean usedontmove = plugin.getConfig()
                                             .getBoolean("Delay.Teleport.EnableDontMove");
                                     int delay = plugin.getConfig().getInt("Delay.Teleport.Delay");
 

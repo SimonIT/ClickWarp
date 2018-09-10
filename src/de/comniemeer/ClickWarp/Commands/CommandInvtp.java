@@ -52,10 +52,10 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 
                     for (Player p_ : players) {
                         if (p_ != p) {
-                            ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                            ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
                             SkullMeta meta = (SkullMeta) item.getItemMeta();
 
-                            meta.setOwner(p_.getName());
+                            meta.setOwningPlayer(p_);
                             meta.setDisplayName(ChatColor.BOLD + p_.getName());
                             item.setItemMeta(meta);
                             inv.setItem(slot, item);

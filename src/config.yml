@@ -27,8 +27,7 @@ Commands:
   exportwarp: exportwarp
 
 # Define here the default item for /invwarp
-# Attention! If you use an item with an additional meta, like blue wool (wool:11),
-# you have to make that item in '' (example: DefaultWarpItem: 'wool:11')!
+# (example: DefaultWarpItem: white_wool)!
 DefaultWarpItem: grass
 
 # If you wish to use an item that opens the "/invwarp" menu, enable it here and define an item.
@@ -46,7 +45,7 @@ VehicleWarp: true
 GetWarpItem: true
 
 # The sound who should be played if someone warps
-WarpSound: ENTITY_ENDERMEN_TELEPORT 
+WarpSound: ENTITY_ENDERMAN_TELEPORT
 
 # If you wish to use an item that teleports you to a player
 GetTpSkull: true

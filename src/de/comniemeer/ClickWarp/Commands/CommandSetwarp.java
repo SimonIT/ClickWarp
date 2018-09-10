@@ -53,7 +53,7 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
                     try {
                         Warp warp = new Warp(args[0], player.getLocation(), player);
                         warp.setItem(args[1]);
-                        Double price = Double.parseDouble(args[2]);
+                        double price = Double.parseDouble(args[2]);
                         warp.setPrice(price);
                         warp.save();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SetwarpSuccess)

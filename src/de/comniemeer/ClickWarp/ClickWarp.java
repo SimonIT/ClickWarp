@@ -120,7 +120,7 @@ public class ClickWarp extends JavaPlugin {
 
     private boolean setupWarpPortals() {
         Plugin wapo = getServer().getPluginManager().getPlugin("WarpPortals");
-        if ((wapo == null) || (!(wapo instanceof PortalPlugin))) {
+        if (!(wapo instanceof PortalPlugin)) {
             return false;
         }
         this.pdm = ((PortalPlugin) wapo).mPortalManager.mPortalDestManager;
@@ -130,7 +130,7 @@ public class ClickWarp extends JavaPlugin {
 
     private boolean setupCommandBook() {
         Plugin cb = getServer().getPluginManager().getPlugin("CommandBook");
-        if ((cb == null) || (!(cb instanceof CommandBook))) {
+        if (!(cb instanceof CommandBook)) {
             return false;
         }
 
@@ -142,7 +142,7 @@ public class ClickWarp extends JavaPlugin {
     private WGCustomFlagsPlugin getWGCustomFlags() {
         Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
 
-        if (plugin == null || !(plugin instanceof WGCustomFlagsPlugin)) {
+        if (!(plugin instanceof WGCustomFlagsPlugin)) {
             return null;
         }
 
@@ -154,7 +154,7 @@ public class ClickWarp extends JavaPlugin {
         Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
 
         // WorldGuard may not be loaded
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+        if (!(plugin instanceof WorldGuardPlugin)) {
             return null; // Maybe you want throw an exception instead
         }
 
@@ -200,7 +200,7 @@ public class ClickWarp extends JavaPlugin {
             this.log.severe("[ClickWarp] Failed to submit the stats!");
         }
 
-        List<Warp> warps = Warp.getWarps();
+        List<Warp> warps = Warp.getWarps(this);
         try {
             Metrics metrics = new Metrics(this);
 
@@ -242,11 +242,11 @@ public class ClickWarp extends JavaPlugin {
         }
 
 
-        Boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
-        Boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
-        Boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
-        Boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
-        Boolean enableCommandBook = this.getConfig().getBoolean("CommandBook.Enable");
+        boolean enableEconomy = this.getConfig().getBoolean("Economy.Enable");
+        boolean enableFlags = this.getConfig().getBoolean("Flags.Enable");
+        boolean enableIWarps = this.getConfig().getBoolean("Essentials.Enable");
+        boolean enableWarpPortals = this.getConfig().getBoolean("WarpPortals.Enable");
+        boolean enableCommandBook = this.getConfig().getBoolean("CommandBook.Enable");
 
         if (enableEconomy) {
             try {
@@ -329,7 +329,7 @@ public class ClickWarp extends JavaPlugin {
             if (value.size() > 0) {
                 String mainCommand = value.get(0);
                 value.remove(0);
-                String[] alias = value.toArray(new String[value.size()]);
+                String[] alias = value.toArray(new String[0]);
 
                 new CustomCommands(this, mainCommand,
                         ChatColor.translateAlternateColorCodes('&', getConfig().getString("Sign.FirstLine")) + " "

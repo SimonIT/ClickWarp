@@ -54,7 +54,7 @@ public class PlayerListener implements Listener {
 
             if (e.getItem() != null && e.getItem().getType() == invwarpmaterial
                     && e.getItem().getData().getData() == invwarpitem_variant) {
-                Boolean enableinvwarp = plugin.getConfig().getBoolean("EnableInvwarpItem");
+                boolean enableinvwarp = plugin.getConfig().getBoolean("EnableInvwarpItem");
 
                 if (enableinvwarp) {
                     if (p.hasPermission("clickwarp.invwarp.item")) {
@@ -90,9 +90,9 @@ public class PlayerListener implements Listener {
                     "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[34][0-9a-fA-F]{3}-[89ab][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"))) {
                 Player p_ = Bukkit.getPlayer(UUID.fromString(e.getItem().getItemMeta().getLore().get(0)));
                 if (p_ != null) {
-                    Boolean usedelay = this.plugin.getConfig().getBoolean("Delay.Teleport.EnableDelay");
+                    boolean usedelay = this.plugin.getConfig().getBoolean("Delay.Teleport.EnableDelay");
                     Sound warp_sound = Sound.valueOf(this.plugin.getConfig().getString("WarpSound").toUpperCase());
-                    Boolean use_vehicle = false;
+                    boolean use_vehicle = false;
                     Entity vec = null;
                     if (p.getVehicle() != null && p.hasPermission("clickwarp.vehiclewarp")
                             && plugin.getConfig().getBoolean("VehicleWarp")) {
@@ -124,7 +124,7 @@ public class PlayerListener implements Listener {
                         p.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPSuccess)
                                 .replace("{player}", p_.getName()));
                     } else {
-                        Boolean usedontmove = this.plugin.getConfig().getBoolean("Delay.Teleport.EnableDontMove");
+                        boolean usedontmove = this.plugin.getConfig().getBoolean("Delay.Teleport.EnableDontMove");
                         int delay = this.plugin.getConfig().getInt("Delay.Teleport.Delay");
                         if (usedontmove) {
                             this.plugin.warp_delay.put(p.getName(), Boolean.TRUE);

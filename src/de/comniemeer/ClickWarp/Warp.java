@@ -26,11 +26,11 @@ public class Warp {
     private OfflinePlayer player;
     private ItemStack item;
     private String lore;
-    private Double price;
+    private Double price = 0d;
     private String message;
     private Sound sound;
-    private List<String> executeCommands;
-    private List<String> aliasCommands;
+    private List<String> executeCommands = new ArrayList<>();
+    private List<String> aliasCommands = new ArrayList<>();
     private Double minDistance;
 
     private Entity vec;
@@ -39,6 +39,12 @@ public class Warp {
             ".yml", "\\", "|", "/", ":"
     };
 
+    /**
+     * loads a warp
+     *
+     * @param name the name of the warp to load, case insensitive
+     * @throws WarpNoExist thrown if the warp does not exist
+     */
     public Warp(String name) throws WarpNoExist {
         this.clickWarp = (ClickWarp) Bukkit.getPluginManager().getPlugin("ClickWarp");
         this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
@@ -66,16 +72,11 @@ public class Warp {
             }
 
             if (cfg.getString(this.filename + ".item") != null) {
-                String item__;
-                byte variant = 0;
-                if (cfg.getString(this.filename + ".item").contains(":")) {
-                    String[] item_split = cfg.getString(this.filename + ".item").split(":");
-                    item__ = item_split[0].toUpperCase();
-                    variant = Byte.parseByte(item_split[1]);
-                } else {
-                    item__ = cfg.getString(this.filename + ".item").toUpperCase();
+                String mName = cfg.getString(this.filename + ".item").toUpperCase();
+                Material material = Material.getMaterial(mName);
+                if (material != null) {
+                    this.item = new ItemStack(material, 1);
                 }
-                this.item = new ItemStack(Material.matchMaterial(item__), 1, variant);
             }
 
 
@@ -88,7 +89,7 @@ public class Warp {
             }
 
             if (cfg.get(this.filename + ".message") != null) {
-                this.message = message = cfg.getString(this.filename + ".message");
+                this.message = cfg.getString(this.filename + ".message");
             }
 
             if (cfg.get(this.filename + ".sound") != null) {
@@ -111,6 +112,14 @@ public class Warp {
         }
     }
 
+    /**
+     * Creates a new warp
+     *
+     * @param name   the warp name
+     * @param loc    the warp position
+     * @param player the player who creates the warp
+     * @throws InvalidName thrown if the name contains invalid characters
+     */
     public Warp(String name, Location loc, OfflinePlayer player) throws InvalidName {
         this.clickWarp = (ClickWarp) Bukkit.getPluginManager().getPlugin("ClickWarp");
         this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
@@ -138,16 +147,7 @@ public class Warp {
             }
 
             if (cfg.getString(this.filename + ".item") != null) {
-                String item__;
-                byte variant = 0;
-                if (cfg.getString(this.filename + ".item").contains(":")) {
-                    String[] item_split = cfg.getString(this.filename + ".item").split(":");
-                    item__ = item_split[0].toUpperCase();
-                    variant = Byte.parseByte(item_split[1]);
-                } else {
-                    item__ = cfg.getString(this.filename + ".item").toUpperCase();
-                }
-                this.item = new ItemStack(Material.matchMaterial(item__), 1, variant);
+                this.item = new ItemStack(Material.matchMaterial(cfg.getString(this.filename + ".item").toUpperCase()), 1);
             }
 
 
@@ -160,7 +160,7 @@ public class Warp {
             }
 
             if (cfg.get(this.filename + ".message") != null) {
-                this.message = message = cfg.getString(this.filename + ".message");
+                this.message = cfg.getString(this.filename + ".message");
             }
 
             if (cfg.get(this.filename + ".sound") != null) {
@@ -234,7 +234,7 @@ public class Warp {
         }
 
         if (this.item != null) {
-            cfg.set(this.filename + ".item", this.item.getType() + ":" + this.item.getData().getData());
+            cfg.set(this.filename + ".item", this.item.getType());
         }
 
         if (this.lore != null) {
@@ -284,13 +284,12 @@ public class Warp {
         }
     }
 
-    public static List<Warp> getWarps() {
-        Plugin cw = Bukkit.getPluginManager().getPlugin("ClickWarp");
+    public static List<Warp> getWarps(ClickWarp cw) {
         File warps_folder = new File(cw.getDataFolder() + "/Warps");
 
         File[] warps = warps_folder.listFiles();
 
-        List<Warp> list = new ArrayList<Warp>();
+        List<Warp> list = new ArrayList<>();
 
         if (warps != null && warps.length > 0) {
             for (File warp : warps) {
@@ -334,42 +333,24 @@ public class Warp {
         return this.player;
     }
 
+    public void setItem(Material item) {
+        this.item = new ItemStack(item, 1);
+    }
+
     public void setItem(String item) throws InvalidItem {
-        String item_;
-        byte variant = 0;
-        if (item.contains(":")) {
-            String[] item_split = item.split(":");
-            item_ = item_split[0];
-            variant = Byte.parseByte(item_split[1]);
-        } else {
-            item_ = item;
-        }
-        Material material = Material.matchMaterial(item_);
+        Material material = Material.matchMaterial(item);
         if (material != null) {
-            this.item = new ItemStack(material, 1, variant);
+            this.item = new ItemStack(material, 1);
         } else {
             throw new InvalidItem();
         }
-    }
-
-    public void setItem(String material, byte variant) {
-        this.item = new ItemStack(Material.matchMaterial(material), 1, variant);
     }
 
     public ItemStack getItem() {
         if (this.item != null) {
             return this.item;
         } else {
-            String item;
-            byte variant = 0;
-            if (this.clickWarp.getConfig().getString("DefaultWarpItem").contains(":")) {
-                String[] item_split = this.clickWarp.getConfig().getString("DefaultWarpItem").split(":");
-                item = item_split[0].toUpperCase();
-                variant = Byte.parseByte(item_split[1]);
-            } else {
-                item = this.clickWarp.getConfig().getString("DefaultWarpItem").toUpperCase();
-            }
-            return new ItemStack(Material.matchMaterial(item), 1, variant);
+            return new ItemStack(Material.matchMaterial(this.clickWarp.getConfig().getString("DefaultWarpItem").toUpperCase()), 1);
         }
     }
 
@@ -436,7 +417,12 @@ public class Warp {
         if (this.sound != null) {
             return this.sound;
         } else {
-            return Sound.valueOf(this.clickWarp.getConfig().getString("WarpSound").toUpperCase());
+            Sound soundConfig = Sound.valueOf(this.clickWarp.getConfig().getString("WarpSound").toUpperCase());
+            if (soundConfig != null) {
+                return sound;
+            } else {
+                return Sound.ENTITY_ENDERMAN_TELEPORT;
+            }
         }
     }
 
@@ -445,33 +431,20 @@ public class Warp {
     }
 
     public void addExCmd(String cmd) throws CommandNoExist {
-        //Command command = Bukkit.getServer().getPluginCommand(cmd.replace("/", "")); //TODO Check if command exist
-        //if (command != null) {
-        if (this.executeCommands == null) {
-            this.executeCommands = new ArrayList<>();
-        }
-        this.executeCommands.add(cmd);
-        /*} else {
-            throw new CommandNoExist();
-        }*/
+        this.addExCmd(cmd, 0);
     }
 
     public void addExCmd(String cmd, int priority) throws CommandNoExist {
-        //Command command = Bukkit.getServer().getPluginCommand(cmd.replace("/", "")); //TODO Check if command exist
-        //if (command != null) {
-        if (this.executeCommands == null) {
-            this.executeCommands = new ArrayList<>();
+        //TODO Check if command exist
+        if (priority > 0 && priority < this.executeCommands.size()) {
+            this.executeCommands.add(priority - 1, cmd);
+        } else {
+            this.executeCommands.add(cmd);
         }
-        this.executeCommands.add(priority, cmd);
-        /*} else {
-            throw new CommandNoExist();
-        }*/
     }
 
     public void removeExCmd(String cmd) {
-        if (this.executeCommands.contains(cmd)) {
-            this.executeCommands.remove(cmd);
-        }
+        this.executeCommands.remove(cmd);
     }
 
     public List<String> getExCmds() {
@@ -487,33 +460,20 @@ public class Warp {
     }
 
     public void addCmd(String cmd) throws CommandNoExist {
-        //Command command = Bukkit.getServer().getPluginCommand(cmd.replace("/", "")); //TODO Check if command exist
-        //if (command != null) {
-        if (this.aliasCommands == null) {
-            this.aliasCommands = new ArrayList<>();
-        }
-        this.aliasCommands.add(cmd);
-        /*} else {
-            throw new CommandNoExist();
-        }*/
+        this.addCmd(cmd, 0);
     }
 
     public void addCmd(String cmd, int priority) throws CommandNoExist {
-        //Command command = Bukkit.getServer().getPluginCommand(cmd.replace("/", "")); //TODO Check if command exist
-        //if (command != null) {
-        if (this.aliasCommands == null) {
-            this.aliasCommands = new ArrayList<>();
+        //TODO Check if command exist
+        if (priority > 0 && priority < this.aliasCommands.size()) {
+            this.aliasCommands.add(priority - 1, cmd);
+        } else {
+            this.aliasCommands.add(cmd);
         }
-        this.aliasCommands.add(priority, cmd);
-        /*} else {
-            throw new CommandNoExist();
-        }*/
     }
 
     public void removeCmd(String cmd) {
-        if (this.aliasCommands.contains(cmd)) {
-            this.aliasCommands.remove(cmd);
-        }
+        this.aliasCommands.remove(cmd);
     }
 
     public List<String> getCmds() {
@@ -536,14 +496,14 @@ public class Warp {
         }
     }
 
-    public void handleWarp(final Player player, Boolean fromsign) {
-        Boolean flag = true;
+    public void handleWarp(final Player player, boolean fromsign) {
+        boolean flag = true;
         if (this.clickWarp.getConfig().getBoolean("Flags.Enable")) {
             //flag = Util.getFlagValue(this.clickWarp.wg, player.getLocation(), this.clickWarp.Warp_Flag, player) == StateFlag.State.ALLOW;
         }
 
         if ((player.hasPermission("clickwarp.warp." + this.filename) || player.hasPermission("clickwarp.warp.*")) && flag) {
-            Boolean use_vehicle;
+            boolean use_vehicle;
             if (player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp")
                     && this.clickWarp.getConfig().getBoolean("VehicleWarp")) {
                 use_vehicle = true;
@@ -552,10 +512,10 @@ public class Warp {
                 use_vehicle = false;
             }
 
-            Boolean enableEconomy = this.clickWarp.getConfig().getBoolean("Economy.Enable");
-            Boolean _payed = false;
+            boolean enableEconomy = this.clickWarp.getConfig().getBoolean("Economy.Enable");
+            boolean _payed = false;
 
-            if (enableEconomy) {
+            if (enableEconomy && this.clickWarp.economy != null) {
                 if (this.price == 0) {
                     String notEnoughMoney = ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpNotEnoughMoney)
                             .replace("{price}", String.valueOf(this.price));
@@ -576,13 +536,13 @@ public class Warp {
                 }
             }
 
-            final Boolean payed = _payed;
+            final boolean payed = _payed;
 
             if (this.location.getWorld() != player.getWorld()) {
                 use_vehicle = false;
             }
 
-            Boolean usedelay = this.clickWarp.getConfig().getBoolean("Delay.Warp.EnableDelay");
+            boolean usedelay = this.clickWarp.getConfig().getBoolean("Delay.Warp.EnableDelay");
 
             if (!usedelay) {
                 if (this.location.getWorld() != player.getWorld() || player.getLocation().distance(this.location) >= this.getMinDistance()) {
@@ -626,7 +586,7 @@ public class Warp {
                 }
             } else {
                 if (fromsign) {
-                    Boolean usesigndelay = this.clickWarp.getConfig().getBoolean("Delay.Warp.Sign.Enable");
+                    boolean usesigndelay = this.clickWarp.getConfig().getBoolean("Delay.Warp.Sign.Enable");
 
                     if (!usesigndelay) {
                         if (this.location.getWorld() != player.getWorld() || player.getLocation().distance(this.location) >= this.getMinDistance()) {
@@ -715,7 +675,7 @@ public class Warp {
 
                     }
                 } else {
-                    Boolean usedontmove = this.clickWarp.getConfig().getBoolean("Delay.Warp.EnableDontMove");
+                    boolean usedontmove = this.clickWarp.getConfig().getBoolean("Delay.Warp.EnableDontMove");
                     int delay = this.clickWarp.getConfig().getInt("Delay.Warp.Delay");
 
                     if (usedontmove) {
