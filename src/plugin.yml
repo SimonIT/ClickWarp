@@ -2,18 +2,18 @@ name: ClickWarp
 version: 1.4.8
 api-version: 1.13
 authors:
-- comniemeer
-- SimonIT
+  - comniemeer
+  - SimonIT
 description: Teleports to a warp by clicking on it in an inventory
 website: http://dev.bukkit.org/server-mods/clickwarp/
 main: de.comniemeer.ClickWarp.ClickWarp
 softdepend:
-- Essentials
-- Vault
-- WorldGuard
-- WGCustomFlags
-- WarpPortals
-- CommandBook
+  - Essentials
+  - Vault
+  - WorldGuard
+  - WGCustomFlags
+  - WarpPortals
+  - CommandBook
 permissions:
   clickwarp.*:
     default: op

@@ -1,24 +1,17 @@
 package de.comniemeer.ClickWarp.Messages;
 
-import java.io.File;
-import java.io.IOException;
-
+import de.comniemeer.ClickWarp.ClickWarp;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import de.comniemeer.ClickWarp.ClickWarp;
+import java.io.File;
+import java.io.IOException;
 
 public class LanguageKorean {
 
-	private ClickWarp plugin;
-
-	public LanguageKorean(ClickWarp clickwarp) {
-		plugin = clickwarp;
-	}
-
 	public File file;
 	public FileConfiguration cfg;
-
+	private ClickWarp plugin;
 	private String NoWarps = "&7현재 정의된 워프가 없습니다!";
 	private String WarpList = "&7현재 가지고있는 워프들:";
 	private String WarpNoExist = "&7&6{warp}&7은/는 워프 이름이 아닙니다.";
@@ -55,7 +48,6 @@ public class LanguageKorean {
 	private String ErrorFileSaving = "&c파일 저장중 오류 발생! 자세한 내역은 콘솔을 확인하세요!";
 	private String NoPermission = "&c권한 없음!";
 	private String OnlyPlayers = "&c플레이어만 그 명령어를 쓸 수 있습니다.";
-
 	private String NoWarpsPath = "Warp.NoWarps";
 	private String WarpListPath = "Warp.List";
 	private String WarpNoExistPath = "Warp.NoExist";
@@ -85,6 +77,10 @@ public class LanguageKorean {
 	private String ErrorFileSavingPath = "Various.ErrorFileSaving";
 	private String NoPermissionPath = "Various.NoPermission";
 	private String OnlyPlayersPath = "Various.OnlyPlayers";
+
+	public LanguageKorean(ClickWarp clickwarp) {
+		plugin = clickwarp;
+	}
 
 	public void load() {
 		file = new File(this.plugin.getDataFolder() + "/Languages", "ko.yml");

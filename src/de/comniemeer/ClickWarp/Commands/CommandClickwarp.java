@@ -1,79 +1,78 @@
 package de.comniemeer.ClickWarp.Commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
 import de.comniemeer.ClickWarp.Updater;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandClickwarp extends AutoCommand<ClickWarp> {
 
-    public CommandClickwarp(ClickWarp plugin, String cmd, String description) {
-        super(plugin, cmd, description);
-    }
+	public CommandClickwarp(ClickWarp plugin, String cmd, String description) {
+		super(plugin, cmd, description);
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
-        if (sender.hasPermission("clickwarp.clickwarp")) {
-            if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("reload")) {
-                    this.reload();
-                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.PluginReloaded));
-                } else if (args[0].equalsIgnoreCase("version")) {
-                    sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + "ClickWarp" + ChatColor.GRAY + "] Version " + ChatColor.GOLD + plugin.version + ChatColor.GRAY + " by " + ChatColor.GOLD + plugin.authors);
-                } else if (args[0].equalsIgnoreCase("update")) {
-                    new Updater(this.plugin.pl, this.plugin.id, this.plugin.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
-                    sender.sendMessage("The Update is downloading");
-                }
-            } else {
-                sender.sendMessage(ChatColor.YELLOW + "/clickwarp <version | reload | update>");
-            }
-        } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
-        }
+	@Override
+	public boolean execute(CommandSender sender, String label, String[] args) {
+		if (sender.hasPermission("clickwarp.clickwarp")) {
+			if (args.length == 1) {
+				if (args[0].equalsIgnoreCase("reload")) {
+					this.reload();
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.PluginReloaded));
+				} else if (args[0].equalsIgnoreCase("version")) {
+					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + "ClickWarp" + ChatColor.GRAY + "] Version " + ChatColor.GOLD + plugin.version + ChatColor.GRAY + " by " + ChatColor.GOLD + plugin.authors);
+				} else if (args[0].equalsIgnoreCase("update")) {
+					new Updater(this.plugin.pl, this.plugin.id, this.plugin.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
+					sender.sendMessage("The Update is downloading");
+				}
+			} else {
+				sender.sendMessage(ChatColor.YELLOW + "/clickwarp <version | reload | update>");
+			}
+		} else {
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public List<String> tabComplete(CommandSender sender, String label, String[] args) {
-        if (sender.hasPermission("clickwarp.clickwarp")) {
-            List<String> arguments = new ArrayList<>();
+	@Override
+	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+		if (sender.hasPermission("clickwarp.clickwarp")) {
+			List<String> arguments = new ArrayList<>();
 
-            arguments.add("reload");
-            arguments.add("version");
+			arguments.add("reload");
+			arguments.add("version");
 
-            if (args.length == 0) {
-                return arguments;
-            } else if (args.length == 1) {
-                List<String> tabList = new ArrayList<>();
+			if (args.length == 0) {
+				return arguments;
+			} else if (args.length == 1) {
+				List<String> tabList = new ArrayList<>();
 
-                for (String str : arguments) {
-                    if (str.startsWith(args[0].toLowerCase())) {
-                        tabList.add(str);
-                    }
-                }
+				for (String str : arguments) {
+					if (str.startsWith(args[0].toLowerCase())) {
+						tabList.add(str);
+					}
+				}
 
-                return tabList;
-            }
-        }
+				return tabList;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    private void reload() {
-        plugin.reloadConfig();
+	private void reload() {
+		plugin.reloadConfig();
 
-        plugin.en.load();
-        plugin.de.load();
-        plugin.fr.load();
-        plugin.pt.load();
-        plugin.cz.load();
-        plugin.ko.load();
-        plugin.msg.load();
-    }
+		plugin.en.load();
+		plugin.de.load();
+		plugin.fr.load();
+		plugin.pt.load();
+		plugin.cz.load();
+		plugin.ko.load();
+		plugin.msg.load();
+	}
 }

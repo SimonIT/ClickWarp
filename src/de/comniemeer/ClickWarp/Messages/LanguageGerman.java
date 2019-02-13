@@ -1,24 +1,17 @@
 package de.comniemeer.ClickWarp.Messages;
 
-import java.io.File;
-import java.io.IOException;
-
+import de.comniemeer.ClickWarp.ClickWarp;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import de.comniemeer.ClickWarp.ClickWarp;
+import java.io.File;
+import java.io.IOException;
 
 public class LanguageGerman {
 
-	private ClickWarp plugin;
-
-	public LanguageGerman(ClickWarp clickwarp) {
-		plugin = clickwarp;
-	}
-
 	public File file;
 	public FileConfiguration cfg;
-
+	private ClickWarp plugin;
 	private String NoWarps = "&7Es gibt &6(noch) &7keine Warps!";
 	private String WarpList = "&7Es gibt im Moment folgende Warps:";
 	private String WarpNoExist = "&7Der Warp &6{warp} &7existiert nicht.";
@@ -55,7 +48,6 @@ public class LanguageGerman {
 	private String ErrorFileSaving = "&cFehler beim Speichern der Datei! Schau in die Konsole für weitere Informationen!";
 	private String NoPermission = "&cKeine Erlaubnis!";
 	private String OnlyPlayers = "&cNur Spieler können diesen Befehl benutzen.";
-
 	private String NoWarpsPath = "Warp.NoWarps";
 	private String WarpListPath = "Warp.List";
 	private String WarpNoExistPath = "Warp.NoExist";
@@ -85,6 +77,10 @@ public class LanguageGerman {
 	private String ErrorFileSavingPath = "Various.ErrorFileSaving";
 	private String NoPermissionPath = "Various.NoPermission";
 	private String OnlyPlayersPath = "Various.OnlyPlayers";
+
+	public LanguageGerman(ClickWarp clickwarp) {
+		plugin = clickwarp;
+	}
 
 	public void load() {
 		file = new File(this.plugin.getDataFolder() + "/Languages", "de.yml");

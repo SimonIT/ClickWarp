@@ -73,7 +73,7 @@ Delay:
 
     # Shouldn't players move before teleport?
     EnableDontMove: true
-    
+
     Sign:
       # Should there also be a delay when using warp-signs?
       Enable: true
@@ -99,19 +99,19 @@ Inventory:
 Economy:
   # After setting this to "true", you have to reload/restart your server!
   Enable: false
-  
+
   # Should the price be shown in /invwarp (last line)?
   ShowPrice: true
-  
+
   # Edit here the format of the price:
   PriceFormat: '&7&oPrice: &6&o{price} {currency}'
-  
+
   CurrencySingular: 'Dollar'
   CurrencyPlural: 'Dollars'
 
 # If you want import/export the warps from/to Essentials
 # Essentials must be installed for this option
-Essentials: 
+Essentials:
   Enable: false
 
 # If you want import/export the warps as destinations from/to WarpPortals
