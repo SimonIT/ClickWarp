@@ -1,5 +1,6 @@
 ClickWarp
 =========
+[![Build Status](https://travis-ci.com/SimonIT/ClickWarp.svg?branch=master)](https://travis-ci.com/SimonIT/ClickWarp)
 
 Bukkit plugin "ClickWarp"
 
