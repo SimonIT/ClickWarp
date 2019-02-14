@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -24,6 +24,18 @@
             <id>vault-repo</id>
             <url>http://nexus.hc.to/content/repositories/pub_releases</url>
         </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
+        <repository>
+            <id>ess-repo</id>
+            <url>http://ci.ender.zone/plugin/repository/everything/</url>
+        </repository>
+        <repository>
+            <id>wgcf-repo</id>
+            <url>http://maven.elmakers.com/repository/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -33,11 +45,47 @@
             <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Plugin for warps with costs -->
         <dependency>
             <groupId>net.milkbowl.vault</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Plugins for WorldGuard Flags -->
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>6.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mewin</groupId>
+            <artifactId>WGCustomFlags</artifactId>
+            <version>1.8.1-beta</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Plugins for import and export -->
+        <dependency>
+            <groupId>com.sk89q</groupId>
+            <artifactId>commandbook</artifactId>
+            <version>2.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.ess3</groupId>
+            <artifactId>EssentialsX</artifactId>
+            <version>2.16.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.mccraftaholics</groupId>
+            <artifactId>WarpPortals</artifactId>
+            <version>5.6.5-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>
+                ${project.basedir}/libs/WarpPortals-5.6.5-SNAPSHOT.jar
+            </systemPath>
         </dependency>
     </dependencies>
 
