@@ -2,8 +2,8 @@ language: java
 jdk:
   - openjdk8
 
-install:
-  - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -DfinalName=ClickWarp-$TRAVIS_TAG
+before_deploy:
+  - mvn package
 
 deploy:
   provider: releases
@@ -11,7 +11,7 @@ deploy:
   skip_cleanup: true
   api_key: ${GH_TOKEN}
   file_glob: true
-  file: target/ClickWarp-$TRAVIS_TAG.jar
+  file: target/ClickWarp-*.jar
   on:
     repo: SimonIT/ClickWarp
     tags: true
