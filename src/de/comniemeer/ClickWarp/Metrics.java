@@ -77,7 +77,7 @@ public class Metrics {
 	/**
 	 * All of the custom graphs to submit to metrics
 	 */
-	private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<Graph>());
+	private final Set<Graph> graphs = Collections.synchronizedSet(new HashSet<>());
 
 	/**
 	 * The plugin configuration file

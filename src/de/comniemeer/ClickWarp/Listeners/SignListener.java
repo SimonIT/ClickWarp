@@ -28,12 +28,10 @@ public class SignListener implements Listener {
 		if (e.getLine(0).equalsIgnoreCase("[Warp]")) {
 			if (player.hasPermission("clickwarp.sign.create")) {
 				if (e.getLine(1).isEmpty()) {
-					e.setCancelled(true);
-					e.getBlock().breakNaturally();
 					player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSpecifyWarp));
 				} else {
 					String _line = e.getLine(1);
-					Warp warp = null;
+					Warp warp;
 					try {
 						warp = new Warp(_line);
 						String name = warp.getName();
@@ -44,16 +42,11 @@ public class SignListener implements Listener {
 						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.SignWarpSuccess)
 								.replace("{warp}", name));
 					} catch (WarpNoExist warpNoExist) {
-						warpNoExist.printStackTrace();
-						e.setCancelled(true);
-						e.getBlock().breakNaturally();
 						player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
 								.replace("{warp}", _line));
 					}
 				}
 			} else {
-				e.setCancelled(true);
-				e.getBlock().breakNaturally();
 				player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
 			}
 		}
@@ -74,11 +67,13 @@ public class SignListener implements Listener {
 					if (player.hasPermission("clickwarp.sign.use")) {
 						event.setCancelled(true);
 
+						String warpName = sign.getLine(1);
 						try {
-							Warp warp = new Warp(sign.getLine(1));
+							Warp warp = new Warp(warpName);
 							warp.handleWarp(player, true);
 						} catch (WarpNoExist warpNoExist) {
-							warpNoExist.printStackTrace();
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.WarpNoExist)
+									.replace("{warp}", warpName));
 						}
 					} else {
 						event.setCancelled(true);

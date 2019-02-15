@@ -65,7 +65,6 @@ public class ClickWarp extends JavaPlugin {
 	public String version_update = "";
 	public String link = "";
 	public File file = null;
-	public Plugin pl = null;
 
 	private boolean setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -177,7 +176,7 @@ public class ClickWarp extends JavaPlugin {
 			this.log.severe("[ClickWarp] Failed to submit the stats!");
 		}
 
-		List<Warp> warps = Warp.getWarps(this);
+		List<Warp> warps = Warp.getWarps();
 		try {
 			Metrics metrics = new Metrics(this);
 
@@ -196,17 +195,17 @@ public class ClickWarp extends JavaPlugin {
 		for (Warp warp : warps) {
 			List<String> infos = new ArrayList<>();
 			infos.add(warp.getName());
-			if (warp.getPrice() != 0) {
-				Double price = warp.getPrice();
-				String priceformat = ChatColor.translateAlternateColorCodes('&',
+			double price = warp.getPrice();
+			if (price > 0) {
+				String priceFormat = ChatColor.translateAlternateColorCodes('&',
 						getConfig().getString("Economy.PriceFormat").replace("{price}", String.valueOf(price)));
 
 				if (price == 1) {
-					infos.add(priceformat.replace("{currency}",
+					infos.add(priceFormat.replace("{currency}",
 							getConfig().getString("Economy.CurrencySingular")));
 				} else {
 					infos.add(
-							priceformat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
+							priceFormat.replace("{currency}", getConfig().getString("Economy.CurrencyPlural")));
 				}
 			} else {
 				infos.add("free");
@@ -334,6 +333,5 @@ public class ClickWarp extends JavaPlugin {
 			this.link = updater.getLatestFileLink(); // Get the latest link
 		}
 		this.file = this.getFile();
-		this.pl = this;
 	}
 }

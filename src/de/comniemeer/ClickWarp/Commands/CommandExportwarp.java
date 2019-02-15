@@ -26,7 +26,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 				if (args[0].equalsIgnoreCase("Essentials") && this.plugin.getConfig().getBoolean("Essentials.Enable") && args[1] != null) {
 					if (this.plugin.IWarps != null) {
 						if (args[1].equalsIgnoreCase("all")) {
-							List<Warp> warps = Warp.getWarps(this.plugin);
+							List<Warp> warps = Warp.getWarps();
 							if (warps.size() == 0) {
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
 							} else {
@@ -61,7 +61,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 						try {
 							this.plugin.fflm.load();
 							if (args[1].equalsIgnoreCase("all")) {
-								List<Warp> warps = Warp.getWarps(this.plugin);
+								List<Warp> warps = Warp.getWarps();
 
 								if (warps.size() == 0) {
 									sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
@@ -92,7 +92,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 				} else if (args[0].equalsIgnoreCase("WarpPortals") && this.plugin.getConfig().getBoolean("WarpPortals.Enable") && args[1] != null) {
 					if (this.plugin.pdm != null) {
 						if (args[1].equalsIgnoreCase("all")) {
-							List<Warp> warps = Warp.getWarps(this.plugin);
+							List<Warp> warps = Warp.getWarps();
 
 							if (warps.size() == 0) {
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoWarps));
@@ -147,7 +147,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 					tabList.add("all");
 				}
 
-				for (Warp warp : Warp.getWarps(this.plugin)) {
+				for (Warp warp : Warp.getWarps()) {
 					if (warp.getName().toLowerCase().startsWith(args[1].toLowerCase())) {
 						tabList.add(warp.getName());
 					}

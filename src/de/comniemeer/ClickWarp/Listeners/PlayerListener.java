@@ -62,7 +62,7 @@ public class PlayerListener implements Listener {
 				}
 			} else if (e.getItem() != null && e.getItem().getType() == invtpmaterial
 					&& e.getItem().getData().getData() == invtpitem_variant) {
-				Boolean enableinvtp = plugin.getConfig().getBoolean("EnableInvtpItem");
+				boolean enableinvtp = plugin.getConfig().getBoolean("EnableInvtpItem");
 
 				if (enableinvtp) {
 					if (p.hasPermission("clickwarp.invtp.item")) {

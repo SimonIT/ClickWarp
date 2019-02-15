@@ -25,7 +25,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 				} else if (args[0].equalsIgnoreCase("version")) {
 					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + "ClickWarp" + ChatColor.GRAY + "] Version " + ChatColor.GOLD + plugin.version + ChatColor.GRAY + " by " + ChatColor.GOLD + plugin.authors);
 				} else if (args[0].equalsIgnoreCase("update")) {
-					new Updater(this.plugin.pl, this.plugin.id, this.plugin.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
+					new Updater(this.plugin, this.plugin.id, this.plugin.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
 					sender.sendMessage("The Update is downloading");
 				}
 			} else {

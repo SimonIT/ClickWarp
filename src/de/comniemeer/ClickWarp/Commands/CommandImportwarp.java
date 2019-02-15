@@ -40,8 +40,8 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 							}
 							try {
 								Warp warp = new Warp(EWarp, loc, (Player) sender);
-								if (warp.existWarp()) {
-									for (int i = 1; warp.existWarp(); i++) {
+								if (warp.exists()) {
+									for (int i = 1; warp.exists(); i++) {
 										warp = new Warp(EWarp + i, loc, (Player) sender);
 									}
 								}
@@ -69,8 +69,8 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 						}
 						try {
 							Warp warp = new Warp(args[1], loc, (Player) sender);
-							if (warp.existWarp()) {
-								for (int i = 1; warp.existWarp(); i++) {
+							if (warp.exists()) {
+								for (int i = 1; warp.exists(); i++) {
 									warp = new Warp(args[1] + i, loc, (Player) sender);
 								}
 							}
@@ -91,8 +91,8 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 							List<NamedLocation> lnl = this.plugin.fflm.getLocations();
 							for (NamedLocation nl : lnl) {
 								Warp warp = new Warp(nl.getName(), nl.getLocation(), Bukkit.getOfflinePlayer(nl.getCreatorID()));
-								if (warp.existWarp()) {
-									for (int i = 1; warp.existWarp(); i++) {
+								if (warp.exists()) {
+									for (int i = 1; warp.exists(); i++) {
 										warp = new Warp(nl.getName() + i, nl.getLocation(), Bukkit.getPlayer(nl.getCreatorID()));
 									}
 								}
@@ -112,8 +112,8 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 								this.plugin.fflm.load();
 								NamedLocation nl = this.plugin.fflm.get(args[1]);
 								Warp warp = new Warp(nl.getName(), nl.getLocation(), Bukkit.getPlayer(nl.getCreatorID()));
-								if (warp.existWarp()) {
-									for (int i = 1; warp.existWarp(); i++) {
+								if (warp.exists()) {
+									for (int i = 1; warp.exists(); i++) {
 										warp = new Warp(nl.getName() + i, nl.getLocation(), Bukkit.getPlayer(nl.getCreatorID()));
 									}
 								}
@@ -143,8 +143,8 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 								loc = new Location(coords.world, coords.x, coords.y, coords.z, coords.yaw,
 										coords.pitch);
 								Warp warp = new Warp(PortalDest, loc, (Player) sender);
-								if (warp.existWarp()) {
-									for (int i = 1; warp.existWarp(); i++) {
+								if (warp.exists()) {
+									for (int i = 1; warp.exists(); i++) {
 										warp = new Warp(PortalDest + i, loc, (Player) sender);
 									}
 								}
@@ -168,8 +168,8 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 								loc = new Location(coords.world, coords.x, coords.y, coords.z, coords.yaw,
 										coords.pitch);
 								Warp warp = new Warp(args[1], loc, (Player) sender);
-								if (warp.existWarp()) {
-									for (int i = 1; warp.existWarp(); i++) {
+								if (warp.exists()) {
+									for (int i = 1; warp.exists(); i++) {
 										warp = new Warp(args[1] + i, loc, (Player) sender);
 									}
 								}

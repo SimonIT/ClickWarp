@@ -22,7 +22,7 @@ public class CommandDelwarp extends AutoCommand<ClickWarp> {
 			if (args.length == 1) {
 				try {
 					Warp warp = new Warp(args[0]);
-					warp.delWarp();
+					warp.delete();
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.DelwarpSuccess)
 							.replace("{warp}", args[0]));
 				} catch (WarpNoExist warpNoExist) {

@@ -27,7 +27,7 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 				if (args.length == 0) {
 					Player p = (Player) sender;
 
-					List<Warp> warps = Warp.getWarps(this.plugin);
+					List<Warp> warps = Warp.getWarps();
 
 					if (warps != null) {
 						if (warps.size() == 0) {
@@ -77,8 +77,8 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 										boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
 
 										if (useshowprice) {
-											if (aList.getPrice() != null) {
-												Double price = aList.getPrice();
+											double price = aList.getPrice();
+											if (price > 0) {
 												String priceformat = ChatColor.translateAlternateColorCodes('&',
 														plugin.getConfig().getString("Economy.PriceFormat")
 																.replace("{price}", String.valueOf(price)));
@@ -102,9 +102,9 @@ public class CommandInvwarp extends AutoCommand<ClickWarp> {
 										boolean useshowprice = plugin.getConfig().getBoolean("Economy.ShowPrice");
 
 										if (useshowprice) {
-											if (aList.getPrice() != null) {
-												List<String> lore = new ArrayList<String>();
-												Double price = aList.getPrice();
+											double price = aList.getPrice();
+											if (price > 0) {
+												List<String> lore = new ArrayList<>();
 												String priceformat = ChatColor.translateAlternateColorCodes('&',
 														plugin.getConfig().getString("Economy.PriceFormat")
 																.replace("{price}", String.valueOf(price)));

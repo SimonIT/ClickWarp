@@ -11,8 +11,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,22 +21,25 @@ import java.util.UUID;
 
 public class Warp {
 
-	private final String[] notAllowedChars = {
+	private static final String[] notAllowedChars = {
 			".yml", "\\", "|", "/", ":"
 	};
-	private ClickWarp clickWarp;
+
+	private static ClickWarp clickWarp = (ClickWarp) Bukkit.getPluginManager().getPlugin("ClickWarp");
+	private static String warpDirectory = clickWarp.getDataFolder() + "/Warps";
+
 	private String filename;
 	private String name;
 	private Location location;
 	private OfflinePlayer player;
 	private ItemStack item;
 	private String lore;
-	private Double price = 0d;
+	private double price = 0;
 	private String message;
 	private Sound sound;
 	private List<String> executeCommands = new ArrayList<>();
 	private List<String> aliasCommands = new ArrayList<>();
-	private Double minDistance;
+	private double minDistance = 0;
 	private Entity vec;
 
 	/**
@@ -45,10 +48,9 @@ public class Warp {
 	 * @param name the name of the warp to load, case insensitive
 	 * @throws WarpNoExist thrown if the warp does not exist
 	 */
-	public Warp(String name) throws WarpNoExist {
-		this.clickWarp = (ClickWarp) Bukkit.getPluginManager().getPlugin("ClickWarp");
+	public Warp(@Nonnull String name) throws WarpNoExist {
 		this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
-		File file = new File(this.clickWarp.getDataFolder() + "/Warps", this.filename + ".yml");
+		File file = new File(warpDirectory, this.filename + ".yml");
 
 		if (file.exists()) {
 			FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
@@ -120,10 +122,9 @@ public class Warp {
 	 * @param player the player who creates the warp
 	 * @throws InvalidName thrown if the name contains invalid characters
 	 */
-	public Warp(String name, Location loc, OfflinePlayer player) throws InvalidName {
-		this.clickWarp = (ClickWarp) Bukkit.getPluginManager().getPlugin("ClickWarp");
+	public Warp(@Nonnull String name, @Nonnull Location loc, @Nonnull OfflinePlayer player) throws InvalidName {
 		this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
-		File file = new File(this.clickWarp.getDataFolder() + "/Warps", this.filename + ".yml");
+		File file = new File(warpDirectory, this.filename + ".yml");
 
 		if (file.exists()) {
 			FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
@@ -192,8 +193,7 @@ public class Warp {
 	}
 
 	private static void updateMetrics() throws IOException {
-		Plugin cw = Bukkit.getPluginManager().getPlugin("ClickWarp");
-		File warps_folder = new File(cw.getDataFolder() + "/Warps");
+		File warps_folder = new File(warpDirectory);
 		File[] warps = warps_folder.listFiles();
 
 		final int files;
@@ -201,7 +201,7 @@ public class Warp {
 			files = warps.length;
 
 			Metrics metrics;
-			metrics = new Metrics(cw);
+			metrics = new Metrics(clickWarp);
 			Graph Warps = metrics.createGraph("Warps");
 
 			Warps.addPlotter(new Metrics.Plotter("Warps") {
@@ -215,29 +215,31 @@ public class Warp {
 		}
 	}
 
-	public static List<Warp> getWarps(ClickWarp cw) {
-		File warps_folder = new File(cw.getDataFolder() + "/Warps");
+	public static List<Warp> getWarps() {
+		File warpsFolder = new File(warpDirectory);
 
-		File[] warps = warps_folder.listFiles();
+		File[] warpFiles = warpsFolder.listFiles();
 
-		List<Warp> list = new ArrayList<>();
+		List<Warp> warps = new ArrayList<>();
 
-		if (warps != null && warps.length > 0) {
-			for (File warp : warps) {
-				String Name = warp.getName().replace(".yml", "");
-				try {
-					list.add(new Warp(Name));
-				} catch (WarpNoExist warpNoExist) {
-					warpNoExist.printStackTrace();
+		if (warpFiles != null && warpFiles.length > 0) {
+			for (File warpFile : warpFiles) {
+				if (warpFile != null && warpFile.isFile()) {
+					String warpName = warpFile.getName().replace(".yml", "");
+					try {
+						warps.add(new Warp(warpName));
+					} catch (WarpNoExist warpNoExist) {
+						warpNoExist.printStackTrace();
+					}
 				}
 			}
 
 		}
-		return list;
+		return warps;
 	}
 
 	public void save() throws IOException {
-		File warp = new File(this.clickWarp.getDataFolder() + "/Warps", this.filename + ".yml");
+		File warp = new File(warpDirectory, this.filename + ".yml");
 
 		FileConfiguration cfg = YamlConfiguration.loadConfiguration(warp);
 
@@ -262,7 +264,7 @@ public class Warp {
 			cfg.set(this.filename + ".lore", this.lore);
 		}
 
-		if (this.price != null) {
+		if (this.price > -1) {
 			cfg.set(this.filename + ".price", this.price);
 		}
 
@@ -282,7 +284,7 @@ public class Warp {
 			cfg.set(this.filename + ".cmd", this.aliasCommands);
 		}
 
-		if (this.minDistance != null) {
+		if (this.minDistance > -1) {
 			cfg.set(this.filename + ".mindist", this.minDistance);
 		}
 
@@ -298,15 +300,15 @@ public class Warp {
 		this.location = location;
 	}
 
-	public void delWarp() {
-		File file = new File(this.clickWarp.getDataFolder() + "/Warps", this.filename + ".yml");
+	public void delete() {
+		File file = new File(warpDirectory, this.filename + ".yml");
 		if (file.exists()) {
 			file.delete();
 		}
 	}
 
-	public boolean existWarp() {
-		File file = new File(this.clickWarp.getDataFolder() + "/Warps", this.filename + ".yml");
+	public boolean exists() {
+		File file = new File(warpDirectory, this.filename + ".yml");
 		return file.exists();
 	}
 
@@ -315,7 +317,7 @@ public class Warp {
 	}
 
 	public void setName(String name) throws InvalidName {
-		this.delWarp();
+		this.delete();
 		this.name = name;
 		this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
 		for (String notAllowedChar : notAllowedChars) {
@@ -337,7 +339,7 @@ public class Warp {
 		if (this.item != null) {
 			return this.item;
 		} else {
-			return new ItemStack(Material.matchMaterial(this.clickWarp.getConfig().getString("DefaultWarpItem").toUpperCase()), 1);
+			return new ItemStack(Material.matchMaterial(clickWarp.getConfig().getString("DefaultWarpItem").toUpperCase()), 1);
 		}
 	}
 
@@ -348,7 +350,7 @@ public class Warp {
 	public void setItem(String item) throws InvalidItem {
 		Material material = Material.matchMaterial(item);
 		if (material != null) {
-			this.item = new ItemStack(material, 1);
+			setItem(material);
 		} else {
 			throw new InvalidItem();
 		}
@@ -377,12 +379,8 @@ public class Warp {
 		this.lore = lore;
 	}
 
-	public Double getPrice() {
-		if (this.price != null) {
-			return this.price;
-		} else {
-			return 0d;
-		}
+	public double getPrice() {
+		return this.price;
 	}
 
 	public void setPrice(double price) {
@@ -412,7 +410,7 @@ public class Warp {
 		if (this.sound != null) {
 			return this.sound;
 		} else {
-			Sound soundConfig = Sound.valueOf(this.clickWarp.getConfig().getString("WarpSound").toUpperCase());
+			Sound soundConfig = Sound.valueOf(clickWarp.getConfig().getString("WarpSound").toUpperCase());
 			if (soundConfig != null) {
 				return sound;
 			} else {
@@ -487,49 +485,49 @@ public class Warp {
 		this.minDistance = distance;
 	}
 
-	public Double getMinDistance() {
-		if (this.minDistance != null) {
+	public double getMinDistance() {
+		if (this.minDistance > -1) {
 			return this.minDistance;
 		} else {
-			return this.clickWarp.getConfig().getDouble("minDistance");
+			return clickWarp.getConfig().getDouble("minDistance");
 		}
 	}
 
-	public void handleWarp(final Player player, boolean fromsign) {
+	public void handleWarp(final Player player, boolean fromSign) {
 		boolean flag = true;
-		if (this.clickWarp.getConfig().getBoolean("Flags.Enable")) {
-			//flag = Util.getFlagValue(this.clickWarp.wg, player.getLocation(), this.clickWarp.Warp_Flag, player) == StateFlag.State.ALLOW;
+		if (clickWarp.getConfig().getBoolean("Flags.Enable")) {
+			//flag = Util.getFlagValue(clickWarp.wg, player.getLocation(), clickWarp.Warp_Flag, player) == StateFlag.State.ALLOW;
 		}
 
 		if ((player.hasPermission("clickwarp.warp." + this.filename) || player.hasPermission("clickwarp.warp.*")) && flag) {
 			boolean use_vehicle;
 			if (player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp")
-					&& this.clickWarp.getConfig().getBoolean("VehicleWarp")) {
+					&& clickWarp.getConfig().getBoolean("VehicleWarp")) {
 				use_vehicle = true;
 				vec = player.getVehicle();
 			} else {
 				use_vehicle = false;
 			}
 
-			boolean enableEconomy = this.clickWarp.getConfig().getBoolean("Economy.Enable");
+			boolean enableEconomy = clickWarp.getConfig().getBoolean("Economy.Enable");
 			boolean _payed = false;
 
-			if (enableEconomy && this.clickWarp.economy != null) {
+			if (enableEconomy && clickWarp.economy != null) {
 				if (this.price == 0) {
-					String notEnoughMoney = ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpNotEnoughMoney)
+					String notEnoughMoney = ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpNotEnoughMoney)
 							.replace("{price}", String.valueOf(this.price));
 
-					if (this.clickWarp.economy.getBalance(player) < this.price) {
+					if (clickWarp.economy.getBalance(player) < this.price) {
 						if (this.price == 1) {
 							player.sendMessage(notEnoughMoney.replace("{currency}",
-									this.clickWarp.getConfig().getString("Economy.CurrencySingular")));
+									clickWarp.getConfig().getString("Economy.CurrencySingular")));
 						} else {
 							player.sendMessage(notEnoughMoney.replace("{currency}",
-									this.clickWarp.getConfig().getString("Economy.CurrencyPlural")));
+									clickWarp.getConfig().getString("Economy.CurrencyPlural")));
 						}
 						return;
 					} else {
-						this.clickWarp.economy.withdrawPlayer(player, this.price);
+						clickWarp.economy.withdrawPlayer(player, this.price);
 						_payed = true;
 					}
 				}
@@ -541,9 +539,9 @@ public class Warp {
 				use_vehicle = false;
 			}
 
-			boolean usedelay = this.clickWarp.getConfig().getBoolean("Delay.Warp.EnableDelay");
+			boolean useDelay = clickWarp.getConfig().getBoolean("Delay.Warp.EnableDelay");
 
-			if (!usedelay) {
+			if (!useDelay) {
 				if (this.location.getWorld() != player.getWorld() || player.getLocation().distance(this.location) >= this.getMinDistance()) {
 					player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 					player.playSound(player.getLocation(), this.getSound(), 1, 0);
@@ -558,15 +556,15 @@ public class Warp {
 						player.performCommand(executeCommand.replace("_", " "));
 					}
 					if (payed) {
-						String payed_ = ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccessPayed)
+						String payed_ = ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccessPayed)
 								.replace("{warp}", name).replace("{price}", String.valueOf(price));
 
 						if (this.price == 1) {
 							player.sendMessage(payed_.replace("{currency}",
-									this.clickWarp.getConfig().getString("Economy.CurrencySingular")));
+									clickWarp.getConfig().getString("Economy.CurrencySingular")));
 						} else {
 							player.sendMessage(payed_.replace("{currency}",
-									this.clickWarp.getConfig().getString("Economy.CurrencyPlural")));
+									clickWarp.getConfig().getString("Economy.CurrencyPlural")));
 						}
 					} else {
 						if (this.message != null) {
@@ -574,20 +572,20 @@ public class Warp {
 								player.sendMessage(message_line);
 							}
 						} else {
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccess)
+							player.sendMessage(ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccess)
 									.replace("{warp}", this.name));
 						}
 					}
-					this.clickWarp.log.info(
+					clickWarp.log.info(
 							"[ClickWarp] [" + player.getName() + ": Warped " + player.getName() + " to " + this.name + "]");
 				} else {
 
 				}
 			} else {
-				if (fromsign) {
-					boolean usesigndelay = this.clickWarp.getConfig().getBoolean("Delay.Warp.Sign.Enable");
+				if (fromSign) {
+					boolean useSignDelay = clickWarp.getConfig().getBoolean("Delay.Warp.Sign.Enable");
 
-					if (!usesigndelay) {
+					if (!useSignDelay) {
 						if (this.location.getWorld() != player.getWorld() || player.getLocation().distance(this.location) >= this.getMinDistance()) {
 							player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 							player.playSound(player.getLocation(), this.getSound(), 1, 0);
@@ -602,15 +600,15 @@ public class Warp {
 								player.performCommand(executeCommand.replace("_", " "));
 							}
 							if (payed) {
-								String payed_ = ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccessPayed)
+								String payed_ = ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccessPayed)
 										.replace("{warp}", name).replace("{price}", String.valueOf(price));
 
 								if (price == 1) {
 									player.sendMessage(payed_.replace("{currency}",
-											this.clickWarp.getConfig().getString("Economy.CurrencySingular")));
+											clickWarp.getConfig().getString("Economy.CurrencySingular")));
 								} else {
 									player.sendMessage(payed_.replace("{currency}",
-											this.clickWarp.getConfig().getString("Economy.CurrencyPlural")));
+											clickWarp.getConfig().getString("Economy.CurrencyPlural")));
 								}
 							} else {
 								if (this.message != null) {
@@ -619,11 +617,11 @@ public class Warp {
 									}
 								} else {
 									player.sendMessage(
-											ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccess)
+											ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccess)
 													.replace("{warp}", name));
 								}
 							}
-							this.clickWarp.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
+							clickWarp.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
 									+ " to " + this.name + "]");
 							return;
 						} else {
@@ -648,15 +646,15 @@ public class Warp {
 						}
 
 						if (payed) {
-							String payed_ = ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccessPayed)
+							String payed_ = ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccessPayed)
 									.replace("{warp}", name).replace("{price}", String.valueOf(price));
 
 							if (price == 1) {
 								player.sendMessage(payed_.replace("{currency}",
-										this.clickWarp.getConfig().getString("Economy.CurrencySingular")));
+										clickWarp.getConfig().getString("Economy.CurrencySingular")));
 							} else {
 								player.sendMessage(payed_.replace("{currency}",
-										this.clickWarp.getConfig().getString("Economy.CurrencyPlural")));
+										clickWarp.getConfig().getString("Economy.CurrencyPlural")));
 							}
 						} else {
 							if (this.message != null) {
@@ -664,38 +662,38 @@ public class Warp {
 									player.sendMessage(message_line);
 								}
 							} else {
-								player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccess)
+								player.sendMessage(ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccess)
 										.replace("{warp}", name));
 							}
 						}
-						this.clickWarp.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
+						clickWarp.log.info("[ClickWarp] [" + player.getName() + ": Warped " + player.getName()
 								+ " to " + this.name + "]");
 					} else {
 
 					}
 				} else {
-					boolean usedontmove = this.clickWarp.getConfig().getBoolean("Delay.Warp.EnableDontMove");
-					int delay = this.clickWarp.getConfig().getInt("Delay.Warp.Delay");
+					boolean useDontMove = clickWarp.getConfig().getBoolean("Delay.Warp.EnableDontMove");
+					int delay = clickWarp.getConfig().getInt("Delay.Warp.Delay");
 
-					if (usedontmove) {
-						this.clickWarp.warp_delay.put(player.getName(), true);
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.DelayDoNotMove)
+					if (useDontMove) {
+						clickWarp.warp_delay.put(player.getName(), true);
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', clickWarp.msg.DelayDoNotMove)
 								.replace("{delay}", String.valueOf(delay)));
 					} else {
-						player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.Delay)
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&', clickWarp.msg.Delay)
 								.replace("{delay}", String.valueOf(delay)));
 					}
 
-					this.clickWarp.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(this.clickWarp, () -> {
+					clickWarp.delaytask = Bukkit.getScheduler().scheduleSyncDelayedTask(clickWarp, () -> {
 						if (this.location.getWorld() != player.getWorld()
 								|| player.getLocation().distance(this.location) >= this.getMinDistance()) {
 							player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 							player.playSound(player.getLocation(), this.getSound(), 1, 0);
 							player.teleport(this.location);
 							player.playSound(this.location, this.getSound(), 1, 0);
-							this.clickWarp.warp_delay.remove(player.getName());
+							clickWarp.warp_delay.remove(player.getName());
 
-							if (this.clickWarp.getConfig().getBoolean("VehicleWarp")) {
+							if (clickWarp.getConfig().getBoolean("VehicleWarp")) {
 								vec.teleport(this.location);
 								vec.addPassenger(player);
 							}
@@ -706,15 +704,15 @@ public class Warp {
 
 							if (payed) {
 								String payedstring = ChatColor
-										.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccessPayed)
+										.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccessPayed)
 										.replace("{warp}", name).replace("{price}", String.valueOf(price));
 
 								if (price == 1) {
 									player.sendMessage(payedstring.replace("{currency}",
-											this.clickWarp.getConfig().getString("Economy.CurrencySingular")));
+											clickWarp.getConfig().getString("Economy.CurrencySingular")));
 								} else {
 									player.sendMessage(payedstring.replace("{currency}",
-											this.clickWarp.getConfig().getString("Economy.CurrencyPlural")));
+											clickWarp.getConfig().getString("Economy.CurrencyPlural")));
 								}
 							} else {
 								if (this.message != null) {
@@ -724,7 +722,7 @@ public class Warp {
 									}
 								} else {
 									player.sendMessage(
-											ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.WarpSuccess)
+											ChatColor.translateAlternateColorCodes('&', clickWarp.msg.WarpSuccess)
 													.replace("{warp}", name));
 								}
 							}
@@ -735,7 +733,7 @@ public class Warp {
 				}
 			}
 		} else {
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', this.clickWarp.msg.NoPermission));
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', clickWarp.msg.NoPermission));
 		}
 	}
 }
