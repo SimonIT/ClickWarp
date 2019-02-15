@@ -257,7 +257,7 @@ public class Warp {
 		}
 
 		if (this.item != null) {
-			cfg.set(this.filename + ".item", this.item.getType());
+			cfg.set(this.filename + ".item", this.item.getType().name());
 		}
 
 		if (this.lore != null) {
