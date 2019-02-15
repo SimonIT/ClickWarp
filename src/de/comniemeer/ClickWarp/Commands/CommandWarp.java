@@ -19,6 +19,8 @@ import java.util.List;
 
 public class CommandWarp extends AutoCommand<ClickWarp> {
 
+	private final static String GROUP_PREFIX = "g:";
+
 	public CommandWarp(ClickWarp plugin, String cmd, String description, String... alias) {
 		super(plugin, cmd, description, alias);
 	}
@@ -107,8 +109,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 										this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
 								item_lore.setDisplayName(item_prefix + warp.getName());
 								itemstack.setItemMeta(item_lore);
-								Player player = (Player) sender;
-								PlayerInventory inventory = player.getInventory();
+								PlayerInventory inventory = ((Player) sender).getInventory();
 								inventory.addItem(itemstack);
 							} catch (WarpNoExist warpNoExist) {
 								sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
@@ -141,43 +142,43 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 					}
 				}
 			} else if (args[1].equalsIgnoreCase("all")) {
-				for (Player player : Bukkit.getOnlinePlayers()) {
-					if (player.hasPermission("clickwarp.warp")) {
-						try {
-							Warp warp = new Warp(args[0]);
-							warp.handleWarp(player, false);
-						} catch (WarpNoExist warpNoExist) {
-							sender.sendMessage(
-									ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
-											.replace("{warp}", args[0]));
-						}
-					} else {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
-					}
-				}
-			} else if (args[1].contains("g:")) {
-				if (this.plugin.permission != null) {
-					String group = args[1].replace("g:", "");
+				if (sender.hasPermission("clickwarp.warp")) {
 					try {
 						Warp warp = new Warp(args[0]);
 						for (Player player : Bukkit.getOnlinePlayers()) {
-							if (this.plugin.permission.playerInGroup(player.getWorld().getName(), player, group)) {
-								if (player.hasPermission("clickwarp.warp")) {
-									warp.handleWarp(player, false);
-								} else {
-									sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
-								}
-							}
+							warp.handleWarp(player, false);
 						}
 					} catch (WarpNoExist warpNoExist) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
-								.replace("{warp}", args[0]));
+						sender.sendMessage(
+								ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+										.replace("{warp}", args[0]));
 					}
+				} else {
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
+				}
+			} else if (args[1].startsWith(GROUP_PREFIX)) {
+				if (sender.hasPermission("clickwarp.warp")) {
+					if (this.plugin.permission != null) {
+						String group = args[1].replace("g:", "");
+						try {
+							Warp warp = new Warp(args[0]);
+							for (Player player : Bukkit.getOnlinePlayers()) {
+								if (this.plugin.permission.playerInGroup(player, group)) {
+									warp.handleWarp(player, false);
+								}
+							}
+						} catch (WarpNoExist warpNoExist) {
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.WarpNoExist)
+									.replace("{warp}", args[0]));
+						}
+					}
+				} else {
+					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.msg.NoPermission));
 				}
 			} else if (Bukkit.getPlayer(args[1]) != null) {
 				Player player = Bukkit.getPlayer(args[1]);
 				if (player.isOnline()) {
-					if (player.hasPermission("clickwarp.warp")) {
+					if (sender.hasPermission("clickwarp.warp")) {
 						try {
 							Warp warp = new Warp(args[0]);
 							warp.handleWarp(player, false);
@@ -197,7 +198,8 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 			sender.sendMessage(ChatColor.YELLOW + "/warps");
 			sender.sendMessage(ChatColor.YELLOW + "/warp <warp>");
 			sender.sendMessage(ChatColor.YELLOW + "/warp <warp> <user>");
-			sender.sendMessage(ChatColor.YELLOW + "/warp <warp> g:<group>");
+			if (this.plugin.permission != null && this.plugin.permission.hasGroupSupport())
+				sender.sendMessage(ChatColor.YELLOW + "/warp <warp> g:<group>");
 			sender.sendMessage(ChatColor.YELLOW + "/warp <warp> all");
 			sender.sendMessage(ChatColor.YELLOW + "/warp <warp> info");
 			sender.sendMessage(ChatColor.YELLOW + "/warp <warp> getitem");
@@ -242,6 +244,14 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 				tabList.add("getitem");
 			}
 
+			if ("all".startsWith(args[1].toLowerCase())) {
+				tabList.add("all");
+			}
+
+			if ("info".startsWith(args[1].toLowerCase())) {
+				tabList.add("info");
+			}
+
 			List<String> playerList = new ArrayList<>();
 
 			for (OfflinePlayer p : Bukkit.getOnlinePlayers()) {
@@ -253,6 +263,15 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 			for (String player : playerList) {
 				if (player != null && player.toLowerCase().startsWith(args[1].toLowerCase())) {
 					tabList.add(player);
+				}
+			}
+
+			if (this.plugin.permission != null && this.plugin.permission.hasGroupSupport()) {
+				for (String group : this.plugin.permission.getGroups()) {
+					group = GROUP_PREFIX.concat(group.toLowerCase());
+					if (group.startsWith(args[1].toLowerCase())) {
+						tabList.add(group);
+					}
 				}
 			}
 
