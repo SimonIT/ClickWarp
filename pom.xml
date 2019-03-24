@@ -36,6 +36,10 @@
             <id>wgcf-repo</id>
             <url>http://maven.elmakers.com/repository/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -79,13 +83,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.mccraftaholics</groupId>
-            <artifactId>WarpPortals</artifactId>
-            <version>5.6.5-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>
-                ${project.basedir}/libs/WarpPortals-5.6.5-SNAPSHOT.jar
-            </systemPath>
+            <groupId>com.github.McCraftaholics</groupId>
+            <artifactId>Bukkit-WarpPortals</artifactId>
+            <version>master-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
