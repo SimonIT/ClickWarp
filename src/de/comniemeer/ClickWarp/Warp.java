@@ -1,5 +1,9 @@
 package de.comniemeer.ClickWarp;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.association.RegionAssociable;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import de.comniemeer.ClickWarp.Exceptions.CommandNoExist;
 import de.comniemeer.ClickWarp.Exceptions.InvalidItem;
 import de.comniemeer.ClickWarp.Exceptions.InvalidName;
@@ -496,17 +500,19 @@ public class Warp {
 	public void handleWarp(final Player player, boolean fromSign) {
 		boolean flag = true;
 		if (clickWarp.getConfig().getBoolean("Flags.Enable")) {
-			//flag = Util.getFlagValue(clickWarp.wg, player.getLocation(), clickWarp.Warp_Flag, player) == StateFlag.State.ALLOW;
+			RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+			com.sk89q.worldedit.util.Location wrappedLocation = BukkitAdapter.adapt(player.getLocation());
+			flag = query.testState(wrappedLocation, (RegionAssociable) null, clickWarp.WarpFlag);
 		}
 
 		if ((player.hasPermission("clickwarp.warp." + this.filename) || player.hasPermission("clickwarp.warp.*")) && flag) {
-			boolean use_vehicle;
+			boolean useVehicle;
 			if (player.getVehicle() != null && player.hasPermission("clickwarp.vehiclewarp")
 					&& clickWarp.getConfig().getBoolean("VehicleWarp")) {
-				use_vehicle = true;
+				useVehicle = true;
 				vec = player.getVehicle();
 			} else {
-				use_vehicle = false;
+				useVehicle = false;
 			}
 
 			boolean enableEconomy = clickWarp.getConfig().getBoolean("Economy.Enable");
@@ -536,7 +542,7 @@ public class Warp {
 			final boolean payed = _payed;
 
 			if (this.location.getWorld() != player.getWorld()) {
-				use_vehicle = false;
+				useVehicle = false;
 			}
 
 			boolean useDelay = clickWarp.getConfig().getBoolean("Delay.Warp.EnableDelay");
@@ -547,7 +553,7 @@ public class Warp {
 					player.playSound(player.getLocation(), this.getSound(), 1, 0);
 					player.teleport(this.location);
 					player.playSound(this.location, this.getSound(), 1, 0);
-					if (use_vehicle) {
+					if (useVehicle) {
 						vec.teleport(this.location);
 						vec.addPassenger(player);
 					}
@@ -591,7 +597,7 @@ public class Warp {
 							player.playSound(player.getLocation(), this.getSound(), 1, 0);
 							player.teleport(this.location);
 							player.playSound(this.location, this.getSound(), 1, 0);
-							if (use_vehicle) {
+							if (useVehicle) {
 								vec.teleport(this.location);
 								vec.addPassenger(player);
 							}
@@ -630,13 +636,13 @@ public class Warp {
 					}
 				}
 
-				if (player.hasPermission("clickwarp.warp.instant") && flag) {
+				if (player.hasPermission("clickwarp.warp.instant")) {
 					if (this.location.getWorld() != player.getWorld() || player.getLocation().distance(this.location) >= this.getMinDistance()) {
 						player.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, null);
 						player.playSound(player.getLocation(), this.getSound(), 1, 0);
 						player.teleport(this.location);
 						player.playSound(this.location, this.getSound(), 1, 0);
-						if (use_vehicle) {
+						if (useVehicle) {
 							vec.teleport(this.location);
 							vec.addPassenger(player);
 						}

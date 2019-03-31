@@ -4,10 +4,11 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.Warps;
 import com.mccraftaholics.warpportals.bukkit.PortalPlugin;
 import com.mccraftaholics.warpportals.manager.PortalDestManager;
-import com.mewin.WGCustomFlags.WGCustomFlagsPlugin;
 import com.sk89q.commandbook.CommandBook;
 import com.sk89q.commandbook.locations.FlatFileLocationsManager;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import de.comniemeer.ClickWarp.Commands.*;
 import de.comniemeer.ClickWarp.Listeners.InventoryListener;
 import de.comniemeer.ClickWarp.Listeners.PlayerListener;
@@ -53,11 +54,9 @@ public class ClickWarp extends JavaPlugin {
 	public Permission permission;
 	public Economy economy;
 	public Warps IWarps;
-	public WGCustomFlagsPlugin wgcf;
-	public WorldGuardPlugin wg;
 	public PortalDestManager pdm;
 
-	//public StateFlag Warp_Flag = null;
+	public StateFlag WarpFlag = null;
 	public FlatFileLocationsManager fflm;
 	public boolean update = false;
 	public String name = "";
@@ -86,7 +85,7 @@ public class ClickWarp extends JavaPlugin {
 
 	private boolean setupIWarps() {
 		Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
-		if ((ess == null) || (!(ess instanceof Essentials))) {
+		if (!(ess instanceof Essentials)) {
 			return false;
 		}
 		this.IWarps = ((Essentials) ess).getWarps();
@@ -113,28 +112,6 @@ public class ClickWarp extends JavaPlugin {
 		this.fflm = new FlatFileLocationsManager(new File(cb.getDataFolder(), "warps.csv"), "warps");
 
 		return true;
-	}
-
-	private WGCustomFlagsPlugin getWGCustomFlags() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WGCustomFlags");
-
-		if (!(plugin instanceof WGCustomFlagsPlugin)) {
-			return null;
-		}
-
-		//this.Warp_Flag = new StateFlag("warp", true);
-		return (WGCustomFlagsPlugin) plugin;
-	}
-
-	private WorldGuardPlugin getWorldGuard() {
-		Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-
-		// WorldGuard may not be loaded
-		if (!(plugin instanceof WorldGuardPlugin)) {
-			return null; // Maybe you want throw an exception instead
-		}
-
-		return (WorldGuardPlugin) plugin;
 	}
 
 	public void onDisable() {
@@ -250,14 +227,13 @@ public class ClickWarp extends JavaPlugin {
 
 		if (enableFlags) {
 			try {
-				this.wg = this.getWorldGuard();
-				this.wgcf = this.getWGCustomFlags();
-				if (this.wgcf != null) {
-					//this.wgcf.addCustomFlag(this.Warp_Flag);
-				}
+				WorldGuard worldGuard = WorldGuard.getInstance();
+				FlagRegistry flagRegistry = worldGuard.getFlagRegistry();
+
+				flagRegistry.register(this.WarpFlag = new StateFlag("allow-warping", true));
 			} catch (NoClassDefFoundError ncdfe) {
-				this.log.severe("[ClickWarp] Failed to load WGCustomFlags or WorldGuard!");
-				this.log.severe("[ClickWarp] Install Essentials or set \"EnableFlags\" in the config.yml to \"false\"");
+				this.log.severe("[ClickWarp] Failed to load WorldGuard!");
+				this.log.severe("[ClickWarp] Install WorldGuard or set \"EnableFlags\" in the config.yml to \"false\"");
 				this.getServer().getPluginManager().disablePlugin(this);
 				return;
 			}
@@ -269,7 +245,7 @@ public class ClickWarp extends JavaPlugin {
 			} catch (NoClassDefFoundError ncdfe) {
 				this.log.severe("[ClickWarp] Failed to load WarpPortals!");
 				this.log.severe(
-						"[ClickWarp] Install Essentials or set \"EnableWarpPortals\" in the config.yml to \"false\"");
+						"[ClickWarp] Install WarpPortals or set \"EnableWarpPortals\" in the config.yml to \"false\"");
 				this.getServer().getPluginManager().disablePlugin(this);
 				return;
 			}

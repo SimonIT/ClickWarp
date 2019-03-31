@@ -110,7 +110,7 @@ Economy:
   CurrencyPlural: 'Dollars'
 
 # If you want import/export the warps from/to Essentials
-# Essentials must be installed for this option
+# Essentials[X] must be installed for this option
 Essentials:
   Enable: false
 
@@ -126,8 +126,8 @@ WarpPortals:
 CommandBook:
   Enable: false
 
-# For this function you need WGCustomFlags and WorldGuard enabled on your server
-# For now, you can't use this feature because WGCustomFlags doesn't add the flag to WorldGuard.
+# For this function you need WorldGuard7 enabled on your server
+# Download it at https://dev.bukkit.org/projects/worldguard
 Flags:
   Enable: false
 # End of the config #
