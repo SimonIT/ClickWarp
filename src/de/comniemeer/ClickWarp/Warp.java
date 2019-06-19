@@ -15,8 +15,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class Warp {
 	 * @param name the name of the warp to load, case insensitive
 	 * @throws WarpNoExist thrown if the warp does not exist
 	 */
-	public Warp(@Nonnull String name) throws WarpNoExist {
+	public Warp(@NotNull String name) throws WarpNoExist {
 		this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
 		File file = new File(warpDirectory, this.filename + ".yml");
 
@@ -126,7 +126,7 @@ public class Warp {
 	 * @param player the player who creates the warp
 	 * @throws InvalidName thrown if the name contains invalid characters
 	 */
-	public Warp(@Nonnull String name, @Nonnull Location loc, @Nonnull OfflinePlayer player) throws InvalidName {
+	public Warp(@NotNull String name, @NotNull Location loc, @NotNull OfflinePlayer player) throws InvalidName {
 		this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
 		File file = new File(warpDirectory, this.filename + ".yml");
 
@@ -414,12 +414,7 @@ public class Warp {
 		if (this.sound != null) {
 			return this.sound;
 		} else {
-			Sound soundConfig = Sound.valueOf(clickWarp.getConfig().getString("WarpSound").toUpperCase());
-			if (soundConfig != null) {
-				return sound;
-			} else {
-				return Sound.ENTITY_ENDERMAN_TELEPORT;
-			}
+			return Sound.valueOf(clickWarp.getConfig().getString("WarpSound").toUpperCase());
 		}
 	}
 

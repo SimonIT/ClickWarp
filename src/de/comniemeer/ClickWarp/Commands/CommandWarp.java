@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (args.length == 0) {
 			if (!plugin.getConfig().getBoolean("InvwarpInsteadWarp")) {
 				if (sender.hasPermission("clickwarp.warps")) {
@@ -177,7 +178,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 				}
 			} else if (Bukkit.getPlayer(args[1]) != null) {
 				Player player = Bukkit.getPlayer(args[1]);
-				if (player.isOnline()) {
+				if (player != null && player.isOnline()) {
 					if (sender.hasPermission("clickwarp.warp")) {
 						try {
 							Warp warp = new Warp(args[0]);
@@ -208,8 +209,9 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		List<String> warpList = new ArrayList<>();
 
 		List<Warp> warps = Warp.getWarps();

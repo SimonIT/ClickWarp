@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 		super(plugin, cmd, description);
 	}
 
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (this.plugin.getConfig().getBoolean("GetTpSkull")) {
 			if (sender.hasPermission("clickwarp.gettpskull")) {
 				if (args.length == 1) {
@@ -52,15 +53,14 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.gettpskull")) {
 			List<String> playerList = new ArrayList<>();
 
 			for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-				if (p != null) {
-					playerList.add(p.getName());
-				}
+				playerList.add(p.getName());
 			}
 
 			if (args.length == 0) {

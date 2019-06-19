@@ -32,15 +32,13 @@ public class InventoryListener implements Listener {
 
 					if (item != null && item.getType() != Material.AIR) {
 						String dispname = item.getItemMeta().getDisplayName();
-						if (dispname != null) {
-							try {
-								Warp warp = new Warp(dispname);
-								warp.handleWarp(player, false);
-							} catch (WarpNoExist warpNoExist) {
-								warpNoExist.printStackTrace();
-							}
-							this.closeInv(player);
+						try {
+							Warp warp = new Warp(dispname);
+							warp.handleWarp(player, false);
+						} catch (WarpNoExist warpNoExist) {
+							warpNoExist.printStackTrace();
 						}
+						this.closeInv(player);
 					}
 				} else if (plugin.InvHM.get(player.getName()).equals("InventarTP")) {
 					e.setCancelled(true);

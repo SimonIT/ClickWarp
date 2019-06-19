@@ -28,28 +28,13 @@ public class PlayerListener implements Listener {
 		if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
 				&& e.getItem() != null) {
 			Player p = e.getPlayer();
-			String invwarpitem = plugin.getConfig().getString("InvwarpItem").toUpperCase();
-			byte invwarpitem_variant = e.getItem().getData().getData();
-			if (invwarpitem.contains(":")) {
-				String[] invwarpitem_split = invwarpitem.split(":");
-				invwarpitem = invwarpitem_split[0].toUpperCase();
-				invwarpitem_variant = Byte.parseByte(invwarpitem_split[1]);
-			}
-			Material invwarpmaterial = Material.getMaterial(invwarpitem);
-			String invtpitem = plugin.getConfig().getString("InvtpItem").toUpperCase();
-			byte invtpitem_variant = e.getItem().getData().getData();
-			if (invtpitem.contains(":")) {
-				String[] invtpitem_split = invtpitem.split(":");
-				invtpitem = invtpitem_split[0].toUpperCase();
-				invtpitem_variant = Byte.parseByte(invtpitem_split[1]);
-			}
-			Material invtpmaterial = Material.getMaterial(invtpitem);
+			Material invwarpmaterial = Material.getMaterial(plugin.getConfig().getString("InvwarpItem").toUpperCase());
+			Material invtpmaterial = Material.getMaterial(plugin.getConfig().getString("InvtpItem").toUpperCase());
 
 			String item_prefix = ChatColor.translateAlternateColorCodes('&',
 					this.plugin.getConfig().getString("Sign.FirstLine")) + " ";
 
-			if (e.getItem() != null && e.getItem().getType() == invwarpmaterial
-					&& e.getItem().getData().getData() == invwarpitem_variant) {
+			if (e.getItem() != null && e.getItem().getType() == invwarpmaterial) {
 				boolean enableinvwarp = plugin.getConfig().getBoolean("EnableInvwarpItem");
 
 				if (enableinvwarp) {
@@ -60,8 +45,7 @@ public class PlayerListener implements Listener {
 						e.setCancelled(false);
 					}
 				}
-			} else if (e.getItem() != null && e.getItem().getType() == invtpmaterial
-					&& e.getItem().getData().getData() == invtpitem_variant) {
+			} else if (e.getItem() != null && e.getItem().getType() == invtpmaterial) {
 				boolean enableinvtp = plugin.getConfig().getBoolean("EnableInvtpItem");
 
 				if (enableinvtp) {

@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.editwarp")) {
 			if (args.length >= 3) {
 				try {
@@ -174,8 +175,9 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.editwarp")) {
 			List<String> parameters = new ArrayList<>();
 			parameters.add("name");

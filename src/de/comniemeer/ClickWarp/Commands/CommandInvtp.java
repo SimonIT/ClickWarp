@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandInvtp extends AutoCommand<ClickWarp> {
@@ -20,7 +22,7 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.invtp")) {
 			if (sender instanceof Player) {
 				if (args.length == 0) {
@@ -76,8 +78,9 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
-		return null;
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+		return new ArrayList<>();
 	}
 }

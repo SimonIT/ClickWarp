@@ -7,7 +7,9 @@ import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CustomCommands extends AutoCommand<ClickWarp> {
@@ -16,7 +18,7 @@ public class CustomCommands extends AutoCommand<ClickWarp> {
 		super(plugin, command, description, aliases);
 	}
 
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender instanceof Player) {
 			String[] splits = description.split(" ");
 			try {
@@ -33,8 +35,9 @@ public class CustomCommands extends AutoCommand<ClickWarp> {
 	}
 
 
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
-		return null;
+	@NotNull
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+		return new ArrayList<>();
 	}
 
 }

@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,10 +26,10 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.setwarp")) {
 			if (args.length == 2) {
-				if (args[0].equalsIgnoreCase("Essentials") && this.plugin.getConfig().getBoolean("Essentials.Enable") && args[1] != null) {
+				if (args[0].equalsIgnoreCase("Essentials") && this.plugin.getConfig().getBoolean("Essentials.Enable")) {
 					if (args[1].equalsIgnoreCase("all")) {
 						Collection<String> EWarps = this.plugin.IWarps.getList();
 						StringBuilder warp_names = new StringBuilder(ChatColor.GOLD.toString());
@@ -83,7 +84,7 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 						}
 
 					}
-				} else if (args[0].equalsIgnoreCase("CommandBook") && this.plugin.getConfig().getBoolean("CommandBook.Enable") && args[1] != null) {
+				} else if (args[0].equalsIgnoreCase("CommandBook") && this.plugin.getConfig().getBoolean("CommandBook.Enable")) {
 					if (args[1].equalsIgnoreCase("all")) {
 						StringBuilder warp_names = new StringBuilder(ChatColor.GOLD.toString());
 						try {
@@ -131,13 +132,13 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 									"[ClickWarp] Install Essentials or set \"CommandBookEnable\" in the config.yml to \"false\"");
 						}
 					}
-				} else if (args[0].equalsIgnoreCase("WarpPortals") && this.plugin.getConfig().getBoolean("WarpPortals.Enable") && args[1] != null) {
+				} else if (args[0].equalsIgnoreCase("WarpPortals") && this.plugin.getConfig().getBoolean("WarpPortals.Enable")) {
 					if (args[1].equalsIgnoreCase("all")) {
 						Set<String> PortalDests = this.plugin.pdm.getDestinations();
 						StringBuilder warp_names = new StringBuilder(ChatColor.GOLD.toString());
 						for (String PortalDest : PortalDests) {
 							CoordsPY coords;
-							Location loc = null;
+							Location loc;
 							try {
 								coords = this.plugin.pdm.getDestCoords(PortalDest);
 								loc = new Location(coords.world, coords.x, coords.y, coords.z, coords.yaw,
@@ -161,7 +162,7 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 								.replace("{warp}", ChatColor.translateAlternateColorCodes('&', warp_names.toString())));
 					} else {
 						CoordsPY coords;
-						Location loc = null;
+						Location loc;
 						if (this.plugin.pdm != null) {
 							try {
 								coords = this.plugin.pdm.getDestCoords(args[1]);
@@ -193,8 +194,9 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 		return false;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.setwarp")) {
 			List<String> pluginList = new ArrayList<>();
 			if (this.plugin.IWarps != null) {

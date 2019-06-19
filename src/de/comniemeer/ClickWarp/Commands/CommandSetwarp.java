@@ -8,8 +8,10 @@ import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommandSetwarp extends AutoCommand<ClickWarp> {
@@ -19,7 +21,7 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.setwarp")) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
@@ -81,8 +83,9 @@ public class CommandSetwarp extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
-		return null;
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+		return new ArrayList<>();
 	}
 }

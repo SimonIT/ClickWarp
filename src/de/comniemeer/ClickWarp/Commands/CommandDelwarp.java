@@ -6,6 +6,7 @@ import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
 import de.comniemeer.ClickWarp.Warp;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class CommandDelwarp extends AutoCommand<ClickWarp> {
 		super(plugin, cmd, description, alias);
 	}
 
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.delwarp")) {
 			if (args.length == 1) {
 				try {
@@ -39,8 +40,9 @@ public class CommandDelwarp extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.delwarp")) {
 			List<String> warpList = new ArrayList<>();
 			File warps_folder = new File("plugins/ClickWarp/Warps");

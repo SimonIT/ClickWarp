@@ -5,6 +5,7 @@ import de.comniemeer.ClickWarp.ClickWarp;
 import de.comniemeer.ClickWarp.Updater;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String label, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.clickwarp")) {
 			if (args.length == 1) {
 				if (args[0].equalsIgnoreCase("reload")) {
@@ -38,8 +39,9 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 		return true;
 	}
 
+	@NotNull
 	@Override
-	public List<String> tabComplete(CommandSender sender, String label, String[] args) {
+	public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.clickwarp")) {
 			List<String> arguments = new ArrayList<>();
 

@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -60,11 +61,13 @@ public abstract class AutoCommand<P extends JavaPlugin> extends Command {
 		}
 	}
 
-	public abstract boolean execute(CommandSender cs, String label, String[] args);
+	public abstract boolean execute(@NotNull CommandSender cs, @NotNull String label, @NotNull String[] args);
 
-	public abstract List<String> tabComplete(CommandSender cs, String label, String[] args);
+	@NotNull
+	public abstract List<String> tabComplete(@NotNull CommandSender cs, @NotNull String label, @NotNull String[] args);
 
-	public String buildString(String[] args, int start) {
+	@NotNull
+	public String buildString(@NotNull String[] args, @NotNull int start) {
 		StringBuilder str = new StringBuilder();
 		if (args.length > start) {
 			str.append(args[start]);
