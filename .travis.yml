@@ -16,3 +16,8 @@ deploy:
     repo: SimonIT/ClickWarp
     tags: true
     all_branches: true
+
+cache:
+  directories:
+    - .autoconf
+    - $HOME/.m2
