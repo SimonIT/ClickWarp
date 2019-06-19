@@ -73,9 +73,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.McCraftaholics</groupId>
+            <groupId>com.github.elian1203</groupId>
             <artifactId>Bukkit-WarpPortals</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>1.12-update-818ad9df2d-1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
