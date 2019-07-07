@@ -192,7 +192,7 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 					}
 				} else {
 					sender.sendMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.msg.InvTPNotOnline)
-							.replace("{player}", player.getDisplayName()));
+							.replace("{player}", args[1]));
 				}
 			}
 		} else {
@@ -280,6 +280,6 @@ public class CommandWarp extends AutoCommand<ClickWarp> {
 			return tabList;
 
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }

@@ -72,6 +72,6 @@ public class CommandDelwarp extends AutoCommand<ClickWarp> {
 			}
 		}
 
-		return null;
+		return new ArrayList<>();
 	}
 }

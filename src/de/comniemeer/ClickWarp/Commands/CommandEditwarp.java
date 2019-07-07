@@ -274,6 +274,6 @@ public class CommandEditwarp extends AutoCommand<ClickWarp> {
 				}
 			}
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }

@@ -52,7 +52,7 @@ public class CommandInvtp extends AutoCommand<ClickWarp> {
 					int slot = 0;
 
 					for (Player p_ : players) {
-						if (p_ != p) {
+						if (!p_.equals(p)) {
 							ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
 							SkullMeta meta = (SkullMeta) item.getItemMeta();
 

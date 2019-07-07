@@ -24,7 +24,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 	public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
 		if (sender.hasPermission("clickwarp.exportwarp")) {
 			if (args.length == 2) {
-				if (args[0].equalsIgnoreCase("Essentials") && this.plugin.getConfig().getBoolean("Essentials.Enable") && args[1] != null) {
+				if (args[0].equalsIgnoreCase("Essentials") && this.plugin.getConfig().getBoolean("Essentials.Enable")) {
 					if (this.plugin.IWarps != null) {
 						if (args[1].equalsIgnoreCase("all")) {
 							List<Warp> warps = Warp.getWarps();
@@ -57,7 +57,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 					}
 
 
-				} else if (args[0].equalsIgnoreCase("CommandBook") && this.plugin.getConfig().getBoolean("CommandBook.Enable") && args[1] != null) {
+				} else if (args[0].equalsIgnoreCase("CommandBook") && this.plugin.getConfig().getBoolean("CommandBook.Enable")) {
 					if (this.plugin.fflm != null) {
 						try {
 							this.plugin.fflm.load();
@@ -90,7 +90,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 						this.plugin.log.severe(
 								"[ClickWarp] Install WarpPortals or set \"EnableCommandBook\" in the config.yml to \"false\"");
 					}
-				} else if (args[0].equalsIgnoreCase("WarpPortals") && this.plugin.getConfig().getBoolean("WarpPortals.Enable") && args[1] != null) {
+				} else if (args[0].equalsIgnoreCase("WarpPortals") && this.plugin.getConfig().getBoolean("WarpPortals.Enable")) {
 					if (this.plugin.pdm != null) {
 						if (args[1].equalsIgnoreCase("all")) {
 							List<Warp> warps = Warp.getWarps();
@@ -158,7 +158,7 @@ public class CommandExportwarp extends AutoCommand<ClickWarp> {
 				return tabList;
 			}
 		}
-		return null;
+		return new ArrayList<>();
 	}
 
 }

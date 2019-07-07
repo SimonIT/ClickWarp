@@ -65,53 +65,47 @@ public class ClickWarp extends JavaPlugin {
 	public String link = "";
 	public File file = null;
 
-	private boolean setupEconomy() {
+	private void setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-			return false;
+			return;
 		}
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if (rsp == null) {
-			return false;
+			return;
 		}
 		economy = rsp.getProvider();
-		return economy != null;
 	}
 
-	private boolean setupPermissions() {
+	private void setupPermissions() {
 		RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
 		permission = rsp.getProvider();
-		return permission != null;
 	}
 
-	private boolean setupIWarps() {
+	private void setupIWarps() {
 		Plugin ess = getServer().getPluginManager().getPlugin("Essentials");
 		if (!(ess instanceof Essentials)) {
-			return false;
+			return;
 		}
 		this.IWarps = ((Essentials) ess).getWarps();
 
-		return true;
 	}
 
-	private boolean setupWarpPortals() {
+	private void setupWarpPortals() {
 		Plugin wapo = getServer().getPluginManager().getPlugin("WarpPortals");
 		if (!(wapo instanceof PortalPlugin)) {
-			return false;
+			return;
 		}
 		this.pdm = ((PortalPlugin) wapo).mPortalManager.mPortalDestManager;
 
-		return true;
 	}
 
-	private boolean setupCommandBook() {
+	private void setupCommandBook() {
 		Plugin cb = getServer().getPluginManager().getPlugin("CommandBook");
 		if (!(cb instanceof CommandBook)) {
-			return false;
+			return;
 		}
 
 		this.fflm = new FlatFileLocationsManager(new File(cb.getDataFolder(), "warps.csv"), "warps");
-
-		return true;
 	}
 
 	public void onDisable() {

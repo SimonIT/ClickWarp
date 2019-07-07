@@ -268,6 +268,6 @@ public class CommandImportwarp extends AutoCommand<ClickWarp> {
 				}
 			}
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }

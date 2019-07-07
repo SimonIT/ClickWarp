@@ -63,7 +63,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 			}
 		}
 
-		return null;
+		return new ArrayList<>();
 	}
 
 	private void reload() {

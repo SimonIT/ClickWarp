@@ -67,7 +67,7 @@ public abstract class AutoCommand<P extends JavaPlugin> extends Command {
 	public abstract List<String> tabComplete(@NotNull CommandSender cs, @NotNull String label, @NotNull String[] args);
 
 	@NotNull
-	public String buildString(@NotNull String[] args, @NotNull int start) {
+	public String buildString(@NotNull String[] args, int start) {
 		StringBuilder str = new StringBuilder();
 		if (args.length > start) {
 			str.append(args[start]);

@@ -77,6 +77,6 @@ public class CommandGettpskull extends AutoCommand<ClickWarp> {
 				return tabList;
 			}
 		}
-		return null;
+		return new ArrayList<>();
 	}
 }
