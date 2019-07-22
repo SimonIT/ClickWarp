@@ -2,7 +2,7 @@ package de.comniemeer.ClickWarp.Commands;
 
 import de.comniemeer.ClickWarp.AutoCommand;
 import de.comniemeer.ClickWarp.ClickWarp;
-import de.comniemeer.ClickWarp.Updater;
+import net.gravitydevelopment.updater.Updater;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +26,7 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 				} else if (args[0].equalsIgnoreCase("version")) {
 					sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.GOLD + "ClickWarp" + ChatColor.GRAY + "] Version " + ChatColor.GOLD + plugin.version + ChatColor.GRAY + " by " + ChatColor.GOLD + plugin.authors);
 				} else if (args[0].equalsIgnoreCase("update")) {
-					new Updater(this.plugin, this.plugin.id, this.plugin.file, Updater.UpdateType.NO_VERSION_CHECK, true); // Go
+					this.plugin.updater = new Updater(this.plugin, this.plugin.id, this.plugin.getFile(), Updater.UpdateType.NO_VERSION_CHECK, true); // Go
 					sender.sendMessage("The Update is downloading");
 				}
 			} else {

@@ -15,7 +15,7 @@ import de.comniemeer.ClickWarp.Listeners.PlayerListener;
 import de.comniemeer.ClickWarp.Listeners.SignListener;
 import de.comniemeer.ClickWarp.Messages.*;
 import de.comniemeer.ClickWarp.Metrics.Graph;
-import de.comniemeer.ClickWarp.Updater.ReleaseType;
+import net.gravitydevelopment.updater.Updater;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
@@ -25,6 +25,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,11 +60,7 @@ public class ClickWarp extends JavaPlugin {
 	public StateFlag WarpFlag = null;
 	public FlatFileLocationsManager fflm;
 	public boolean update = false;
-	public String name = "";
-	public ReleaseType type = null;
-	public String version_update = "";
-	public String link = "";
-	public File file = null;
+	public Updater updater;
 
 	private void setupEconomy() {
 		if (getServer().getPluginManager().getPlugin("Vault") == null) {
@@ -295,13 +292,13 @@ public class ClickWarp extends JavaPlugin {
 		this.log.info("[ClickWarp] Plugin v" + this.version + " by " + this.authors + " enabled.");
 
 		if (getConfig().getBoolean("auto-update")) {
-			Updater updater = new Updater(this, this.id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
-			this.update = updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE; // Determine
-			this.name = updater.getLatestName(); // Get the latest name
-			this.version_update = updater.getLatestGameVersion(); // Get the latest
-			this.type = updater.getLatestType(); // Get the latest file's type
-			this.link = updater.getLatestFileLink(); // Get the latest link
+			this.updater = new Updater(this, this.id, this.getFile(), Updater.UpdateType.NO_DOWNLOAD, false); // Start
 		}
-		this.file = this.getFile();
+	}
+
+	@Override
+	@NotNull
+	public File getFile() {
+		return super.getFile();
 	}
 }

@@ -141,8 +141,11 @@ public class PlayerListener implements Listener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
 		if (player.hasPermission("clickwarp.update") && this.plugin.update && this.plugin.getConfig().getBoolean("auto-update")) {
-			player.sendMessage("An update is available: " + this.plugin.name + ", a " + this.plugin.type + " for "
-					+ this.plugin.version_update + " available at " + this.plugin.link);
+			player.sendMessage(String.format("An update is available: %s, a %s for %s available at %s",
+					this.plugin.updater.getLatestName(),
+					this.plugin.updater.getLatestType(),
+					this.plugin.updater.getLatestGameVersion(),
+					this.plugin.updater.getLatestFileLink()));
 			// Will look like - An update is available: AntiCheat v1.5.9, a
 			// release for CB 1.6.2-R0.1 available at
 			// http://media.curseforge.com/XYZ
