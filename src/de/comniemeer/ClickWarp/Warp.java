@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -219,6 +220,7 @@ public class Warp {
 		}
 	}
 
+	@NotNull
 	public static List<Warp> getWarps() {
 		File warpsFolder = new File(warpDirectory);
 
@@ -296,11 +298,12 @@ public class Warp {
 		updateMetrics();
 	}
 
+	@NotNull
 	public Location getLocation() {
 		return this.location;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(@NotNull Location location) {
 		this.location = location;
 	}
 
@@ -316,11 +319,12 @@ public class Warp {
 		return file.exists();
 	}
 
+	@NotNull
 	public String getName() {
 		return this.name;
 	}
 
-	public void setName(String name) throws InvalidName {
+	public void setName(@NotNull String name) throws InvalidName {
 		this.delete();
 		this.name = name;
 		this.filename = ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', name.toLowerCase()));
@@ -331,14 +335,16 @@ public class Warp {
 		}
 	}
 
+	@NotNull
 	public OfflinePlayer getPlayer() {
 		return this.player;
 	}
 
-	public void setPlayer(OfflinePlayer player) {
+	public void setPlayer(@NotNull OfflinePlayer player) {
 		this.player = player;
 	}
 
+	@NotNull
 	public ItemStack getItem() {
 		if (this.item != null) {
 			return this.item;
@@ -347,11 +353,11 @@ public class Warp {
 		}
 	}
 
-	public void setItem(Material item) {
+	public void setItem(@NotNull Material item) {
 		this.item = new ItemStack(item, 1);
 	}
 
-	public void setItem(String item) throws InvalidItem {
+	public void setItem(@NotNull String item) throws InvalidItem {
 		Material material = Material.matchMaterial(item);
 		if (material != null) {
 			setItem(material);
@@ -360,6 +366,7 @@ public class Warp {
 		}
 	}
 
+	@NotNull
 	public List<String> getPreparedLore() {
 		List<String> lore = new ArrayList<>();
 		if (this.lore != null) {
@@ -371,6 +378,7 @@ public class Warp {
 		return lore;
 	}
 
+	@NotNull
 	public String getLore() {
 		if (this.lore != null) {
 			return this.lore;
@@ -379,7 +387,7 @@ public class Warp {
 		}
 	}
 
-	public void setLore(String lore) {
+	public void setLore(@Nullable String lore) {
 		this.lore = lore;
 	}
 
@@ -391,6 +399,7 @@ public class Warp {
 		this.price = price;
 	}
 
+	@NotNull
 	public List<String> getPreparedMessage() {
 		String[] message_lines_orig;
 		List<String> message_lines = new ArrayList<>();
@@ -402,14 +411,16 @@ public class Warp {
 		return message_lines;
 	}
 
+	@Nullable
 	public String getMessage() {
 		return this.message;
 	}
 
-	public void setMessage(String message) {
+	public void setMessage(@Nullable String message) {
 		this.message = message;
 	}
 
+	@NotNull
 	public Sound getSound() {
 		if (this.sound != null) {
 			return this.sound;
@@ -418,7 +429,7 @@ public class Warp {
 		}
 	}
 
-	public void setSound(Sound sound) {
+	public void setSound(@Nullable Sound sound) {
 		this.sound = sound;
 	}
 
@@ -439,6 +450,7 @@ public class Warp {
 		this.executeCommands.remove(cmd);
 	}
 
+	@NotNull
 	public List<String> getExCmds() {
 		if (this.executeCommands != null) {
 			return this.executeCommands;
@@ -447,7 +459,7 @@ public class Warp {
 		}
 	}
 
-	public void setExCmds(List<String> excmds) {
+	public void setExCmds(@Nullable List<String> excmds) {
 		this.executeCommands = excmds;
 	}
 
@@ -468,6 +480,7 @@ public class Warp {
 		this.aliasCommands.remove(cmd);
 	}
 
+	@NotNull
 	public List<String> getCmds() {
 		if (this.aliasCommands != null) {
 			return this.aliasCommands;
@@ -476,7 +489,7 @@ public class Warp {
 		}
 	}
 
-	public void setCmds(List<String> cmds) {
+	public void setCmds(@Nullable List<String> cmds) {
 		this.aliasCommands = cmds;
 	}
 
@@ -492,7 +505,7 @@ public class Warp {
 		}
 	}
 
-	public void handleWarp(final Player player, boolean fromSign) {
+	public void handleWarp(@NotNull final Player player, boolean fromSign) {
 		boolean flag = true;
 		if (clickWarp.getConfig().getBoolean("Flags.Enable")) {
 			RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
