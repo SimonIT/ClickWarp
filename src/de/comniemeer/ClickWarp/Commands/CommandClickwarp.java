@@ -45,8 +45,9 @@ public class CommandClickwarp extends AutoCommand<ClickWarp> {
 		if (sender.hasPermission("clickwarp.clickwarp")) {
 			List<String> arguments = new ArrayList<>();
 
-			arguments.add("reload");
 			arguments.add("version");
+			arguments.add("reload");
+			arguments.add("update");
 
 			if (args.length == 0) {
 				return arguments;
