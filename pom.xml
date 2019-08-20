@@ -41,7 +41,7 @@
             <version>17.0.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.SimonIT</groupId>
+            <groupId>com.github.timbru31</groupId>
             <artifactId>updater</artifactId>
             <version>master-SNAPSHOT</version>
         </dependency>
