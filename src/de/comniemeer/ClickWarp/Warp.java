@@ -8,7 +8,6 @@ import de.comniemeer.ClickWarp.Exceptions.CommandNoExist;
 import de.comniemeer.ClickWarp.Exceptions.InvalidItem;
 import de.comniemeer.ClickWarp.Exceptions.InvalidName;
 import de.comniemeer.ClickWarp.Exceptions.WarpNoExist;
-import de.comniemeer.ClickWarp.Metrics.Graph;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mcstats.Metrics;
 
 import java.io.File;
 import java.io.IOException;
@@ -207,7 +207,7 @@ public class Warp {
 
 			Metrics metrics;
 			metrics = new Metrics(clickWarp);
-			Graph Warps = metrics.createGraph("Warps");
+			Metrics.Graph Warps = metrics.createGraph("Warps");
 
 			Warps.addPlotter(new Metrics.Plotter("Warps") {
 				@Override

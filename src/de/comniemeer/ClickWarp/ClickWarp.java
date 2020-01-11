@@ -14,7 +14,6 @@ import de.comniemeer.ClickWarp.Listeners.InventoryListener;
 import de.comniemeer.ClickWarp.Listeners.PlayerListener;
 import de.comniemeer.ClickWarp.Listeners.SignListener;
 import de.comniemeer.ClickWarp.Messages.*;
-import de.comniemeer.ClickWarp.Metrics.Graph;
 import net.gravitydevelopment.updater.Updater;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -26,6 +25,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.mcstats.Metrics;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,7 +148,7 @@ public class ClickWarp extends JavaPlugin {
 		try {
 			Metrics metrics = new Metrics(this);
 
-			Graph Warps = metrics.createGraph("Warps");
+			Metrics.Graph Warps = metrics.createGraph("Warps");
 
 			Warps.addPlotter(new Metrics.Plotter("Warps") {
 				public int getValue() {
