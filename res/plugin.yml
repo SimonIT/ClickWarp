@@ -1,6 +1,6 @@
 name: ClickWarp
 version: 1.4.9
-api-version: 1.13
+api-version: "1.13"
 authors:
   - comniemeer
   - SimonIT

@@ -30,7 +30,7 @@
         </repository>
         <repository>
             <id>mcstats-repo</id>
-            <url>https://repo.mcstats.org/content/repositories/releases/</url>
+            <url>https://repo.mcstats.org/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.mcstats.bukkit</groupId>
             <artifactId>metrics</artifactId>
-            <version>R7</version>
+            <version>R8-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bukkit</groupId>
@@ -54,6 +54,7 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>18.0.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.timbru31</groupId>
